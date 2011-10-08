@@ -1,0 +1,107 @@
+\documentclass[12pt,psfig,a4]{article}
+\usepackage{geometry}
+%\geometry{a4paper}
+\geometry{left=28mm,right=28mm,top=21mm,bottom=21mm}
+
+%\gemoetry{verbose,a4paper,tmargin=21mm,bmargin=21mm,lmargin=18mm,rmargin=18mm}
+\usepackage{graphics}
+\usepackage{setspace}
+\newcommand{\Lyx}{L\kern-.1667em\lower.25em\hbox{y}\kern-.125emX\spacefactor1000}
+\newcommand\bibname{References}
+\singlespacing
+\begin{document}
+\bibliographystyle{plain} 
+\pagestyle{plain} 
+\pagenumbering{arabic}
+%\rmfamily
+
+\title{TML: Language Reference Manual}
+\author{
+Jiabin Hu (jh3240)\\
+Akash Sharma (as4122)\\
+Shuai Sun (ss4088)\\
+Yan Zou (yz2437)
+}
+\date{\today}
+\maketitle
+
+% Article starts here
+
+%\begin{abstract} 
+
+%\end{abstract} 
+
+%{\bf Keywords:} \\
+
+\section{Introduction}
+
+\textit{This section will be written later.}
+
+\section{Lexical Conventions}
+
+\subsection{Character Set}
+TML takes the standard \textbf{ASCII} character set for source codes.
+
+\subsection{Comments}
+In TML, there are two ways to make comments. The first style starts with the characters \textbf{/*}, and ends with the characters \textbf{*/}, all contents between which are comments. Note that, just like C-style comments, TML supports only un-nested comments. The second style is inline comments. It starts with the characters \textbf{//}, all contents in the current line after which are regarded as comments.
+
+\subsection{Identifiers}
+In TML, an identifier is a string that starts with a letter or an underscore, and consists of a sequece of letters, digits, and underscores. The max length of an identifier is 26 characters. 
+All identifiers are case-sensitive in TML.
+
+\subsection{Keywords}
+\textit{This section needs discussion.}\\
+In TML, the words listed in Table~\ref{keywords} are reserved as keywords, and are not allowed to be used as a user-defined identifier.
+
+\begin{table}[ht]
+\begin{center}
+\begin{tabular}{| c | c | c | c | c |}
+\hline
+if & else & type & while & foreach \\
+\hline
+in & by & do & print &\\
+\hline
+preorder & inorder & postorder & border &\\
+\hline
+int & float & char & string & bool  \\
+\hline
+treetype &  & & & \\
+\hline
+\end{tabular}
+\caption{Keywords in TML}
+\label{keywords}
+\end {center}
+\end{table}
+
+\subsection{Operators}
+\textit{This section needs discussion.}\\
+TML provides basic operators for arithmetic, comparing, assignment and string operations, which are listed in Table~\ref{basic_operators}.
+
+\begin{table}[ht]
+\begin{center}
+\begin{tabular}{| c | c |}
+\hline
+\textbf{Usage} & \textbf{Operator} \\
+\hline
+Arithmetic & +, -, *, /, \% \\
+\hline
+Comparing & \textgreater, \textgreater=, ==, !=, \textless=, \textless \\
+\hline
+Assignment & =, +=, -=, *=, /=, \%= \\
+\hline
+Sting & ==, sizeof() \\
+\hline
+\end{tabular}
+\caption{Basic Operators in TML}
+\label{basic_operators}
+\end {center}
+\end{table}
+
+
+
+
+%\begin{thebibliography}{}
+
+%\end{thebibliography}   
+
+\end{document}
