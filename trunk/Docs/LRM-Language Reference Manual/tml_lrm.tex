@@ -100,6 +100,57 @@ treetype &  & & & \\
 
 
 \section{Expressions}
+In TML, expressions consists of operators and their operands. In this section, we'll begin with defining each operator. After this, we'll define the precedence rules so that the evaluation can be carried out unambigously.
+
+\subsection{Arithmetic Operators}
+In TML, arithmetic operators are $+$, $-$, $*$, $/$ and $\%$. $+$ means addition, $-$ means substruction, $*$ means multiplication, $/$ means division and $\%$ means modulation. All of them are binary and left associative. It requires that their operands must be of the same primitive types, and the result will be of the same type.
+
+\subsection{Comparative Operators}
+In TML, comparative operators are $>$ (greater than), $<$ (less than), $>=$ (greater than or equal to), $<=$ (less than or equal to), $!=$ (not equal) and $==$ (equal). All of them are binary and left associative. It requires that their operands must be of the same primitive types . The result will be of type bool.
+
+\subsection{Logical Operators}
+Logical operators in TML include \&\& (logical and), $||$ (logical or) and ! (logical not). \&\& and $||$ are binary and left-associative. They take two operands of type bool, and return a bool value. ! is unary and appears on the left side of the operand. They type of the operand must be bool and the return type is also bool.
+
+\subsection{Assignment Operators}
+TML's assignment operator is =. it's binary and right-associative. The left operand must be an identifier and the right operand must be an expression. It assigns the value of the expression to the identifier, and returns the value of the identifier. This allows chained assignment. In addition, the following short-cut assignment operators are also defined: +=, -=, *=, /=, \%=. They require the expression and identifier of the same type.
+
+\subsection{Parentheses}
+In TML, parentheses in expressions are used to overwrite the precedence rules, Expression enclosed by the parentheses will always be calculated first before applying its adjacent operators.
+
+\subsection{Tree Operators}
+The highlight of TML is a set of operators that can be applied to trees. They are divided into three categories: tree-building, tree-copying and tree-querying.
+
+\subsubsection{Tree-building operator}
+We define $->$ to be the tree building operator. It's binary and right-associative. The left operand is a single tree node, representing the root. The right operand is a list of trees, enclosed by parentheses and seperated by commas, representing the immediate children of the root. For example, a$->$(b, c) means building a tree with a as root and b as its left subtree, and c as its right subtree. This operator returns the newly built tree.
+
+\subsubsection{Tree-copying operators}
+We define two operators to copy trees. @ means copying the node and its value only, with all of its children set to null. \$ means creating a new tree, with exactly the same stucture as the original tree. Both of them are unary and appear on the left side of the opearand. They return the new tree.
+
+\subsubsection{Tree-querying operators}
+In TML, we define operator \# as follows: \#n means the order of node n among its siblings, starting from 0. For example, if node a has three nodes b, c, d, then \#b, \#c, \#d will return 0, 1, 2, respectively. If n has no parent, \#n will return null.
+
+\subsection{Precedence Rules}
+\begin{table}[ht]
+\begin{center}
+\begin{tabular}{| c | c |}
+\hline
+1 & () \\
+2 & \# \\
+3 & @, \$ \\
+4 & *, /, \% \\
+5 & +, - \\
+6 & $<$, $>$, $<=$, $>=$, $!=$, $==$ \\
+7 & ! \\
+8 & \&\& \\
+9 & $||$ \\
+10 & =, +=, -=, *=, /=, \%= \\
+11 & $->$ \\
+\hline
+\end{tabular}
+\caption{Precedence Rules}
+\label{keywords}
+\end {center}
+\end{table}
 
 \section{Statements}
 
