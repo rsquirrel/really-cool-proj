@@ -15,6 +15,10 @@
 \pagenumbering{arabic}
 %\rmfamily
 
+\newenvironment{code}
+{\hangindent=0.7cm\itshape\sffamily\parskip 7.2pt}
+{\parskip 7.2pt}
+
 \title{TML: Language Reference Manual}
 \author{
 Jiabin Hu (jh3240)\\
@@ -154,7 +158,37 @@ In TML, we define operator \# as follows: \#n means the order of node n among it
 
 \section{Statements}
 
+\subsection{Variable Declaration and Initialization Statement}
+
+\subsubsection{Type Specifiers}
+
+\subsubsection{Declarators}
+
+\subsection{Expression Statements}
+The expression statement is the most common one in TML. It consists of an expression and a semicolon at the end. Any expression can be used here. TML will evaluate the expression and ignore the final evaluation result.
+
+
+
+\begin{code}
+expression;
+\end{code}
+
+\subsection{Compound Statements}
+
+\subsection{Conditional Statements}
+
+\subsection{Iterative Statements}
+
+\subsection{Other Statements}
+
 \section{Functions}
+Order insensitive
+
+\subsection{Function Definition}
+
+\subsection{Function Return}
+
+\subsection{Function Calls}
 
 \section{Scope}
 
