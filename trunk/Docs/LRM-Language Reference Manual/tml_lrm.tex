@@ -43,7 +43,7 @@ Yan Zou (yz2437)
 
 \textit{This section will be written later.}
 
-\section{Lexical Conventions}
+\section{Lexical Conventions} \label{lexCon}
 
 \subsection{Character Set}
 TML takes the standard \textbf{ASCII} character set for source codes.
@@ -51,7 +51,7 @@ TML takes the standard \textbf{ASCII} character set for source codes.
 \subsection{Comments}
 In TML, there are two ways to make comments. The first style starts with the characters \textbf{/*}, and ends with the characters \textbf{*/}, all contents between which are comments. Note that, just like C-style comments, TML supports only un-nested comments. The second style is inline comments. It starts with the characters \textbf{//}, all contents in the current line after which are regarded as comments.
 
-\subsection{Identifiers}
+\subsection{Identifiers} \label{lexConId}
 In TML, an identifier is a string that starts with a letter or an underscore, and consists of a sequece of letters, digits, and underscores. The max length of an identifier is 26 characters. 
 All identifiers are case-sensitive in TML.
 
@@ -95,7 +95,7 @@ treetype &  & & & \\
 %\hline
 %Assignment & =, +=, -=, *=, /=, \%= \\
 %\hline
-%Sting & ==, sizeof() \\
+%String & ==, sizeof() \\
 %\hline
 %\end{tabular}
 %\caption{Basic Operators in TML}
@@ -104,6 +104,97 @@ treetype &  & & & \\
 %\end{table}
 
 
+% Shuai Begin
+\subsection {Constants}
+There are several kinds of constants in TML, which are listed as follows.
+\subsubsection {Integer constants}
+
+\subsubsection {Integer constants}
+
+\subsubsection {Integer constants}
+
+
+\section {Types}
+In TML, there are two kind of types, the \textit{primitive types} and the \textit{tree types}.
+
+\subsection {Primitive Types}
+There are several kinds of primitive types as listed below in Table~\ref{pri_types}. 
+
+\begin{table}[ht]
+\begin{center}
+\begin{tabular}{| c | c | c |}
+\hline
+\textbf{Primitive Type} & \textbf{Size} & \textbf{Range} \\
+\hline
+Integer & 4 bytes & -2 147 483 648 ~  2 147 483 647 \\
+\hline
+Float & 4 bytes & about $\pm$3.402 823 47E+38\\
+\hline
+Character & 1 byte &  ASCII\\
+\hline
+String & \textgreater 1 byte & combinations of characters \\
+\hline
+Boolean & 1 byte & true, false \\
+\hline
+\end{tabular}
+\caption{Primitive Types in TML}
+\label{pri_types}
+\end {center}
+\end{table}
+
+\subsubsection {Intergers}
+In TML, there is only one type of integer. The integers are signed, and are of fixed size. The size of an integer is four bytes.
+
+\subsubsection {Floats}
+In TML, there is only one type of floating point number. The size of the float type is four bytes.
+
+\subsubsection {Characters}
+In TML, there is only one type of character. The size of a character is one byte. The characters are interpreted as ASCII code.
+
+\subsubsection {Strings}
+Strings are considered as a primitive type in TML. A string is a permutation of more than one characters. A string can be compared with another string. The size of a string equals to the number of characters in it.
+
+\subsubsection {Booleans}
+Boolean type is a primitive type in TML. There are only two values, true and false, in the Boolean type, which is used to determinate logic conditions. There is no conversions between integers and these two values.
+
+\subsection {Tree Types}
+In TML, a \textit{tree type} is a type that supports tree features, such as tree structures and operations. By using the tree types, users can define and use tree data structures in their programs.
+
+In a tree data structure, children of the root node can be also regarded as sub roots of sub trees. By this concept, in TML, all nodes in a tree are of the same tree type with the root. There is no tree node type in TML.
+
+\subsubsection {Define a tree type}
+Tree types are defined by users before they can declare and define variables of the tree types. A tree type consists of necessary parts, \textit{type name}, \textit{degree} and \textit{member variable(s)}, and an optional part, \textit{children index aliases}. To define a tree type, the \textit{type name}, \textit{degree} and \textit{member variable(s)} must be defined, and the \textit{children index aliases} can be optionally defiined. The size of a tree type is the sum size of its member variable types.
+
+An example of a tree type definition, MyTree\_t, is given below.
+
+\begin{code}
+\begin{tabbing}
+treetype \textless2, [left, right]\textgreater MyTree\_t \\
+\{\\
+~~~~int i;\\
+~~~~float f;\\
+~~~~string s;\\
+\}
+\end{tabbing}
+\end{code}
+
+
+\subsubsection {Type name}
+The \textit{type name} of a tree type follows the identifier definition in the section~\ref{lexConId}. After the tree type is defined, the type name can be used to define variables of this type.
+
+\subsubsection {Degree}
+In TML, each tree type must define a fixed \textit{degree} at definition. All nodes of the same tree type have the same degree. The value range of the degree is from 1 to 99. The degree of a tree type can be referred to by using  ????????????????????????? introduced in the section~\ref{treeOp}.
+
+\subsubsection {Member variables}
+In TML, a tree type can define its own \textit{member variable(s)} to store values for algorithms and programs. Each tree type can have at most 99 member variables. Each member variable must have a name which is unique in its tree type, and can be of any primitive types or tree types. Note that if a member variable is defined as some tree type, the definition of the tree type must appear before the member variable definition. All member variables are public. The member variables of a tree type variable can be referred to by using  ????????????????????? operation introduced in the section~\ref{treeOp}.
+
+\subsubsection {Children index and aliases}
+In TML, children sub roots of a root can be referred to by the index number, ranging from 0 to degree-1. Optionally, at the definition of a tree type, user can define alias of the children indices. The alias follows the identifier definition in section~\ref{lexConId}. Note that if aliases are defined, then aliases for all Children indices must be defined. Only defining a subset of children indices is not allowed in TML. Whether using number indices or aliases, the children of a tree root can be referred to by using ???????????????????????? introduced in section~\ref{treeOp}.
+
+\subsection {Type Conversions}
+In TML, no type conversion is allowed.
+
+% Shuai End
 
 \section{Expressions}
 In TML, expressions consists of operators and their operands. In this section, we'll begin with defining each operator. After this, we'll define the precedence rules so that the evaluation can be carried out unambigously.
