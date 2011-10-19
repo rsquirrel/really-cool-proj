@@ -16,8 +16,10 @@
 %\rmfamily
 
 \newenvironment{code}
-{\hangindent=0.7cm\itshape\sffamily\parskip 7.2pt}
-{\parskip 7.2pt}
+{\sffamily
+ \setlength{\parskip}{0pt}
+ \noindent}
+{}
 
 \title{TML: Language Reference Manual}
 \author{
@@ -38,11 +40,10 @@ Yan Zou (yz2437)
 %{\bf Keywords:} \\
 
 \section{Introduction}
-Tree manipulation(TML) language is user friendly language that is designed to help users program trees. It allows users to create, manipulate and run algorithms on trees. Various existing programming languages make tree operations cumbersome and TML is intended to bridge this gap. In TML everything is of type Tree except primitive data types. Each node of the tree is of type Tree and it has fields associated with it like parent, child etc. Every node of the Tree is root for its subtree. Nodes of the tree can consist of user defined or primitive value types and they can be of any degree. We can refer to any child or parent node of a given node using predefined constructs. TMLprovides methods to perform trivial operations on trees such as tree traversal, node creation or deletion etc.
+
 \textit{This section will be written later.}
 
 \section{Lexical Conventions}
-
 
 \subsection{Character Set}
 TML takes the standard \textbf{ASCII} character set for source codes.
@@ -159,6 +160,7 @@ In TML, we define operator \# as follows: \#n means the order of node n among it
 
 \section{Statements}
 
+<<<<<<< .mine
 \subsection{Variable Declaration and Initialization Statement}
 
 \subsubsection{Type Specifiers}
@@ -168,33 +170,138 @@ In TML, we define operator \# as follows: \#n means the order of node n among it
 \subsection{Expression Statements}
 The expression statement is the most common one in TML. It consists of an expression and a semicolon at the end. Any expression can be used here. TML will evaluate the expression and ignore the final evaluation result.
 
-
-
 \begin{code}
-expression;
+	\textit{expression};
 \end{code}
 
 \subsection{Compound Statements}
+The compound statement is a list of statements surrounded by curly braces.
+
+\begin{code}
+\{ \textit{statement-list}
+%\\
+%statement
+%statement
+%...
+%\\
+\}
+\end{code}
+
+\noindent
+The \textit{statement-list} consists of sequential statements one after another
+
+\begin{code}
+\textit{statement-list}  $\rightarrow$ \textit{statement} $\mid$ \textit{statement} \textit{statement-list}
+\end{code}
 
 \subsection{Conditional Statements}
+The conditional statements contain only the if statement with the following syntax (The square brackets means optional):
+
+\begin{code}
+if (\textit{expression}) \textit{statement} [else \textit{statement}]
+\end{code}
+
+\noindent
+If compound statements are used for both statements, as is used mostly, the if statement can be written as follows:
+
+\begin{code}
+if (\textit{expression}) \\
+\{ \\
+\textit{statement} \\
+... \\
+\} \\
+else ...
+\end{code}
 
 \subsection{Iterative Statements}
+There are four kinds of iterative statements: while statement, do statement, for statement and foreach statement.
+
+\subsubsection{while statement}
+The while statement contains a condition-expression and a loop body. The codes in the loop body will be executed again and again as long as the evaluation result of the condition-expression is true. The condition-expression will be evaluated before each time the loop body is executed. This statement has the following syntax:
+
+\begin{code}
+while (\textit{expression}) \textit{statement}
+\end{code}
+
+\subsubsection{do statement}
+Similar to the while statement, the do statement also contains a condition-expression and a loop body. The codes in the loop body will be executed again and again as long as the evaluation result of the condition-expression is true. But the condition-expression will be evaluated after each time the loop body is executed. This statement has the following syntax:
+
+\begin{code}
+\begin{tabbing}
+do \= \\
+\> \textit{statement} \\
+while (\textit{expression})
+\end{tabbing}
+\end{code}
+
+\subsubsection{for statement}
+The for statement takes three expressions: init-expression, cond-expression and loop-expression. At the beginning, the init-expression will be evaluated. And then, the cond-expresion is evaluated repeatedly until the result is false. For each time the evaluation has the result true, the codes of the loop body will be executed and the loop-expression will be evaluated afterwards. It has the following syntax:
+
+\begin{code}
+for (\textit{init-expression}; \textit{cond-expression}; \textit{loop-expression}) \\
+\textit{statement}
+\end{code}
+
+\subsubsection{foreach statement}
+The foreach statement is used to enumerate the elements contained in an object, like all the characters in a string, all subtrees in a tree, and so on. It is mainly operated on trees. The syntax of this statement is:
+
+\begin{code}
+foreach \textit{variable1} in \textit{variable2} [by \textit{function}] do \\
+\textit{statement}
+\end{code}
+
+\noindent
+This statement will enumerate all the elements contained in variable2, and for each of the elements, it will store the element into variable1 and execute the loop body once. The order of the elements in each iteration will be determined by the function defined. There are four existing functions named preorder, inorder, postorder and levelorder, which are used to traverse the tree in corresponding order. If the function is not given, preorder will be used as default.
 
 \subsection{Other Statements}
+There are other statements that we may use in special conditions.
+
+\subsubsection{break statements}
+This statement is simply written as:
+
+\begin{code}
+break;
+\end{code}
+
+\noindent
+It is used to immediately terminate a loop and execute the codes following the loop.
+
+\subsubsection{continue statements}
+This statement is simply written as:
+
+\begin{code}
+continue;
+\end{code}
+
+\noindent
+It is used to immediately enter the next iteration of the loop ignoring the left of the codes in this iteration.
+
+\subsubsection{return statements}
+This statement is simply written as:
+
+\begin{code}
+return[ expression];
+\end{code}
+
+\noindent
+It is used to immediately exit a function and take expression as the return value of the function. The expression is optional as some functions do not have a return value.
+
+\subsubsection{NULL statements}
+This statement is simply written as:
+
+\begin{code}
+;
+\end{code}
+
+\noindent
+It does nothing.
+
 
 \section{Functions}
-Order insensitive
-
-\subsection{Function Definition}
-
-\subsection{Function Return}
-
-\subsection{Function Calls}
 
 \section{Scope}
 
 \section{Language Restrictions}
-Like various existing languages like C, Java etc, TML also has some restrictions on length of identifier names, size of basic data types, number of arguments for function calls, number of data fields in a node of type Tree and maximum degree of the node.
 
 \section{Language Formalization}
 
