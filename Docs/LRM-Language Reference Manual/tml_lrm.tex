@@ -9,17 +9,28 @@
 \newcommand{\Lyx}{L\kern-.1667em\lower.25em\hbox{y}\kern-.125emX\spacefactor1000}
 \newcommand\bibname{References}
 \singlespacing
+%\setlength{\parskip}{0pt}
+%\setlength{\parsep}{0pt}
+%\setlength{\headsep}{0pt}
+%\setlength{\topskip}{0pt}
+%\setlength{\topmargin}{0pt}
+%\setlength{\topsep}{0pt}
+%\setlength{\partopsep}{0pt}
+\usepackage[compact]{titlesec}
+\titlespacing{\section}{0pt}{*1}{*1}
+\titlespacing{\subsection}{0pt}{*1}{*1}
+\titlespacing{\subsubsection}{0pt}{*1}{*1}
 \begin{document}
 \bibliographystyle{plain} 
 \pagestyle{plain} 
 \pagenumbering{arabic}
 %\rmfamily
-
 \newenvironment{code}
 {\sffamily
  \setlength{\parskip}{0pt}
  \noindent}
 {}
+
 
 \title{TML: Language Reference Manual}
 \author{
@@ -60,7 +71,7 @@ All identifiers are case-sensitive in TML.
 \textit{This section needs discussion.}\\
 In TML, the words listed in Table~\ref{keywords} are reserved as keywords, and are not allowed to be used as a user-defined identifier.
 
-\begin{table}[ht]
+\begin{table}[!ht]
 \begin{center}
 \begin{tabular}{| c | c | c | c | c |}
 \hline
@@ -109,10 +120,19 @@ treetype &  & & & \\
 \subsection {Constants}
 There are several kinds of constants in TML, which are listed as follows.
 \subsubsection {Integer constants}
+An integer constant consists of a sequence of digits, starting with a non-zero digit. All integer constants are considered to be decimal and of type integer.
 
-\subsubsection {Integer constants}
+\subsubsection {Float constants}
+A floating constant consists of an integer par, a decimal point, a fraction part, and optionally an E with a signed integer exponent. The integer and fraction parts both consist of a sequence of digits, and either one could be missing, but not both. Either the decimal point or the E with the exponent could be missing, but not both. All floating constants are of type float.
 
-\subsubsection {Integer constants}
+\subsubsection {Character constants}
+A character constant is one ASCII character enclosed by $'$ $'$, which is of character type. Note that $'$\textbackslash$n'$, $'$\textbackslash$t'$, $'$\textbackslash$0'$, etc. are character constants.
+
+\subsubsection {String constants}
+A string constant consists of several character constants enclosed by $"$ $"$, and implicitly ends with $'$\textbackslash$0'$.
+
+\subsubsection {Boolean constants}
+There are only two Boolean constants, true and false.
 
 
 \section {Types}
@@ -121,7 +141,7 @@ In TML, there are two kind of types, the \textit{primitive types} and the \texti
 \subsection {Primitive Types}
 There are several kinds of primitive types as listed below in Table~\ref{pri_types}. 
 
-\begin{table}[ht]
+\begin{table}[!ht]
 \begin{center}
 \begin{tabular}{| c | c | c |}
 \hline
@@ -133,7 +153,7 @@ Float & 4 bytes & about $\pm$3.402 823 47E+38\\
 \hline
 Character & 1 byte &  ASCII\\
 \hline
-String & \textgreater 1 byte & combinations of characters \\
+String & $\geq$ 1 byte & combinations of characters \\
 \hline
 Boolean & 1 byte & true, false \\
 \hline
@@ -246,7 +266,7 @@ In TML, we define operator \# as follows: \#n means the order of node n among it
 \hline
 \end{tabular}
 \caption{Precedence Rules}
-\label{keywords}
+\label{preRule}
 \end {center}
 \end{table}
 
