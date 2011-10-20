@@ -52,11 +52,14 @@ Yan Zou (yz2437)
 
 \section{Introduction}
 
-Tree manipulation(TML) language is user friendly language that is designed to help users program trees. It allows users to create, manipulate and run algorithms on trees. Various existing programming languages make tree operations cumbersome and TML is intended to bridge this gap. In TML everything is of type Tree except primitive data types. Each node of the tree is of type Tree and it has fields associated with it like parent, child etc. Every node of the Tree is root for its subtree. Nodes of the tree can consist of user defined or primitive value types and they can be of any degree. We can refer to any child or parent node of a given node using predefined constructs. TMLprovides methods to perform trivial operations on trees such as tree traversal, node creation or deletion etc.
-\textit{This section will be written later.}
+Tree manipulation language (TML) is user friendly language that is designed to help users program trees. It allows users to create, manipulate and run algorithms on trees. Various existing programming languages make tree operations cumbersome and TML is intended to bridge this gap. In TML everything is of type Tree except primitive data types. Each node of the tree is of type Tree and it has fields associated with it like parent, child etc. Every node of the Tree is root for its subtree. Nodes of the tree can consist of user defined or primitive value types and they can be of any degree. We can refer to any child or parent node of a given node using predefined constructs. TML provides methods to perform trivial operations on trees such as tree traversal, node creation or deletion etc.
+%\textit{This section will be written later.}
 
 \section{Lexical Conventions} \label{lexCon}
-There are different classes of tokens that are supported in TML. Token types are identifiers, keywords, literals, Strings and operators. As in c,whitespace characters are ignored except insofar as they serve to delineate other tokens in the input stream. If the input stream has been parsed into tokens up to a given character,the next token is taken to include the longest string of characters which could possibly constitute a token.
+There are different classes of tokens that are supported in TML. Token types are identifiers, keywords, literals, Strings and operators. As in c, whitespace characters are ignored except insofar as they serve to delineate other tokens in the input stream. If the input stream has been parsed into tokens up to a given character,the next token is taken to include the longest string of characters which could possibly constitute a token.
+
+%Akash: try to reorganize the sentences
+
 \subsection{Character Set}
 TML takes the standard \textbf{ASCII} character set for source codes.
 
@@ -64,11 +67,11 @@ TML takes the standard \textbf{ASCII} character set for source codes.
 In TML, there are two ways to make comments. The first style starts with the characters \textbf{/*}, and ends with the characters \textbf{*/}, all contents between which are comments. Note that, just like C-style comments, TML supports only un-nested comments. The second style is inline comments. It starts with the characters \textbf{//}, all contents in the current line after which are regarded as comments.
 
 \subsection{Identifiers} \label{lexConId}
-In TML, an identifier is a string that starts with a letter or an underscore, and consists of a sequece of letters, digits, and underscores. The max length of an identifier is 26 characters. 
+In TML, an identifier is a string that starts with a letter or an underscore, and consists of a sequece of letters, digits, and underscores. %The max length of an identifier is 26 characters. 
 All identifiers are case-sensitive in TML.
 
 \subsection{Keywords}
-\textit{This section needs discussion.}\\
+%\textit{This section needs discussion.}\\
 In TML, the words listed in Table~\ref{keywords} are reserved as keywords, and are not allowed to be used as a user-defined identifier.
 
 \begin{table}[!ht]
@@ -77,9 +80,9 @@ In TML, the words listed in Table~\ref{keywords} are reserved as keywords, and a
 \hline
 if & else & type & while & foreach \\
 \hline
-in & by & do & print &\\
+in & by & do &  &\\  %%whether remove the keyword do??
 \hline
-preorder & inorder & postorder & border &\\
+preorder & inorder & postorder & levelorder &\\
 \hline
 int & float & char & string & bool  \\
 \hline
@@ -134,6 +137,9 @@ A string constant consists of several character constants enclosed by $"$ $"$, a
 \subsubsection {Boolean constants}
 There are only two Boolean constants, true and false.
 
+\subsubsection {Tree constant}
+There is only one tree constant, which is the null constant. The null constant is a null value of any tree type. If a tree is null, then it means the tree reference is lost at the point of time. In TML, the null constant is written as a tilda.
+
 
 \section {Types}
 In TML, there are two kind of types, the \textit{primitive types} and the \textit{tree types}.
@@ -151,7 +157,7 @@ Integer & 4 bytes & -2 147 483 648 ~  2 147 483 647 \\
 \hline
 Float & 4 bytes & about $\pm$3.402 823 47E+38\\
 \hline
-Character & 1 byte &  ASCII\\
+Character & 1 byte &  ASCII\\  % check the java and boolean
 \hline
 String & $\geq$ 1 byte & combinations of characters \\
 \hline
@@ -179,9 +185,9 @@ Strings are considered as a primitive type in TML. A string is a permutation of 
 Boolean type is a primitive type in TML. There are only two values, true and false, in the Boolean type, which is used to determinate logic conditions. There is no conversions between integers and these two values.
 
 \subsection {Tree Types}
-In TML, a \textit{tree type} is a type that supports tree features, such as tree structures and operations. By using the tree types, users can define and use tree data structures in their programs.
+In TML, a \textit{tree type} is a type to represent trees. By using the tree types, users can define and use tree data structures in their programs.
 
-In a tree data structure, children of the root node can be also regarded as sub roots of sub trees. By this concept, in TML, all nodes in a tree are of the same tree type with the root. There is no tree node type in TML.
+In a tree data structure, children of the root node can be also regarded as roots of sub trees. By this concept, in TML, all nodes in a tree are of the same tree type with the root. There is no tree node type in TML.
 
 \subsubsection {Define a tree type}
 Tree types are defined by users before they can declare and define variables of the tree types. A tree type consists of necessary parts, \textit{type name}, \textit{degree} and \textit{member variable(s)}, and an optional part, \textit{children index aliases}. To define a tree type, the \textit{type name}, \textit{degree} and \textit{member variable(s)} must be defined, and the \textit{children index aliases} can be optionally defiined. The size of a tree type is the sum size of its member variable types.
@@ -206,8 +212,12 @@ The \textit{type name} of a tree type follows the identifier definition in the s
 \subsubsection {Degree}
 In TML, each tree type must define a fixed \textit{degree} at definition. All nodes of the same tree type have the same degree. The value range of the degree is from 1 to 99. The degree of a tree type can be referred to by using  ????????????????????????? introduced in the section~\ref{treeOp}.
 
+% use &a  to get the degree
+
 \subsubsection {Member variables}
 In TML, a tree type can define its own \textit{member variable(s)} to store values for algorithms and programs. Each tree type can have at most 99 member variables. Each member variable must have a name which is unique in its tree type, and can be of any primitive types or tree types. Note that if a member variable is defined as some tree type, the definition of the tree type must appear before the member variable definition. All member variables are public. The member variables of a tree type variable can be referred to by using  ????????????????????? operation introduced in the section~\ref{treeOp}.
+
+% limit the member tree varible have only primitive types
 
 \subsubsection {Children index and aliases}
 In TML, children sub roots of a root can be referred to by the index number, ranging from 0 to degree-1. Optionally, at the definition of a tree type, user can define alias of the children indices. The alias follows the identifier definition in section~\ref{lexConId}. Note that if aliases are defined, then aliases for all Children indices must be defined. Only defining a subset of children indices is not allowed in TML. Whether using number indices or aliases, the children of a tree root can be referred to by using ???????????????????????? introduced in section~\ref{treeOp}.
@@ -236,7 +246,7 @@ TML's assignment operator is =. it's binary and right-associative. The left oper
 In TML, parentheses in expressions are used to overwrite the precedence rules, Expression enclosed by the parentheses will always be calculated first before applying its adjacent operators.
 
 \subsection{Tree Operators}
-The highlight of TML is a set of operators that can be applied to trees. They are divided into three categories: tree-building, tree-copying and tree-querying.
+The TML is a set of operators that can be applied to trees. They are divided into three categories: tree-building, tree-copying and tree-querying.
 
 \subsubsection{Tree-building operator}
 We define $->$ to be the tree building operator. It's binary and right-associative. The left operand is a single tree node, representing the root. The right operand is a list of trees, enclosed by parentheses and seperated by commas, representing the immediate children of the root. For example, a$->$(b, c) means building a tree with a as root and b as its left subtree, and c as its right subtree. This operator returns the newly built tree.
@@ -246,6 +256,9 @@ We define two operators to copy trees. @ means copying the node and its value on
 
 \subsubsection{Tree-querying operators}
 In TML, we define operator \# as follows: \#n means the order of node n among its siblings, starting from 0. For example, if node a has three nodes b, c, d, then \#b, \#c, \#d will return 0, 1, 2, respectively. If n has no parent, \#n will return null.
+
+\subsubsection {missing operators}
+a.val\\a[left]\\ \&a  (degree)
 
 \subsection{Precedence Rules}
 \begin{table}[ht]
@@ -317,6 +330,7 @@ if (\textit{expression}) \textit{statement} [else \textit{statement}]
 If compound statements are used for both statements, as is used mostly, the if statement can be written as follows:
 
 \begin{code}
+%make a concrete example
 if (\textit{expression}) \\
 \{ \\
 \textit{statement} \\
