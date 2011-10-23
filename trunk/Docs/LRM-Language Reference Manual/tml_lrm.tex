@@ -80,13 +80,13 @@ In TML, the words listed in Table~\ref{keywords} are reserved as keywords, and a
 \hline
 if & else & type & while & foreach \\
 \hline
-in & by & do &  &\\  %%whether remove the keyword do??
+in & by & return & & do\\  %%whether remove the keyword do??
 \hline
 preorder & inorder & postorder & levelorder &\\
 \hline
 int & float & char & string & bool  \\
 \hline
-treetype &  & & & \\
+treetype & void & & & \\
 \hline
 \end{tabular}
 \caption{Keywords in TML}
@@ -129,7 +129,7 @@ An integer constant consists of a sequence of digits, starting with a non-zero d
 A floating constant consists of an integer par, a decimal point, a fraction part, and optionally an E with a signed integer exponent. The integer and fraction parts both consist of a sequence of digits, and either one could be missing, but not both. Either the decimal point or the E with the exponent could be missing, but not both. All floating constants are of type float.
 
 \subsubsection {Character constants}
-A character constant is one ASCII character enclosed by $'$ $'$, which is of character type. Note that $'$\textbackslash$n'$, $'$\textbackslash$t'$, $'$\textbackslash$0'$, etc. are character constants.
+A character constant is one ASCII character enclosed by $'$ $'$, which is of character type. Note that $'$\textbackslash$n'$, $'$\textbackslash$t'$, $'$\textbackslash$r'$, etc. are character constants.
 
 \subsubsection {String constants}
 A string constant consists of several character constants enclosed by $"$ $"$, and implicitly ends with $'$\textbackslash$0'$.
@@ -157,11 +157,11 @@ Integer & 4 bytes & -2 147 483 648 ~  2 147 483 647 \\
 \hline
 Float & 4 bytes & about $\pm$3.402 823 47E+38\\
 \hline
-Character & 1 byte &  ASCII\\  % check the java and boolean
+Character & 2 byte &  ASCII\\  % check the java and boolean
 \hline
 String & $\geq$ 1 byte & combinations of characters \\
 \hline
-Boolean & 1 byte & true, false \\
+Boolean & 4 byte & true, false \\
 \hline
 \end{tabular}
 \caption{Primitive Types in TML}
@@ -176,7 +176,7 @@ In TML, there is only one type of integer. The integers are signed, and are of f
 In TML, there is only one type of floating point number. The size of the float type is four bytes.
 
 \subsubsection {Characters}
-In TML, there is only one type of character. The size of a character is one byte. The characters are interpreted as ASCII code.
+In TML, there is only one type of character. The size of a character is two bytes. The characters are interpreted as ASCII code.
 
 \subsubsection {Strings}
 Strings are considered as a primitive type in TML. A string is a permutation of more than one characters. A string can be compared with another string. The size of a string equals to the number of characters in it.
