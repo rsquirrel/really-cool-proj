@@ -27,8 +27,7 @@
 %\rmfamily
 \newenvironment{code}
 {\sffamily
- \setlength{\parskip}{0pt}
- \noindent}
+ \setlength{\parskip}{0pt}}
 {}
 
 
@@ -285,58 +284,98 @@ a.val\\a[left]\\ \&a  (degree)
 
 \section{Statements}
 
-<<<<<<< .mine
-\subsection{Variable Declaration and Initialization Statement}
+\subsection{Variable Declarations and Initialization Statements}
+Variable Declarations and Initializations are considered as statements in TML. It has the following syntax (The square brackets means optional):
+
+\begin{code}
+\begin{tabbing}
+~~~~~~~~\= \textit{type-specifier} \textit{initializer-list}; \\
+\> \textit{initializer-list}  $\rightarrow$ \textit{initializer} $\mid$ \textit{initializer-list} \textit{initializer}
+\end{tabbing}
+\end{code}
 
 \subsubsection{Type Specifiers}
+Type Specifiers can be any basic type or user-defined tree type.
 
-\subsubsection{Declarators}
+For basic types, it can be:
+\begin{itemize}
+\setlength{\itemsep}{0pt}
+\setlength{\parskip}{0pt}
+\item int - Intergers
+\item float - Floating point numbers
+\item char - Characters
+\item string - Strings
+\item bool - Booleans
+\end{itemize}
+
+For user-defined tree type, just write the type name identifier.
+
+\subsubsection{Initializers}
+An initializer contains two parts: the name of the variable and the initial value for it. The first part is only an identifier. The second part is optional (We use square brackets to represent optional), and contains an equal sign and an expression that will be evaluated and assigned to that variable.
+
+\begin{code}
+\begin{tabbing}
+~~~~~~~~\textit{Initializer} $\rightarrow$ identifier [= \textit{expression}]
+\end{tabbing}
+\end{code}
 
 \subsection{Expression Statements}
 The expression statement is the most common one in TML. It consists of an expression and a semicolon at the end. Any expression can be used here. TML will evaluate the expression and ignore the final evaluation result.
 
 \begin{code}
-	\textit{expression};
+\begin{tabbing}
+~~~~~~~~\textit{expression};
+\end{tabbing}
 \end{code}
 
 \subsection{Compound Statements}
 The compound statement is a list of statements surrounded by curly braces.
 
 \begin{code}
-\{ \textit{statement-list}
+\begin{tabbing}
+~~~~~~~~\{ \textit{statement-list}
 %\\
 %statement
 %statement
 %...
 %\\
 \}
+\end{tabbing}
 \end{code}
 
-\noindent
 The \textit{statement-list} consists of sequential statements one after another
 
 \begin{code}
-\textit{statement-list}  $\rightarrow$ \textit{statement} $\mid$ \textit{statement} \textit{statement-list}
+\begin{tabbing}
+~~~~~~~~\textit{statement-list}  $\rightarrow$ \textit{statement} $\mid$ \textit{statement} \textit{statement-list}
+\end{tabbing}
 \end{code}
 
 \subsection{Conditional Statements}
-The conditional statements contain only the if statement with the following syntax (The square brackets means optional):
+The conditional statements contain only the if statement with the following syntax:
 
 \begin{code}
-if (\textit{expression}) \textit{statement} [else \textit{statement}]
+\begin{tabbing}
+~~~~~~~~if (\textit{expression}) \textit{statement} [else \textit{statement}]
+\end{tabbing}
 \end{code}
 
-\noindent
 If compound statements are used for both statements, as is used mostly, the if statement can be written as follows:
 
 \begin{code}
+\begin{tabbing}
 %make a concrete example
-if (\textit{expression}) \\
-\{ \\
-\textit{statement} \\
-... \\
-\} \\
-else ...
+~~~~~~~~\= if (x \= \textless \space 0) \\
+\> \{ \\
+\> \> real = false; \\
+\> \> y = sqrt(-x); \\
+\> \} \\
+\> else \\
+\> \{ \\
+\> \> real = true; \\
+\> \> y = sqrt(x); \\
+\> \}
+\end{tabbing}
 \end{code}
 
 \subsection{Iterative Statements}
@@ -346,7 +385,9 @@ There are four kinds of iterative statements: while statement, do statement, for
 The while statement contains a condition-expression and a loop body. The codes in the loop body will be executed again and again as long as the evaluation result of the condition-expression is true. The condition-expression will be evaluated before each time the loop body is executed. This statement has the following syntax:
 
 \begin{code}
-while (\textit{expression}) \textit{statement}
+\begin{tabbing}
+~~~~~~~~while (\textit{expression}) \textit{statement}
+\end{tabbing}
 \end{code}
 
 \subsubsection{do statement}
@@ -354,9 +395,9 @@ Similar to the while statement, the do statement also contains a condition-expre
 
 \begin{code}
 \begin{tabbing}
-do \= \\
-\> \textit{statement} \\
-while (\textit{expression})
+~~~~~~~~\= do \= \\
+\> \> \textit{statement} \\
+\> while (\textit{expression})
 \end{tabbing}
 \end{code}
 
@@ -364,19 +405,22 @@ while (\textit{expression})
 The for statement takes three expressions: init-expression, cond-expression and loop-expression. At the beginning, the init-expression will be evaluated. And then, the cond-expresion is evaluated repeatedly until the result is false. For each time the evaluation has the result true, the codes of the loop body will be executed and the loop-expression will be evaluated afterwards. It has the following syntax:
 
 \begin{code}
-for (\textit{init-expression}; \textit{cond-expression}; \textit{loop-expression}) \\
-\textit{statement}
+\begin{tabbing}
+~~~~~~~~\= for (\= \textit{init-expression}; \textit{cond-expression}; \textit{loop-expression}) \\
+\> \> \textit{statement}
+\end{tabbing}
 \end{code}
 
 \subsubsection{foreach statement}
 The foreach statement is used to enumerate the elements contained in an object, like all the characters in a string, all subtrees in a tree, and so on. It is mainly operated on trees. The syntax of this statement is:
 
 \begin{code}
-foreach \textit{variable1} in \textit{variable2} [by \textit{function}] do \\
-\textit{statement}
+\begin{tabbing}
+~~~~~~~~\= forea\= ch \textit{variable1} in \textit{variable2} [by \textit{function}] do \\
+\> \> \textit{statement}
+\end{tabbing}
 \end{code}
 
-\noindent
 This statement will enumerate all the elements contained in variable2, and for each of the elements, it will store the element into variable1 and execute the loop body once. The order of the elements in each iteration will be determined by the function defined. There are four existing functions named preorder, inorder, postorder and levelorder, which are used to traverse the tree in corresponding order. If the function is not given, preorder will be used as default.
 
 \subsection{Other Statements}
@@ -386,40 +430,44 @@ There are other statements that we may use in special conditions.
 This statement is simply written as:
 
 \begin{code}
-break;
+\begin{tabbing}
+~~~~~~~~break;
+\end{tabbing}
 \end{code}
 
-\noindent
 It is used to immediately terminate a loop and execute the codes following the loop.
 
 \subsubsection{continue statements}
 This statement is simply written as:
 
 \begin{code}
-continue;
+\begin{tabbing}
+~~~~~~~~continue;
+\end{tabbing}
 \end{code}
 
-\noindent
 It is used to immediately enter the next iteration of the loop ignoring the left of the codes in this iteration.
 
 \subsubsection{return statements}
 This statement is simply written as:
 
 \begin{code}
-return[ expression];
+\begin{tabbing}
+~~~~~~~~return[ expression];
+\end{tabbing}
 \end{code}
 
-\noindent
 It is used to immediately exit a function and take expression as the return value of the function. The expression is optional as some functions do not have a return value.
 
 \subsubsection{NULL statements}
 This statement is simply written as:
 
 \begin{code}
-;
+\begin{tabbing}
+~~~~~~~~;
+\end{tabbing}
 \end{code}
 
-\noindent
 It does nothing.
 
 
