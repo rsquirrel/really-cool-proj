@@ -20,6 +20,7 @@
 \titlespacing{\section}{0pt}{*1}{*1}
 \titlespacing{\subsection}{0pt}{*1}{*1}
 \titlespacing{\subsubsection}{0pt}{*1}{*1}
+
 \begin{document}
 \bibliographystyle{plain} 
 \pagestyle{plain} 
@@ -27,7 +28,8 @@
 %\rmfamily
 \newenvironment{code}
 {\sffamily
- \setlength{\parskip}{0pt}}
+ \setlength{\parskip}{0pt}
+}
 {}
 
 
@@ -289,12 +291,13 @@ Variable Declarations and Initializations are considered as statements in TML. I
 
 \begin{code}
 \begin{tabbing}
-~~~~~~~~\= \textit{type-specifier} \textit{initializer-list}; \\
-\> \textit{initializer-list}  $\rightarrow$ \textit{initializer} $\mid$ \textit{initializer-list} \textit{initializer}
+~~~~~~~~\= \textsl{type-specifier} \textsl{initializer-list}; \\
+\> \textsl{initializer-list}  $\rightarrow$ \textsl{initializer} $\mid$ \textsl{initializer-list} \textsl{initializer}
 \end{tabbing}
 \end{code}
 
 \subsubsection{Type Specifiers}
+\label{ts}
 Type Specifiers can be any basic type or user-defined tree type.
 
 For basic types, it can be:
@@ -315,7 +318,7 @@ An initializer contains two parts: the name of the variable and the initial valu
 
 \begin{code}
 \begin{tabbing}
-~~~~~~~~\textit{Initializer} $\rightarrow$ identifier [= \textit{expression}]
+~~~~~~~~\textsl{Initializer} $\rightarrow$ identifier [= \textsl{expression}]
 \end{tabbing}
 \end{code}
 
@@ -324,7 +327,7 @@ The expression statement is the most common one in TML. It consists of an expres
 
 \begin{code}
 \begin{tabbing}
-~~~~~~~~\textit{expression};
+~~~~~~~~\textsl{expression};
 \end{tabbing}
 \end{code}
 
@@ -333,7 +336,7 @@ The compound statement is a list of statements surrounded by curly braces.
 
 \begin{code}
 \begin{tabbing}
-~~~~~~~~\{ \textit{statement-list}
+~~~~~~~~\{ \textsl{statement-list}
 %\\
 %statement
 %statement
@@ -343,11 +346,11 @@ The compound statement is a list of statements surrounded by curly braces.
 \end{tabbing}
 \end{code}
 
-The \textit{statement-list} consists of sequential statements one after another
+The \textsl{statement-list} consists of sequential statements one after another
 
 \begin{code}
 \begin{tabbing}
-~~~~~~~~\textit{statement-list}  $\rightarrow$ \textit{statement} $\mid$ \textit{statement} \textit{statement-list}
+~~~~~~~~\textsl{statement-list}  $\rightarrow$ \textsl{statement} $\mid$ \textsl{statement} \textsl{statement-list}
 \end{tabbing}
 \end{code}
 
@@ -356,7 +359,7 @@ The conditional statements contain only the if statement with the following synt
 
 \begin{code}
 \begin{tabbing}
-~~~~~~~~if (\textit{expression}) \textit{statement} [else \textit{statement}]
+~~~~~~~~if (\textsl{expression}) \textsl{statement} [else \textsl{statement}]
 \end{tabbing}
 \end{code}
 
@@ -386,7 +389,7 @@ The while statement contains a condition-expression and a loop body. The codes i
 
 \begin{code}
 \begin{tabbing}
-~~~~~~~~while (\textit{expression}) \textit{statement}
+~~~~~~~~while (\textsl{expression}) \textsl{statement}
 \end{tabbing}
 \end{code}
 
@@ -396,8 +399,8 @@ Similar to the while statement, the do statement also contains a condition-expre
 \begin{code}
 \begin{tabbing}
 ~~~~~~~~\= do \= \\
-\> \> \textit{statement} \\
-\> while (\textit{expression})
+\> \> \textsl{statement} \\
+\> while (\textsl{expression})
 \end{tabbing}
 \end{code}
 
@@ -406,8 +409,8 @@ The for statement takes three expressions: init-expression, cond-expression and 
 
 \begin{code}
 \begin{tabbing}
-~~~~~~~~\= for (\= \textit{init-expression}; \textit{cond-expression}; \textit{loop-expression}) \\
-\> \> \textit{statement}
+~~~~~~~~\= for (\= \textsl{init-expression}; \textsl{cond-expression}; \textsl{loop-expression}) \\
+\> \> \textsl{statement}
 \end{tabbing}
 \end{code}
 
@@ -416,8 +419,8 @@ The foreach statement is used to enumerate the elements contained in an object, 
 
 \begin{code}
 \begin{tabbing}
-~~~~~~~~\= forea\= ch \textit{variable1} in \textit{variable2} [by \textit{function}] do \\
-\> \> \textit{statement}
+~~~~~~~~\= forea\= ch \textsl{variable1} in \textsl{variable2} [by \textsl{function}] do \\
+\> \> \textsl{statement}
 \end{tabbing}
 \end{code}
 
@@ -453,7 +456,7 @@ This statement is simply written as:
 
 \begin{code}
 \begin{tabbing}
-~~~~~~~~return[ expression];
+~~~~~~~~return[ \textsl{expression}];
 \end{tabbing}
 \end{code}
 
@@ -472,8 +475,41 @@ It does nothing.
 
 
 \section{Functions}
+TML allows only global functions and the functions are order-sensitive. It means that all functions should be defined outside all other function bodies, directly in the file scope. And if you want to call a function, that function should be defined before calling. It is allowed to define recursive functions, which will call the function itself inside the function body, but it is not allowed to define two functions that will call each other.
+
+The function definition has the regular syntax as follows:
+\begin{code}
+\begin{tabbing}
+~~~~~~~~\= \textsl{type-specifier} \textsl{identifier} ( [\textsl{parameter-list}] ) \\
+\> ~~~~~~~~\textsl{statement}
+\end{tabbing}
+\end{code}
+
+The type-specifier is used to declare the type of the return value of the function, and it is the same as described in section 5.1.1. The identifier is the name of the function, which is used by function calls. The statement is the function body and is usually a compound statement. What's in the parentheses is an optional parameter list with the following format and each parameter should be specified type by type-specifier and name by identifier:
+\begin{code}
+\begin{tabbing}
+~~~~~~~~\= \textsl{parameter-list} $\rightarrow$ \= \textsl{parameter-declaration} \\
+\> \> \textsl{parameter-declaration} , \textsl{parameter-list} \\
+\> \textsl{parameter-declaration} $\rightarrow$ \textsl{type-specifier} \textsl{identifier}
+\end{tabbing}
+\end{code}
+
+An example of function:
+\begin{code}
+\begin{tabbing}
+~~~~~~~~\= int gcd(int a, int b) \\
+\> \{ \\
+\> ~~~~~~~~\= if (b $==$ 0 $||$ (a = a \% b) $==$ 0) \\
+\> \> \{ \\
+\> \> ~~~~~~~~\= return b; \\
+\> \> \} \\
+\> \> return gcd(b, a); \\
+\> \}
+\end{tabbing}
+\end{code}
 
 \section{Scope}
+In TML, there are two finds of scopes. Codes directly written in the file has a file scope(global), starting from the current position to the end of the file. Also, each compound statement will generate a local scope confined by the two curly brackets. Identifiers can only be used within its scope.
 
 \section{Language Restrictions}
 Like various existing languages like C, Java etc, TML also has some restrictions on length of identifier names, size of basic data types, number of arguments for function calls, number of data fields in a node of type Tree and maximum degree of the node.
