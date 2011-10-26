@@ -40,7 +40,7 @@ rule token = parse
                       { INT(int_of_string interger) }
 	| digit+ '.' digit* 
 	| '.' digit+ ('e' ['+''-']? digit+)?
-	| digit+ ('.' digit+)? 'e' digit+      as float
+	| digit+ ('.' digit+)? 'e' ['+' '-']? digit+      as float
                       { FLOAT(float_of_string float) }
 	| "true"
 	| "false"         as bool
