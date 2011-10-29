@@ -96,7 +96,7 @@ func_def:
     type_specifier ID LPAREN para_list RPAREN stmt_block                    { 0 }
 
 para_list:
-    /* nothing */
+    /* nothing */					{ 0 }
     | para_decl                    { 0 }
     | para_list COMMA para_decl                    { 0 }
 
@@ -107,7 +107,7 @@ stmt_block:
     LBRACE stmt_list RBRACE                    { 0 }
 
 stmt_list:
-    /* nothing */
+    /* nothing */						{ 0 }
     | stmt_list stmt                    { 0 }
 
 stmt:
