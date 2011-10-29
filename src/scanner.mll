@@ -13,8 +13,7 @@ rule token = parse
     | "/*"                 { comment lexbuf }
     | "//"                 { line_comment lexbuf }
     | [' ' '\t' '\r' '\n'] { token lexbuf }
-    | letter (letter | digit | '_')* as identifier 
-                           { ID(identifier) }
+
     (* Keywords *)
     | "if"            { IF }
     | "else"          { ELSE }
@@ -38,7 +37,7 @@ rule token = parse
     | "bool"          { BOOL_T }
     | "void"          { VOID }
     | "treetype"      { TREETYPE }
-
+	
     (* Constants *)
     | digit+          as integer        
                       { INT(int_of_string integer) }
@@ -95,6 +94,9 @@ rule token = parse
     | '^'    { FATHER }
     | '('    { LPAREN }
     | ')'    { RPAREN }
+	
+	| letter (letter | digit | '_')* as identifier 
+				   { ID(identifier) }
 
     | eof { EOF }
     | _ as err_char { raise (Failure("illegal character " ^ Char.escaped err_char)) }
