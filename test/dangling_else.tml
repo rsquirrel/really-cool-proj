@@ -1,0 +1,7 @@
+void main()
+{
+	if (true) if (false) print(1); else print(2);
+	if (false) if (true) print(1); else print(2);
+	if (false) if (false) print(1); else print(2);
+	if (true) if (true) print(1); else print(2);
+}
