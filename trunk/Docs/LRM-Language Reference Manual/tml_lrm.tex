@@ -262,9 +262,9 @@ The children access operator is the square bracket. It takes a tree variable on 
 
 The dot operator will be used to access the data fields associated with the node. It's binary and left-associative. The left operand will be a tree variable, and the right operand will be one of its data fields. It will return the value of that particular field.
 
-The ampersand (&)is used to get the degree of tree. It's unary and appears in front of a tree variable. It'll return the degree of the tree as an integer.
+The ampersand (\&)is used to get the degree of tree. It's unary and appears in front of a tree variable. It'll return the degree of the tree as an integer.
 
-The ^ operator in TML is used to get the parent of the operand. It's unary and appears on the left side of the operand. It takes an expression of tree type, and returns its parent, if any. Otherwise it returns ~.
+The $\wedge$ operator in TML is used to get the parent of the operand. It's unary and appears on the left side of the operand. It takes an expression of tree type, and returns its parent, if any. Otherwise it returns ~.
 
 \subsection{Precedence Rules}
 \begin{table}[ht]
@@ -273,8 +273,8 @@ The ^ operator in TML is used to get the parent of the operand. It's unary and a
 \hline
 1 & () \\
 2 & ., [] \\
-2 & \#, & \\
-3 & @, \$, ^ \\
+2 & \#, \& \\
+3 & @, \$, $\wedge$ \\
 4 & *, /, \% \\
 5 & +, - \\
 6 & $<$, $>$, $<=$, $>=$, $!=$, $==$ \\
@@ -302,7 +302,7 @@ Variable Declarations and Initializations are considered as statements in TML. I
 \end{tabbing}
 \end{code}
 
-\subsubsection{Type Specifiers}
+\subsubsection{Type Specifiers} \label{typeSpec}
 \label{ts}
 Type Specifiers can be any basic type or user-defined tree type.
 
@@ -492,7 +492,7 @@ The function definition has the regular syntax as follows:
 \end{tabbing}
 \end{code}
 
-The type-specifier is used to declare the type of the return value of the function, and it is the same as described in section 5.1.1. The identifier is the name of the function, which is used by function calls. The statement is the function body and is usually a compound statement. What's in the parentheses is an optional parameter list with the following format and each parameter should be specified type by type-specifier and name by identifier:
+The type-specifier is used to declare the type of the return value of the function, and it is the same as described in section \ref{typeSpec}. The identifier is the name of the function, which is used by function calls. The statement is the function body and is usually a compound statement. What's in the parentheses is an optional parameter list with the following format and each parameter should be specified type by type-specifier and name by identifier:
 \begin{code}
 \begin{tabbing}
 ~~~~~~~~\= \textsl{parameter-list} $\rightarrow$ \= \textsl{parameter-declaration} \\
