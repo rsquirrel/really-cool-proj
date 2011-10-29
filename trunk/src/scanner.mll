@@ -41,7 +41,7 @@ rule token = parse
 
     (* Constants *)
     | digit+          as integer        
-                      { INT(int_of_string interger) }
+                      { INT(int_of_string integer) }
     | digit+ '.' digit* 
     | '.' digit+ ('e' ['+''-']? digit+)?
     | digit+ ('.' digit+)? 'e' ['+' '-']? digit+      as float
@@ -49,10 +49,10 @@ rule token = parse
     | "true"
     | "false"         as bool
                       { BOOL(bool_of_string bool) }
-    | '"' (character | '\'')+ '"'   as string
+    | '"' (character | '\'')+ as string '"'   
                       { STRING(string) }
-    | '\'' (character | '"') '\''   as char
-                      { CHAR(char) }
+    | '\'' (character | '"' as char) '\''   
+                      { CHAR(char) } 
     | '~'             { NULL }
 
 
@@ -107,4 +107,17 @@ and line_comment = parse
 and comment = parse
     "*/"     { token lexbuf }
     | _      { comment lexbuf }
+	
+{
+let lexbuf = Lexing.from_channel stdin in
+let wordlist =
+let rec next l =
+match token lexbuf with
+EOF -> l
+| _ -> 
+next ("1" :: l)
+in next []
+in
+List.iter print_endline (List.rev wordlist)
+}
 
