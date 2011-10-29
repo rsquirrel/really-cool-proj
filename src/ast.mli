@@ -16,10 +16,10 @@ Block of stmt list (* { ... } *)
 | Expr of expr (* foo = bar + 3; *)
 | Return of expr (* return 42; *)
 | If of expr * stmt * stmt (* if (foo == 42) {} else {} *)
-| Foreach of expr  in expr by inorder do stmt 
-| Foreach of expr  in expr by preorder do stmt 
-| Foreach of expr  in expr by postorder do stmt 
-| Foreach of expr  in expr by levelorder do stmt 
+| Foreach of expr * stmt 
+| Foreach of expr * stmt 
+| Foreach of expr * stmt 
+| Foreach of expr * stmt 
 | While of expr * stmt (* while (i<10) { i = i + 1 } *)
 type func_decl = {
 fname : string; (* Name of the function *)	
