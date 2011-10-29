@@ -1,0 +1,5 @@
+treetype <2, [left, right]> binary_tree
+{
+	int a;
+	float b;
+}

@@ -55,12 +55,12 @@ program:
     | program func_def                    { 0 }
     
 type_def:
-    TREETYPE GT INT LT ID LBRACE decl_list RBRACE                    { 0 }
-    | TREETYPE GT INT COMMA LBRACK alias_list RBRACK LT ID LBRACE decl_list RBRACE                    { 0 }
+    TREETYPE LT INT GT ID LBRACE decl_list RBRACE                    { 0 }
+    | TREETYPE LT INT COMMA LBRACK alias_list RBRACK GT ID LBRACE decl_list RBRACE                    { 0 }
 
 alias_list:
     ID                    { 0 }
-    | alias_list ID                    { 0 }
+    | alias_list COMMA ID                    { 0 }
 
 decl_list:
     decl                    { 0 }
