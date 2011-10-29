@@ -298,7 +298,7 @@ Variable Declarations and Initializations are considered as statements in TML. I
 \begin{code}
 \begin{tabbing}
 ~~~~~~~~\= \textsl{type-specifier} \textsl{initializer-list}; \\
-\> \textsl{initializer-list}  $\rightarrow$ \textsl{initializer} $\mid$ \textsl{initializer-list} \textsl{initializer}
+\> \textsl{initializer-list}  $\rightarrow$ \textsl{initializer} $\mid$ \textsl{initializer-list} , \textsl{initializer}
 \end{tabbing}
 \end{code}
 
@@ -337,12 +337,12 @@ The expression statement is the most common one in TML. It consists of an expres
 \end{tabbing}
 \end{code}
 
-\subsection{Compound Statements}
-The compound statement is a list of statements surrounded by curly braces.
+\subsection{Block Statements}
+The block statement is a list of statements surrounded by curly braces.
 
 \begin{code}
 \begin{tabbing}
-~~~~~~~~\{ \textsl{statement-list}
+~~~~~~~~\{ [\textsl{statement-list}]
 %\\
 %statement
 %statement
@@ -406,7 +406,7 @@ Similar to the while statement, the do statement also contains a condition-expre
 \begin{tabbing}
 ~~~~~~~~\= do \= \\
 \> \> \textsl{statement} \\
-\> while (\textsl{expression})
+\> while (\textsl{expression});
 \end{tabbing}
 \end{code}
 
@@ -425,12 +425,13 @@ The foreach statement is used to enumerate the elements contained in an object, 
 
 \begin{code}
 \begin{tabbing}
-~~~~~~~~\= forea\= ch \textsl{variable1} in \textsl{variable2} [by \textsl{function}] do \\
-\> \> \textsl{statement}
+~~~~~~~~\= forea\= ch \textsl{variable1} in \textsl{variable2} by \textsl{traverse-order} \\
+\> \> \textsl{statement} \\
+\> \textsl{traverse-order} $\rightarrow$ preorder $\mid$ inorder $\mid$ postorder $\mid$ levelorder
 \end{tabbing}
 \end{code}
 
-This statement will enumerate all the elements contained in variable2, and for each of the elements, it will store the element into variable1 and execute the loop body once. The order of the elements in each iteration will be determined by the function defined. There are four existing functions named preorder, inorder, postorder and levelorder, which are used to traverse the tree in corresponding order. If the function is not given, preorder will be used as default.
+This statement will enumerate all the elements contained in variable2, and for each of the elements, it will store the element into variable1 and execute the loop body once. The order of the elements in each iteration will be determined by the \textsl{traverse-order}. And there are four kinds of tree traverse order: pre-order, in-order, post-order and level-order.
 
 \subsection{Other Statements}
 There are other statements that we may use in special conditions.
@@ -468,7 +469,7 @@ This statement is simply written as:
 
 It is used to immediately exit a function and take expression as the return value of the function. The expression is optional as some functions do not have a return value.
 
-\subsubsection{NULL statements}
+\subsubsection{Empty statements}
 This statement is simply written as:
 
 \begin{code}
@@ -486,8 +487,8 @@ TML allows only global functions and the functions are order-sensitive. It means
 The function definition has the regular syntax as follows:
 \begin{code}
 \begin{tabbing}
-~~~~~~~~\= \textsl{type-specifier} \textsl{identifier} ( [\textsl{parameter-list}] ) \\
-\> ~~~~~~~~\textsl{statement}
+~~~~~~~~\= \textsl{type-specifier} \textsl{identifier} ( \textsl{parameter-list} ) \\
+\> ~~~~~~~~\textsl{block-statement}
 \end{tabbing}
 \end{code}
 
