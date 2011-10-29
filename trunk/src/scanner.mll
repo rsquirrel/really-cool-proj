@@ -107,17 +107,4 @@ and line_comment = parse
 and comment = parse
     "*/"     { token lexbuf }
     | _      { comment lexbuf }
-	
-{
-let lexbuf = Lexing.from_channel stdin in
-let wordlist =
-let rec next l =
-match token lexbuf with
-EOF -> l
-| _ -> 
-next ("1" :: l)
-in next []
-in
-List.iter print_endline (List.rev wordlist)
-}
 
