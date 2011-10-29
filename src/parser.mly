@@ -29,17 +29,19 @@
 %right ASSIGN
 %right PLUS_ASN MINUS_ASN
 %right TIMES_ASN DEVIDE_ASN MOD_ASN 
+%left BINOP
 %left OR 
 %left AND
+%left EQ NEQ
 %left LT GT LEQ GEQ
 %left PLUS MINUS   /* for binop they are left, but for unop should they be right? */
+%right SIGN
 %left TIMES DIVIDE MOD
 %right NOT
-%right DOLLAR
-%right AT
-%right DEG_AND
+%right AT, DOLLAR, FATHER
+%right HASH, DEG_AND
+%nonassoc LBRACK
 %left DOT
-%right HASH
 
 %start program
 %type <int> program      /* this type should be AST.program. just put int because AST is not finished */
@@ -74,11 +76,14 @@ type_specifier:
     | STRING_T                     { [] }
     | BOOL_T                     { [] }
     | ID                    { [] }
-    
+		| VOID                  { [] }
+
+/*    
 return_type:
     type_specifier                     { [] }
     | VOID                    { [] }
-   
+*/
+
 init_list:
     init                    { [] }
     | init_list COMMA init                    { [] }
@@ -88,7 +93,7 @@ init:
     | ID ASSIGN expr                    { [] }
 
 func_def:
-    return_type ID LPAREN para_list RPAREN stmt_block                    { [] }
+    type_specifier ID LPAREN para_list RPAREN stmt_block                    { [] }
 
 para_list:
     /* nothing */
@@ -127,29 +132,11 @@ trvs_order:
     | POSTORDER                     { [] }
     | LEVELORDER                    { [] }
 
-literal:
-    INT                    { [] }
-    | FLOAT                    { [] }
-    | STRING                    { [] }
-    | CHAR                    { [] }
-    | BOOL                    { [] }
-    | NULL                    { [] }
-
-
-node_list:
-    expr                    { [] }
-    | node_list COLON expr                    { [] }
-
-lvalue:
-    ID                    { [] }
-    | expr DOT ID                    { [] }
-    | expr LBRACK expr RBRACK                    { [] }
-
 /* To construct the expr, there are two ways.
    The second causes more conflicts.
    The first is: */
 
-
+/*
 binop:
     PLUS                    { [] }
     | MINUS                    { [] }
@@ -184,17 +171,17 @@ expr:
     lvalue                    { [] }
     | tr_construct                    { [] }
     | literal                    { [] }
-    | expr binop expr                    { [] }
+    | expr binop expr %prec BINOP                    { [] }
     | unop expr                    { [] }
     | LPAREN expr RPAREN                    { [] }
     | lvalue ASSIGN expr                    { [] }
     | ID LPAREN arg_list RPAREN                    { [] }
-    
+*/    
     
 /* End of the first.
     
     The second is: */
-   /*
+   
 expr:
     | literal                    { [] }
 
@@ -232,9 +219,25 @@ expr:
     | LPAREN expr RPAREN                    { [] }
     | ID LPAREN arg_list RPAREN                    { [] }
 
-*/
     
 /* End of the second */
+
+literal:
+    INT                    { [] }
+    | FLOAT                    { [] }
+    | STRING                    { [] }
+    | CHAR                    { [] }
+    | BOOL                    { [] }
+    | NULL                    { [] }
+
+node_list:
+    expr                    { [] }
+    | node_list COLON expr                    { [] }
+
+lvalue:
+    ID                    { [] }
+    | expr DOT ID                    { [] }
+    | expr LBRACK expr RBRACK                    { [] }
 
 arg_list:
     /* nothing */                    { [] }
