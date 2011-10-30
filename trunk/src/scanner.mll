@@ -37,6 +37,10 @@ rule token = parse
     | "bool"          { BOOL_T }
     | "void"          { VOID }
     | "treetype"      { TREETYPE }
+    | "main"          as main      
+                      { ID(main) }
+    | "print"         as print
+                      { ID(print) }
 	
     (* Constants *)
     | digit+          as integer        
