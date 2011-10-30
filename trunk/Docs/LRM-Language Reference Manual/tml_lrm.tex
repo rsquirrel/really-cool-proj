@@ -53,11 +53,11 @@ Yan Zou (yz2437)
 
 \section{Introduction}
 
-Tree manipulation language (TML) is user friendly language that is designed to help users program trees. It allows users to create, manipulate and run algorithms on trees. Various existing programming languages make tree operations cumbersome and TML is intended to bridge this gap. In TML everything is of type Tree except primitive data types. Each node of the tree is of type Tree and it has fields associated with it like parent, child etc. Every node of the Tree is root for its subtree. Nodes of the tree can consist of user defined or primitive value types and they can be of any degree. We can refer to any child or parent node of a given node using predefined constructs. TML provides methods to perform trivial operations on trees such as tree traversal, node creation or deletion etc.
+Tree manipulation language (TML) is a user friendly language that is designed to help users program trees. It allows users to create, manipulate and run algorithms on trees. Various existing programming languages make tree operations cumbersome and TML is intended to bridge this gap. In TML everything is of type Tree except primitive data types. Each node of the tree is of type Tree and it has fields associated with it like parent, child etc. Every node of the Tree is root for its subtree. Nodes of the tree can consist of user defined or primitive value types and they can be of any degree. We can refer to any child or parent node of a given node using predefined constructs. TML provides methods to perform trivial operations on trees such as tree traversal, node creation or deletion etc.
 %\textit{This section will be written later.}
 
 \section{Lexical Conventions} \label{lexCon}
-There are different classes of tokens that are supported in TML. Token types are identifiers, keywords, literals, Strings and operators. As in c, whitespace characters are ignored except insofar as they serve to delineate other tokens in the input stream. If the input stream has been parsed into tokens up to a given character,the next token is taken to include the longest string of characters which could possibly constitute a token.
+There are different classes of tokens that are supported in TML. Token types are identifiers, keywords, literals, strings and operators. As in C language, whitespace characters are ignored except insofar as they serve to delineate other tokens in the input stream. If the input stream has been parsed into tokens up to a given character,the next token is taken to include the longest string of characters which could possibly constitute a token.
 
 %Akash: try to reorganize the sentences
 
@@ -66,6 +66,14 @@ TML takes the standard \textbf{ASCII} character set for source codes.
 
 \subsection{Comments}
 In TML, there are two ways to make comments. The first style starts with the characters \textbf{/*}, and ends with the characters \textbf{*/}, all contents between which are comments. Note that, just like C-style comments, TML supports only un-nested comments. The second style is inline comments. It starts with the characters \textbf{//}, all contents in the current line after which are regarded as comments.
+
+\begin{code}
+\begin{tabbing}
+~~~~~~~~\= /*  \=This is a \\
+\> \> block comment. */\\
+\> // This is an inline comment.
+\end{tabbing}
+\end{code}
 
 \subsection{Identifiers} \label{lexConId}
 In TML, an identifier is a string that starts with a letter or an underscore, and consists of a sequece of letters, digits, and underscores. %The max length of an identifier is 26 characters. 
@@ -79,45 +87,23 @@ In TML, the words listed in Table~\ref{keywords} are reserved as keywords, and a
 \begin{center}
 \begin{tabular}{| c | c | c | c | c |}
 \hline
-if & else & type & while & foreach \\
+if & else & do & while & for \\
 \hline
-in & by & return & & do\\  %%whether remove the keyword do??
+break & continue & foreach & in & by     \\  %%whether remove the keyword do??         %Shuai: yes, keep it for do-while-loop
 \hline
-preorder & inorder & postorder & levelorder &\\
+return & void & main & print & treetype \\
 \hline
-int & float & char & string & bool  \\
+preorder & inorder & postorder & levelorder & int\\
 \hline
-treetype & void & & & \\
+float & char & string & bool  & true\\
+\hline
+false & & & &\\
 \hline
 \end{tabular}
 \caption{Keywords in TML}
 \label{keywords}
 \end {center}
 \end{table}
-
-%\subsection{Operators}
-%\textit{This section needs discussion.}\\
-%TML provides basic operators for arithmetic, comparing, assignment and string operations, which are listed in Table~\ref{basic_operators}.
-%
-%\begin{table}[ht]
-%\begin{center}
-%\begin{tabular}{| c | c |}
-%\hline
-%\textbf{Usage} & \textbf{Operator} \\
-%\hline
-%Arithmetic & +, -, *, /, \% \\
-%\hline
-%Comparing & \textgreater, \textgreater=, ==, !=, \textless=, \textless \\
-%\hline
-%Assignment & =, +=, -=, *=, /=, \%= \\
-%\hline
-%String & ==, sizeof() \\
-%\hline
-%\end{tabular}
-%\caption{Basic Operators in TML}
-%\label{basic_operators}
-%\end {center}
-%\end{table}
 
 
 % Shuai Begin
@@ -130,10 +116,10 @@ An integer constant consists of a sequence of digits, starting with a non-zero d
 A floating constant consists of an integer par, a decimal point, a fraction part, and optionally an E with a signed integer exponent. The integer and fraction parts both consist of a sequence of digits, and either one could be missing, but not both. Either the decimal point or the E with the exponent could be missing, but not both. All floating constants are of type float.
 
 \subsubsection {Character constants}
-A character constant is one ASCII character enclosed by $'$ $'$, which is of character type. Note that $'$\textbackslash$n'$, $'$\textbackslash$t'$, $'$\textbackslash$r'$, etc. are character constants.
+A character constant is one ASCII character enclosed by $'$ $'$, which is of character type. Note that $'$\textbackslash$n'$, $'$\textbackslash$t'$, and $'$\textbackslash$r'$, are character constants.
 
 \subsubsection {String constants}
-A string constant consists of several character constants enclosed by $"$ $"$, and implicitly ends with $'$\textbackslash$0'$.
+A string constant consists of several character constants enclosed by $''$~~~$''$, and implicitly ends with $'$\textbackslash$0'$.
 
 \subsubsection {Boolean constants}
 There are only two Boolean constants, true and false.
@@ -197,31 +183,30 @@ An example of a tree type definition, MyTree\_t, is given below.
 
 \begin{code}
 \begin{tabbing}
-treetype \textless2, [left, right]\textgreater MyTree\_t \\
-\{\\
-~~~~int i;\\
-~~~~float f;\\
-~~~~string s;\\
-\}
+~~~~~~~~\= treet\=ype \textless2, [left, right]\textgreater MyTree\_t \\
+\> \{ \\
+\> \>int i;\\
+\> \>float f;\\
+\> \>string s;\\
+\> \}
 \end{tabbing}
 \end{code}
-
 
 \subsubsection {Type name}
 The \textit{type name} of a tree type follows the identifier definition in the section~\ref{lexConId}. After the tree type is defined, the type name can be used to define variables of this type.
 
 \subsubsection {Degree}
-In TML, each tree type must define a fixed \textit{degree} at definition. All nodes of the same tree type have the same degree. The value range of the degree is from 1 to 99. The degree of a tree type can be referred to by using  ????????????????????????? introduced in the section~\ref{treeOp}.
+In TML, each tree type must define a fixed \textit{degree} at definition. All nodes of the same tree type have the same degree. The value range of the degree is from 1 to 99. The degree of a tree type can be referred to by using  the operator ``\&'' introduced in the section~\ref{treeOp}.
 
 % use &a  to get the degree
 
 \subsubsection {Member variables}
-In TML, a tree type can define its own \textit{member variable(s)} to store values for algorithms and programs. Each tree type can have at most 99 member variables. Each member variable must have a name which is unique in its tree type, and can be of any primitive types or tree types. Note that if a member variable is defined as some tree type, the definition of the tree type must appear before the member variable definition. All member variables are public. The member variables of a tree type variable can be referred to by using  ????????????????????? operation introduced in the section~\ref{treeOp}.
+In TML, a tree type can define its own \textit{member variable(s)} to store values for algorithms and programs. Each tree type can have at most 99 member variables. Each member variable must have a name which is unique in its tree type, and can be of any primitive types or tree types. Note that if a member variable is defined as some tree type, the definition of the tree type must appear before the member variable definition. All member variables are public. The member variables of a tree type variable can be referred to by using dot operator introduced in the section~\ref{treeOp}.
 
 % limit the member tree varible have only primitive types
 
 \subsubsection {Children index and aliases}
-In TML, children sub roots of a root can be referred to by the index number, ranging from 0 to degree-1. Optionally, at the definition of a tree type, user can define alias of the children indices. The alias follows the identifier definition in section~\ref{lexConId}. Note that if aliases are defined, then aliases for all Children indices must be defined. Only defining a subset of children indices is not allowed in TML. Whether using number indices or aliases, the children of a tree root can be referred to by using ???????????????????????? introduced in section~\ref{treeOp}.
+In TML, children sub roots of a root can be referred to by the index number, ranging from 0 to degree-1. Optionally, at the definition of a tree type, user can define alias of the children indices. The alias follows the identifier definition in section~\ref{lexConId}. Note that if aliases are defined, then aliases for all Children indices must be defined. Only defining a subset of children indices is not allowed in TML. Whether using number indices or aliases, the children of a tree root can be referred to by using child access operator introduced in section~\ref{treeOp}.
 
 \subsection {Type Conversions}
 In TML, no type conversion is allowed.
@@ -250,12 +235,13 @@ In TML, parentheses in expressions are used to overwrite the precedence rules, E
 The TML is a set of operators that can be applied to trees. They are divided into three categories: tree-building, tree-copying and tree-querying.
 
 \subsubsection{Tree-building operator}
-We define $->$ to be the tree building operator. It's binary and right-associative. The left operand is a single tree node, representing the root. The right operand is a list of trees, enclosed by parentheses and seperated by commas, representing the immediate children of the root. For example, a$->$(b, c) means building a tree with a as root and b as its left subtree, and c as its right subtree. This operator returns the newly built tree.
+We define -\textgreater to be the tree building operator. It's binary and right-associative. The left operand is a single tree node, representing the root. The right operand is a list of trees, enclosed by parentheses and seperated by commas, representing the immediate children of the root. For example, a~-\textgreater(b, c) means building a tree with a as root and b as its left subtree, and c as its right subtree. This operator returns the newly built tree.
 
 \subsubsection{Tree-copying operators}
 We define two operators to copy trees. @ means copying the node and its value only, with all of its children set to null. \$ means creating a new tree, with exactly the same stucture as the original tree. Both of them are unary and appear on the left side of the opearand. They return the new tree.
 
 \subsubsection{Tree-querying operators}
+\label{treeOp}
 In TML, we define operator \# as follows: \#n means the order of node n among its siblings, starting from 0. For example, if node a has three nodes b, c, d, then \#b, \#c, \#d will return 0, 1, 2, respectively. If n has no parent, \#n will return null. 
 
 The children access operator is the square bracket. It takes a tree variable on the left side, and either an integer index or string index inside the bracket. For example, a[0] will return the first child of a if it exists, and null otherwise. Note that the operand inside the square bracket must be less than the degree of the tree. 
@@ -272,17 +258,17 @@ The $\wedge$ operator in TML is used to get the parent of the operand. It's unar
 \begin{tabular}{| c | c |}
 \hline
 1 & () \\
-2 & ., [] \\
-2 & \#, \& \\
-3 & @, \$, $\wedge$ \\
-4 & *, /, \% \\
-5 & +, - \\
-6 & $<$, $>$, $<=$, $>=$, $!=$, $==$ \\
+2 & . ~ , ~ [] \\
+2 & \# ~ \& \\
+3 & @ ~ \$ ~ $\wedge$ \\
+4 & * ~ / ~ \% \\
+5 & + ~ - \\
+6 & $<$ ~ $>$ ~ $<=$ ~ $>=$ ~ $!=$ ~ == \\
 7 & ! \\
 8 & \&\& \\
 9 & $||$ \\
-10 & =, +=, -=, *=, /=, \%= \\
-11 & $->$ \\
+10 & =\\%, +=, -=, *=, /=, \%= \\
+11 & -\textgreater \\
 \hline
 \end{tabular}
 \caption{Precedence Rules}
@@ -463,7 +449,7 @@ This statement is simply written as:
 
 \begin{code}
 \begin{tabbing}
-~~~~~~~~return[ \textsl{expression}];
+~~~~~~~~return [\textsl{expression}];
 \end{tabbing}
 \end{code}
 
@@ -523,7 +509,7 @@ Like various existing languages like C, Java etc, TML also has some restrictions
 
 \section{Language Formalization}
 
-\section{Conversions to Java}
+%\section{Conversions to Java}
 
 
 
