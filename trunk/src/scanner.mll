@@ -41,6 +41,8 @@ rule token = parse
                       { ID(main) }
     | "print"         as print
                       { ID(print) }
+    | "alloc"         as alloc
+                      { ID(alloc) }
 	
     (* Constants *)
     | digit+          as integer        
