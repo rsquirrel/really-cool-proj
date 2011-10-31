@@ -1,6 +1,5 @@
 /* parser.mly */
-/* @authors: Shuai Sun,  */
-/* guys, put your names here if you have composed the file */
+/* @authors: Shuai Sun, Yan Zou, Jiabin Hu, Akash */
 
 %token <string> ID
 %token IF ELSE WHILE DO FOR BREAK CONTINUE FOREACH IN BY RETURN
