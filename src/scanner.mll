@@ -1,5 +1,6 @@
 (* scanner.mll *)
 (* @authors: Shuai Sun *)
+(* modified by Jiabin Hu and Yan Zou on identifier and keyword order issues *)
 
 { open Parser }
 

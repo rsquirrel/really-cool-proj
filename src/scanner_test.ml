@@ -1,3 +1,7 @@
+(* scanner_test.ml *)
+(* @author: Yan Zou *)
+(* To test the scanner by outputting all the recognized lexical words *)
+
 open Parser;;
 
 let lexbuf = Lexing.from_channel stdin in

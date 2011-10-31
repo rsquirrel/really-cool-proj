@@ -7,6 +7,7 @@
 \usepackage{graphics}
 \usepackage{setspace}
 \usepackage{url}
+\usepackage{listings}
 \newcommand{\Lyx}{L\kern-.1667em\lower.25em\hbox{y}\kern-.125emX\spacefactor1000}
 \newcommand\bibname{References}
 \singlespacing
@@ -56,6 +57,9 @@ Yan Zou (yz2437)\\\\
 %{\bf Keywords:} \\
 
 \pagebreak
+
+%Akash Begin
+
 \section{Introduction}
 
 Tree manipulation language (TML) is a user friendly language that is designed to help users program trees. It allows users to create, manipulate and run algorithms on trees. Various existing programming languages make tree operations cumbersome and TML is intended to bridge this gap. In TML everything is of type Tree except primitive data types. Each node of the tree is of type Tree and it has fields associated with it like parent, child etc. Every node of the Tree is root for its subtree. Nodes of the tree can consist of user defined or primitive value types and they can be of any degree. We can refer to any child or parent node of a given node using predefined constructs. TML provides methods to perform trivial operations on trees such as tree traversal, node creation or deletion etc.
@@ -109,7 +113,7 @@ true & false & & &\\
 \label{keywords}
 \end {center}
 \end{table}
-
+%Akash End
 
 % Shuai Begin
 \subsection {Constants}
@@ -221,6 +225,8 @@ In TML, no type conversion is allowed.
 
 % Shuai End
 
+% Jiabin Begin
+
 \section{Expressions}
 In TML, expressions consist of operators and their operands. In this section, definition for each operator is given. To avoid ambiguity, precedence rules of the operators in TML are also defined in this section.
 
@@ -329,6 +335,10 @@ To eliminate the possibility of ambiguity, the precedence of operators in TML ar
 \label{preRule}
 \end {center}
 \end{table}
+
+% Jiabin End
+
+% Yan Begin
 
 \section{Statements}
 
@@ -522,6 +532,8 @@ It does nothing.
 
 
 \section{Functions}
+
+\subsection{Function Definition}
 TML allows only global functions and the functions are order-sensitive. It means that all functions should be defined outside all other function bodies, directly in the file scope. And if you want to call a function, that function should be defined before calling. It is allowed to define recursive functions, which will call the function itself inside the function body, but it is not allowed to define two functions that will call each other.
 
 The function definition has the regular syntax as follows:
@@ -555,8 +567,47 @@ An example of function:
 \end{tabbing}
 \end{code}
 
+\subsection{Main Function}
+In TML, there is an entry function where the program starts. There must be one main function in a TML program and should be defined like this:
+\begin{code}
+\begin{tabbing}
+~~~~~~~~\= void main() \\
+\> \{ \\
+\> ~~~~~~~~\textsl{statement-list} \\
+\> \} 
+\end{tabbing}
+\end{code}
+
+\subsection{Built-in Functions}
+There are mainly two built-in functions in TML, doing some regular jobs. The function names are reserved and can't be redefined.
+
+\subsubsection{print function}
+This function is used to print some information onto the screen.
+As a built-in function, the parameters passed to this function can be various. The definition of this function can be regarded as:
+\begin{code}
+\begin{tabbing}
+~~~~~~~~void print(\textsl{item-list}) \{ ... \}
+\end{tabbing}
+\end{code}
+
+The \textsl{item-list} can be a list of items separated by commas. The items can be literals and variables of any basic type. The print function will print them on screen from left to right and move to a new line after printing all the items in the list.
+
+\subsubsection{alloc function}
+This function is used to allocate space for variables of any type of tree.
+Tree variables can only be used as iterators and cannot be assigned node values or children before we allocate memory space of certain size for them.
+As a built-in function, the parameters passed to this function can be various. The definition of this function can be regarded as:
+\begin{code}
+\begin{tabbing}
+~~~~~~~~int alloc(\textsl{tree-list}) \{ ... \}
+\end{tabbing}
+\end{code}
+
+The \textsl{tree-list} can be a list of trees separated by commas. The trees can be of any tree type. The alloc function will recognize the size needed for each tree and allocate the space for them from left to right and return if the allocation succeeds.
+
 \section{Scope}
 In TML, there are two finds of scopes. Codes directly written in the file has a file scope(global), starting from the current position to the end of the file. Also, each compound statement will generate a local scope confined by the two curly brackets. Identifiers can only be used within its scope.
+
+% Yan End
 
 \section{Language Restrictions}
 TML has some language restrictions, which are already mentioned in previous sections. In this section, the restrictions are summarized as below.
@@ -570,7 +621,16 @@ TML has some language restrictions, which are already mentioned in previous sect
 \end{itemize}
 
 \section{Language Formalization}
-TML language formalization is done in ocamlyacc format. The production rules with operator precedence rules are listed below, followed by the ocamlyacc output.
+TML language formalization is done in ocamlyacc format. The production rules with operator precedence rules are listed below:
+%, followed by the ocamlyacc output.
+
+\lstinputlisting{parser_pdf.mly}
+
+%And the output of the parser is:
+
+%/* parser.output */
+
+%\lstinputlisting{../../src/parser.output}    too long!!!!!!!!
 
 %\section{Conversions to Java}
 
