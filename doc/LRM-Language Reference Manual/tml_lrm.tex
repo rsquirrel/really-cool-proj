@@ -621,12 +621,20 @@ TML has some language restrictions, which are already mentioned in previous sect
 \end{itemize}
 
 \section{Language Formalization}
-TML language formalization is done in ocamlyacc format. The production rules with operator precedence rules are listed below:
-%, followed by the ocamlyacc output.
+TML language formalization is done in ocamlyacc format. The production rules with operator precedence rules are listed below, followed by the ocamlyacc output.
 
-\lstinputlisting{parser_pdf.mly}
+\tt
+\lstset{basicstyle=\footnotesize}
+\lstinputlisting[language=Caml]{parser_pdf.mly}
 
-%And the output of the parser is:
+\mbox{}
+
+\noindent
+And the output of the parser in file "parser.output" is:
+
+72 terminals, 22 nonterminals
+
+91 grammar rules, 190 states
 
 %/* parser.output */
 
