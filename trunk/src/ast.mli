@@ -1,4 +1,4 @@
-(*Author : Akash*)
+(*Author : Akash at el *)
 (*Most of the code is taken as it is form MicroC compiler and I will revise this file*)
 type op = Add | Sub | Mult | Div | Equal | Neq | Less | Leq | Greater | Conn | Plus_asn |Mins_asn |Tims_asn |Div_asn |Mod_asn |Or |And |Not |Geq |Mod  
 type uniop = Dollar | At | Deg_a | Dot | Hsh
@@ -16,12 +16,15 @@ Block of stmt list (* { ... } *)
 | Expr of expr (* foo = bar + 3; *)
 | Return of expr (* return 42; *)
 | If of expr * stmt * stmt (* if (foo == 42) {} else {} *)
-| Foreach of expr * stmt 
+| Foreach of expr * stmt   (* for each loop *)
+| For of expr * expr * expr * stmt (* for loop *)
+| Do of stmt * while * expr   (*do while loop *)
 | While of expr * stmt (* while (i<10) { i = i + 1 } *)
 type func_decl = {
+typespecifier : string (* should be of type string ? *)
 fname : string; (* Name of the function *)	
 formals : string list; (* Formal argument names *)
 locals : string list; (* Locally defined variables *)
 body : stmt list;
 }
-type program = string list * func_decl list (* global vars, funcs *)
+type program = string list * func_decl list (* function return type function body and contents *)
