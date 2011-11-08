@@ -1,4 +1,4 @@
-(*Author : Akash at el *)
+(*Author : Akash, Yan Zou, Jiabin Hu, Shuai Sun *)
 (*Most of the code is taken as it is form MicroC compiler and I will revise this file*)
 type op = Add | Sub | Mult | Div | Equal | Neq | Less | Leq | Greater | Conn | Plus_asn |Mins_asn |Tims_asn |Div_asn |Mod_asn |Or |And |Not |Geq |Mod  
 type uniop = Dollar | At | Deg_a | Dot | Hsh
