@@ -17,9 +17,6 @@ Block of stmt list (* { ... } *)
 | Return of expr (* return 42; *)
 | If of expr * stmt * stmt (* if (foo == 42) {} else {} *)
 | Foreach of expr * stmt 
-| Foreach of expr * stmt 
-| Foreach of expr * stmt 
-| Foreach of expr * stmt 
 | While of expr * stmt (* while (i<10) { i = i + 1 } *)
 type func_decl = {
 fname : string; (* Name of the function *)	
