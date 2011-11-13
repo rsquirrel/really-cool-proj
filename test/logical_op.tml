@@ -1,0 +1,17 @@
+void main()
+{
+	print(true && true);
+	print(false && true);
+	print(true && false);
+	print(false && false);
+	print('\n');
+	
+	print(true || true);
+	print(false || true);
+	print(true || false);
+	print(false || false);
+	print('\n');
+	
+	print(!true);
+	print(!false);
+}
