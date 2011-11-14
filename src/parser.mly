@@ -111,7 +111,7 @@ stmt_list:
 
 stmt:
     expr SEMI                    { 0 }
-    | decl SEMI                    { 0 }
+    | decl                    { 0 }
     | stmt_block                     { 0 }
     | IF LPAREN expr RPAREN stmt %prec NOELSE                    { 0 }
     | IF LPAREN expr RPAREN stmt ELSE stmt                    { 0 }
