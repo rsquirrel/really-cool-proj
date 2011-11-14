@@ -1,0 +1,9 @@
+void main()
+{
+	int a = 0;
+	char b = 'b', b2 = 'b2', b3 = 'b3';
+	string c = "Hello world";
+	float d = 1.11;
+	bool e = true;
+	print(a, b, b2, b3, c, d, e);
+}

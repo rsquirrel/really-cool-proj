@@ -1,0 +1,16 @@
+Author: Yan Zou
+
+Usage:
+
+1. Test compilers:
+   First of all, you need to compile our codes and generate the compiler (tmlc)
+   ./test.bash <path>
+   The path is for the compiler.
+   If no path is specified, ../src/tmlc is used as default
+
+2. Test scanners:
+   1) Use my Makefile and run "make scanner_test" in src to generate a scanner_test.
+   2) Run "scanner_test.bash" and pass in the path of scanner_test as the first argument.
+      If no path is specified, "../src/scanner_test" is used as default.
+      This script will generate .scan file for each .tml file, recording the result of the scanner
+   3) Run "scanner_test.bash clean" to remove all the .s files.
