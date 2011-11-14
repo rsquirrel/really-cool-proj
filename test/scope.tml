@@ -1,0 +1,18 @@
+int a = 1;
+
+void fun1()
+{
+	print(a);
+}
+
+void fun2()
+{
+	int a = 2;
+	print(a);
+}
+
+void main()
+{
+	fun1();
+	fun2();
+}
