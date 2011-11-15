@@ -46,11 +46,13 @@ let rec next l =
 		  | COMMA -> "COMMA"
 		  | ASSIGN -> "ASSIGN"
 		  | CONNECT -> "CONNECT"
-		  | PLUS_ASN -> "PLUS_ASN"
+		  (* These operators are removed.
+          | PLUS_ASN -> "PLUS_ASN"
 		  | MINUS_ASN -> "MINUS_ASN"
 		  | TIMES_ASN -> "TIMES_ASN"
 		  | DIVIDE_ASN -> "DIVIDE_ASN"
 		  | MOD_ASN -> "MOD_ASN"
+          *)
 		  | OR -> "OR"
 		  | AND -> "AND"
 		  | NOT -> "NOT"
