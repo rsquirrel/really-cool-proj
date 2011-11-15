@@ -1,8 +1,8 @@
 treetype <2, [left, right]>MyTree_t
 {
-	int vint = 0;
-	float vflt = 1.;
-	string vstr = "hi";
+	int vint;
+	float vflt;
+	string vstr;
 }
 
 
