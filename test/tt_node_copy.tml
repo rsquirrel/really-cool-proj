@@ -1,0 +1,33 @@
+treetype <2, [left, right]>MyTree_t
+{
+	int vint = 0;
+	float vflt = 1.;
+	string vstr = "hi";
+}
+
+
+void main ()
+{
+	MyTree_t ta, tb, tc;
+	alloc(ta, tb, tc);
+	
+	ta.vstr = "root";
+	tb.vstr = "left child";
+	tc.vstr = "right child";
+	
+	ta ->(tb, tc);
+	
+	MyTree_t ta_c1, ta_c2;
+	
+	ta_c1 = @ta;
+	
+	if (ta_c1[left] != ~ || ta_c1[1] != ~ )
+	{
+		print ("error: should be null");
+		print ('\n');
+	}
+	
+	print (ta_c1.vstr);		// root
+	
+
+}
