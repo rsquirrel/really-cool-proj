@@ -1,0 +1,14 @@
+void main()
+{
+	print("the \b: ");
+	print('\b');
+	print("the\n:");
+	print('\n');
+	print("the \r: ");
+	print('\r');
+	print("the \t: ");
+	print('\t');
+	print("the \\: ");
+	print('\\');
+}
+
