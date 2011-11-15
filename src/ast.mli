@@ -1,6 +1,6 @@
 (*Author : Akash, Yan Zou, Jiabin Hu, Shuai Sun *)
 (*Most of the code is taken as it is form MicroC compiler and I will revise this file*)
-type op = Add | Sub | Mult | Div | Equal | Neq | Less | Leq | Greater | Conn | Plus_asn |Mins_asn |Tims_asn |Div_asn |Mod_asn |Or |And |Not |Geq |Mod  
+type op = Add | Sub | Mult | Div | Equal | Neq | Less | Leq | Greater | Conn |Or |And |Not |Geq |Mod (*| these operators are removed: Plus_asn |Mins_asn |Tims_asn |Div_asn |Mod_asn*)  
 type uniop = Dollar | At | Deg_a | Dot | Hsh
 type expr = (* Expressions *)
 Literal of int (* 42 *)

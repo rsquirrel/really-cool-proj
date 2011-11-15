@@ -14,7 +14,9 @@
 %token LBRACE RBRACE SEMI COLON COMMA
 %token ASSIGN
 %token CONNECT 
+/* These operators are removed
 %token PLUS_ASN MINUS_ASN TIMES_ASN DIVIDE_ASN MOD_ASN
+*/
 %token OR AND NOT
 %token NEQ GT LT LEQ GEQ EQ
 %token PLUS MINUS TIMES DIVIDE MOD
@@ -27,8 +29,10 @@
 
 %right CONNECT
 %right ASSIGN
+/* These operators are removed
 %right PLUS_ASN MINUS_ASN
-%right TIMES_ASN DEVIDE_ASN MOD_ASN 
+%right TIMES_ASN DEVIDE_ASN MOD_ASN
+*/ 
 %left OR 
 %left AND
 %left EQ NEQ

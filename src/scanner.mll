@@ -72,11 +72,13 @@ rule token = parse
     
     (* Operators *)
     | "->"   { CONNECT }
+    (* These operators are removed.
     | "+="   { PLUS_ASN }
     | "-="   { MINUS_ASN }
     | "*="   { TIMES_ASN }
     | "/="   { DIVIDE_ASN }
     | "%="   { MOD_ASN }
+    *)
     | "||"   { OR }
     | "&&"   { AND }
     | '!'    { NOT }
