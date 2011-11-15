@@ -7,7 +7,7 @@
 (* letter, digit *)
 let letter = ['a'-'z' 'A'-'Z']
 let digit = ['0'-'9']
-let character = ['\b' '\t' '\n' '\r' '\\' '_' ' ' '!' '@' '#' '$' '%' '^' '&' '*' '(' ')' '{' '}' '|' ';' '<' '>' '.' ',' '?' '/' '+' '-' '=' '~']
+let character = ['\b' '\t' '\n' '\r' '\\' ' ' '!' '@' '#' '$' '%' '^' '&' '*' '(' ')' '-' '_' '+' '=' '{' '[' '}' ']' '|' ';' ':' '<' '>' '.' ',' '?' '/' '~' '`']
             | letter | digit
 
 rule token = parse
@@ -58,7 +58,18 @@ rule token = parse
     | '"' (character | '\'')+ '"' as string 
                       { STRING(String.sub string 1 ((String.length string) - 2)) }
     | '\'' (character | '"') '\'' as string
-                      { CHAR(String.get string 1) } 
+                      { CHAR(String.get string 1) }
+    | '\'' '\\' 'n' '\'' 
+                      { CHAR('\n') }
+    | '\'' '\\' 't' '\'' 
+                      { CHAR('\t') }
+    | '\'' '\\' 'b' '\'' 
+                      { CHAR('\b') }
+    | '\'' '\\' 'r' '\'' 
+                      { CHAR('\r') }
+    | '\'' '\\' '\\' '\'' 
+                      { CHAR('\\') }
+
     | '~'             { NULL }
 
 

@@ -1,7 +1,7 @@
 void main()
 {
 	int a = 0;
-	char b = 'b', b2 = 'b2', b3 = 'b3';
+	char b = 'b', b2 = '2', b3 = '3';
 	string c = "Hello world";
 	float d = 1.11;
 	bool e = true;
