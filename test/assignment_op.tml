@@ -1,0 +1,18 @@
+void main()
+{
+	int i;
+	i = 1;
+	print(i);
+	
+	char j;
+	j = 'a';
+	print(j);
+	
+	float k;
+	k = 0.01;
+	print(k);
+	
+	string s;
+	s = "hi";
+	print(s);
+}
