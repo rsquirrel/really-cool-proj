@@ -7,9 +7,9 @@ type braces = Lbrace | Rbrace
 type alias_list = Normal_string
 				| Seq of alias_list * string
 
-type type_def = Treetype of op * int * alias_list * op * string
+type type_def = Treetype of op * int list * alias_list * op * string
 			
-type tree_def = Seq of type_def * braces * string * braces
+type tree_def = Seq of type_def * braces * string list * braces
 
 type expr = (* Expressions *)
   | Literal of int (* 42 *)
