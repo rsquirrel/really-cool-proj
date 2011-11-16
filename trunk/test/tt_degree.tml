@@ -12,7 +12,7 @@ void main ()
 	alloc(ta, tb, tc);
 	int dgr1, dgr2, dgr3;
 	
-	ta ->(tb, tc);
+	ta ->(tb: tc);
 	
 	dgr1 = &ta;
 	dgr2 = &tb;

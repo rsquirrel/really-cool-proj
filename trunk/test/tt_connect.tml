@@ -15,7 +15,7 @@ void main ()
 	tb.vstr = "left child";
 	tc.vstr = "right child";
 	
-	ta ->(tb, tc);
+	ta ->(tb: tc);
 	print (ta.vstr);		// root
 	print (ta[left].vstr);	// left child
 	print (ta[1].vstr);		// right child

@@ -3,7 +3,7 @@ treetype <2, [left, right]> Bin_T
 	int i = 1000;
 	int i2;
 	float f = 1e-3;
-	string s = "hello, TML."
+	string s = "hello, TML.";
 }
 
 void main()
