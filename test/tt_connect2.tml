@@ -15,9 +15,13 @@ void main ()
 	tb.vstr = "i'm tb";
 	tc.vstr = "i'm tc";
 	
-	ta -> (, tb -> (,tc));
+	
+	ta -> ( : tb -> ( :tc));
+	//ta -> (~ : tb -> (~ :tc));
+	
+	
 	print (ta.vstr);				// root
 	print (ta[1].vstr);				// i'm tb
-	print (ta[1].[right].vstr);		// i'm tc
+	print (ta[1][right].vstr);		// i'm tc
 
 }
