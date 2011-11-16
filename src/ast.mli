@@ -2,18 +2,10 @@ type op = Add | Sub | Mult | Div | Equal | Neq | Less_than | Leq | Greater_than 
 
 type type_specifier = Int | Float | Char | String | Boolean | Void | Tree_type(* including return type of even main function *)
 
-type braces = Lbrace | Rbrace
-
-type alias_list = Normal_string
-				| Seq of alias_list * string
-
-type type_def = Treetype of op * int list * alias_list * op * string
-			
-type tree_def = Seq of type_def * braces * string list * braces
+type constant = Int | Float | Char | String | Boolean
 
 type expr = (* Expressions *)
   | Literal of int (* 42 *)
-  | Expr of tree_def(*Expr of type_def * string  MyTree_t bfs*)
   | Id of string (* foo *)
   | Binop of expr * op * expr (* a + b *)
   | Assign of string * expr (* foo = 42 *)
@@ -21,6 +13,16 @@ type expr = (* Expressions *)
   | Noexpr (* While() *)
   | LbrkRbrk of expr (* parentisized expressions *)
   | Uniop of op*expr   (*for unary operators *)
+  
+type var_decl = WithInit of string * type_specifier * expr
+				| WithoutInit of string * type_specifier
+
+type tree_def = {
+	members : var_decl list;
+	degree :int;
+	aliases : string list;
+}
+
   
 type traverse_order = Preorder | Inorder | Postorder | Levelorder (* different traversal orders *)
 
