@@ -254,7 +254,7 @@ The operator -\textgreater is the tree building operator. This operator is used 
 \begin{tabbing}
 ~~~~~~~~\= MyTree\_t ta, tb, tc;\\
 \> alloc(ta, tb, tc);\\
-\> ta~-\textgreater(tb, tc);
+\> ta~-\textgreater(tb : tc);
 \end{tabbing}
 \end{code}
 
@@ -268,7 +268,7 @@ In the example below, ta\_copy1 gets only the ta node with both children set nul
 \begin{tabbing}
 ~~~~~~~~\= MyTree\_t ta, tb, tc;~~~~~~~\=\\
 \> alloc(ta, tb, tc);\\
-\> ta~-\textgreater(tb, tc);\\
+\> ta~-\textgreater(tb : tc);\\
 \> MyTree\_t ta\_copy1, ta\_copy2;\\
 \> ta\_copy1 = @ta;\>//\textit{copy ta node only}\\
 \> ta\_copy2 = \$ta;\>//\textit{copy the whole ta tree }
@@ -295,7 +295,7 @@ The Caret operator is used to get the parent reference of the operand. It is a u
 \begin{tabbing}
 ~~~~~~~~\= MyTree\_t ta, tb, tc;~~~~~~~~~~~~~~~~\=//\textit{MyTree\_t is defined in section~\ref{defTreetype}}\\
 \> alloc(ta, tb, tc);\\
-\> ta~-\textgreater(tb, tc);\\
+\> ta~-\textgreater(tb : tc);\\
 \> int ta\_order = \#ta;\>//\textit{ta\_order = -1}\\
 \> int tb\_order = \#tb;\>//\textit{tb\_order = 0}\\
 \> int tc\_order = \#ta[1];\>//\textit{tc\_order = 1}\\
