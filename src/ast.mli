@@ -1,4 +1,3 @@
-
 type op = Add | Sub | Mult | Div | Equal | Neq | Less_than | Leq | Greater_than | Conn |Or |And |Not |Geq |Mod |Dollar | At | Deg_a | Dot | Hsh  
 
 type type_specifier = Int | Float | Char | String | Boolean | Void | Tree_type(* including return type of even main function *)
@@ -40,9 +39,9 @@ type stmt_list = Seq of stmt * stmt_list | Single_stmt of stmt
 
 type stmt_block = Block of stmt_list | Empty_block
    
-type param_decl = type_specifier * string
+type param_decl = Seq of type_specifier * string
 
 type param_list = Seq of param_decl * param_list 
 				| Single_decl of param_decl 
                
-type program = type_specifier * string * param_list * stmt_block
+type program = Seq of type_specifier * string * param_list * stmt_block
