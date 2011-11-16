@@ -3,10 +3,18 @@ type op = Add | Sub | Mult | Div | Equal | Neq | Less_than | Leq | Greater_than 
 
 type type_specifier = Int | Float | Char | String | Boolean | Void | Tree_type(* including return type of even main function *)
 
+type braces = Lbrace | Rbrace
+
+type alias_list = Normal_string
+				| Seq of alias_list * string
+
+type type_def = Treetype of op * int * alias_list * op * string
+			
+type tree_def = Seq of type_def * braces * string * braces
 
 type expr = (* Expressions *)
   | Literal of int (* 42 *)
-  | Type_def of string (* MyTree_t bfs*)
+  | Expr of tree_def(*Expr of type_def * string  MyTree_t bfs*)
   | Id of string (* foo *)
   | Binop of expr * op * expr (* a + b *)
   | Assign of string * expr (* foo = 42 *)
