@@ -1,3 +1,5 @@
+all: scanner_test tmlc
+
 tmlc: scanner.cmo parser.cmo compiler.cmo
 	#ocamlc -c ast.mli
 	ocamlc -o tmlc scanner.cmo parser.cmo compiler.cmo
