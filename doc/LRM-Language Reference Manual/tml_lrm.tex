@@ -249,7 +249,7 @@ In TML, parentheses in expressions are used to overwrite the precedence rules. E
 The TML is a set of operators that can be applied to trees. They are divided into three categories: tree-building operators, tree-copying operators and tree-querying operators.
 
 \subsubsection{Tree-building operators}
-The operator -\textgreater is the tree building operator. This operator is used to connect the root and its children to build a tree. It is binary and right-associative. Its left operand is a single tree node, representing the root. The right operand is a list of children trees, enclosed by parentheses. Each child tree is seperated by commas, representing the immediate children of the root. An example is given below. In this example, a tree is built with ta as root and tb as its left subtree, and tc as its right subtree. This operator returns the newly built tree, which is ta.
+The operator -\textgreater is the tree building operator. This operator is used to connect the root and its children to build a tree. It is binary and right-associative. Its left operand is a single tree node, representing the root. The right operand is a list of children trees, enclosed by parentheses. Each child tree is seperated by colons, representing the immediate children of the root. An example is given below. In this example, a tree is built with ta as root and tb as its left subtree, and tc as its right subtree. This operator returns the newly built tree, which is ta.
 \begin{code}
 \begin{tabbing}
 ~~~~~~~~\= MyTree\_t ta, tb, tc;\\
