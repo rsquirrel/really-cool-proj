@@ -52,133 +52,136 @@
 
 
 program:
-    /* nothing */                    { 0 }
-    | program type_def                    { 0 }
-    | program decl                    { 0 }
-    | program func_def                    { 0 }
+    /* nothing */                             { [],[] }   /*this part should be differnt and it should be similar to MicroC unsure about it */
+    | program type_def                        { $1::$2 }
+    | program decl                            { $1::$2 }
+    | program func_def                        { $1::$2 }
     
 type_def:
-    TREETYPE LT INT GT ID LBRACE decl_list RBRACE                    { 0 }
-    | TREETYPE LT INT COMMA LBRACK alias_list RBRACK GT ID LBRACE decl_list RBRACE                    { 0 }
+    TREETYPE LT INT GT ID LBRACE decl_list RBRACE                                      { }
+    | TREETYPE LT INT COMMA LBRACK alias_list RBRACK GT ID LBRACE decl_list RBRACE     { } /*Not sure how to do this..*/
 
 alias_list:
-    ID                    { 0 }
-    | alias_list COMMA ID                    { 0 }
+    ID                                       { $1 }
+    | alias_list COMMA ID                    { $1::$3 }
 
 decl_list:
-    decl                    { 0 }
-    | decl_list decl                    { 0 }
+    decl                                     { $1 }
+    | decl_list decl                         { $1::$2 }
 
 decl:
-    type_specifier init_list SEMI                    { 0 }
+    type_specifier init_list SEMI            { $1::$2 }
 
 type_specifier:
-    INT_T                     { 0 }
-    | FLOAT_T                     { 0 }
-    | CHAR_T                     { 0 }
-    | STRING_T                     { 0 }
-    | BOOL_T                     { 0 }
-    | ID                    { 0 }
-		| VOID                  { 0 }
+    INT_T                                   { Int }
+    | FLOAT_T                               { Float }
+    | CHAR_T                                { Char }
+    | STRING_T                              { String }
+    | BOOL_T                                { Boolean }
+    | ID                                    { $1 }       
+	| VOID                                  { Void }
 
 /*    
 return_type:
-    type_specifier                     { 0 }
-    | VOID                    { 0 }
+    type_specifier                          { $1 }
+    | VOID                                  { Void }
 */
 
 init_list:
-    init                    { 0 }
-    | init_list COMMA init                    { 0 }
+    init                                    { type_specifier }
+    | init_list COMMA init                  { $1::$3 }
 
 init:
-    ID                    { 0 }
-    | ID ASSIGN expr                    { 0 }
+    ID                                      { $1 }
+    | ID ASSIGN expr                        { Binop($1,Equal,$3) }
 
 func_def:
-    type_specifier ID LPAREN para_list RPAREN stmt_block                    { 0 }
+    type_specifier ID LPAREN para_list RPAREN stmt_block           { {fname: $2;     /*We should have return type in ast defined*/
+																	  params: $4;
+																	  body : $6	
+																	} }
 
 para_list:
-    /* nothing */					{ 0 }
-    | para_decl                    { 0 }
-    | para_list COMMA para_decl                    { 0 }
+    /* nothing */					        {[]}
+    | para_decl                             { $1 }
+    | para_list COMMA para_decl             { $3::$1 }
 
 para_decl:
-    type_specifier ID                    { 0 }
+    type_specifier ID                       { $1::$2 }
     
 stmt_block:
-    LBRACE stmt_list RBRACE                    { 0 }
+    LBRACE stmt_list RBRACE                 { Block($2) }
 
 stmt_list:
-    /* nothing */						{ 0 }
-    | stmt_list stmt                    { 0 }
+    /* nothing */						    { [] }
+    | stmt_list stmt                        { $2::$1 }
 
 stmt:
-    expr SEMI                    { 0 }
-    | decl                    { 0 }
-    | stmt_block                     { 0 }
-    | IF LPAREN expr RPAREN stmt %prec NOELSE                    { 0 }
-    | IF LPAREN expr RPAREN stmt ELSE stmt                    { 0 }
-    | WHILE LPAREN expr RPAREN stmt                    { 0 }
-    | DO stmt WHILE LPAREN expr RPAREN SEMI                    { 0 }
-    | FOR LPAREN expr SEMI expr SEMI expr RPAREN stmt                    { 0 }
-    | FOREACH LPAREN ID IN ID RPAREN BY trvs_order stmt                    { 0 }
-    | BREAK SEMI                    { 0 }
-    | CONTINUE SEMI                    { 0 }
-    | RETURN expr SEMI                    { 0 }
-    | RETURN SEMI                    { 0 }
-    | SEMI                    { 0 }
+    expr SEMI                               				  { $1 }
+    | decl                                                    { $1 }
+    | stmt_block                                              { Block($1) }
+    | IF LPAREN expr RPAREN stmt %prec NOELSE                 { If($3,$5,Block([])) }
+    | IF LPAREN expr RPAREN stmt ELSE stmt                    { If($3,$5,$7) }
+    | WHILE LPAREN expr RPAREN stmt                           { While($3,$5) }
+    | DO stmt WHILE LPAREN expr RPAREN SEMI                   { Do($2,$5) }
+    | FOR LPAREN expr SEMI expr SEMI expr RPAREN stmt         { For($3,$5,$7,$9) }
+    | FOREACH LPAREN ID IN ID RPAREN BY trvs_order stmt       { Foreach($3,$5,$8,$9) }
+    | BREAK SEMI                                              { Break }
+    | CONTINUE SEMI                                           { Continue }
+    | RETURN expr SEMI                                        { Return($2) }
+    | RETURN SEMI                                             { Return }
+    | SEMI                                                    { 0 }      /*No action really.. ?*/
 
 trvs_order:
-    INORDER                     { 0 }
-    | PREORDER                     { 0 }
-    | POSTORDER                     { 0 }
-    | LEVELORDER                    { 0 }
+    INORDER                                                   { Inorder }    /*I doubt what exactly these should contain..?*/
+    | PREORDER                                                { Preorder }
+    | POSTORDER                                               { Postorder }
+    | LEVELORDER                                              { Levelorder }
 
 /* To construct the expr, there are two ways.
    The second causes more conflicts.
    The first is: */
-
+/*Not writing anything for these as they are not being used*/
 /*
 binop:
-    PLUS                    { 0 }
-    | MINUS                    { 0 }
-    | TIMES                    { 0 }
-    | DIVIDE                    { 0 }
-    | MOD                    { 0 }
+    PLUS                                                      { 0 }
+    | MINUS                                                   { 0 }
+    | TIMES                                                   { 0 }
+    | DIVIDE                                                  { 0 }
+    | MOD                                                     { 0 }
 
-    | GT                    { 0 }
-    | LT                    { 0 }
-    | GEQ                    { 0 }
-    | LEQ                    { 0 }
-    | NEQ                    { 0 }
-    | EQ                    { 0 }
+    | GT                                                      { 0 }
+    | LT                                                      { 0 }
+    | GEQ                                                     { 0 }
+    | LEQ                                                     { 0 }
+    | NEQ                                                     { 0 }
+    | EQ                                                      { 0 }
 
-    | AND                    { 0 }
-    | OR                    { 0 }
+    | AND                                                     { 0 }
+    | OR                                                      { 0 }  
 
 unop:
-    PLUS                    { 0 }
-    | MINUS                    { 0 }
-    | AT                    { 0 }
-    | DOLLAR                    { 0 }
-    | FATHER                    { 0 }
-    | NOT                    { 0 }
-    | HASH                    { 0 }
-    | DEG_AND                    { 0 }
+    PLUS                                                      { 0 }
+    | MINUS                                                   { 0 }
+    | AT                                                      { 0 }
+    | DOLLAR                                                  { 0 }
+    | FATHER                                                  { 0 }
+    | NOT                                                     { 0 }
+    | HASH                                                    { 0 }
+    | DEG_AND                                                 { 0 }
 
 tr_construct:
     lvalue CONNECT LPAREN node_list RPAREN                    { 0 }
 
 expr:
-    lvalue                    { 0 }
-    | tr_construct                    { 0 }
-    | literal                    { 0 }
-    | expr binop expr %prec BINOP                    { 0 }
-    | unop expr                    { 0 }
-    | LPAREN expr RPAREN                    { 0 }
-    | lvalue ASSIGN expr                    { 0 }
-    | ID LPAREN arg_list RPAREN                    { 0 }
+    lvalue                                                    { 0 }
+    | tr_construct                                            { 0 }
+    | literal                                                 { 0 }
+    | expr binop expr %prec BINOP                             { 0 }
+    | unop expr                                               { 0 }
+    | LPAREN expr RPAREN                                      { 0 }
+    | lvalue ASSIGN expr                                      { 0 }
+    | ID LPAREN arg_list RPAREN                               { 0 }
 */    
     
 /* End of the first.
@@ -186,80 +189,64 @@ expr:
     The second is: */
    
 expr:
-    | literal                    { 0 }
+    | literal                             { Literal($1) }
 
-    | expr PLUS expr                    { 0 }
-    | expr MINUS expr                     { 0 }
-    | expr TIMES expr                    { 0 }
-    | expr DIVIDE expr                    { 0 }
-    | expr MOD expr                    { 0 }
+    | expr PLUS expr                      { Binop($1, Add, $3) }
+    | expr MINUS expr                     { Binop($1, Sub, $3) }
+    | expr TIMES expr                     { Binop($1, Mult,$3) }
+    | expr DIVIDE expr                    { Binop($1, Div, $3) }
+    | expr MOD expr                       { Binop($1 ,Mod, $3) }
 
-    | expr GT expr                    { 0 }
-    | expr LT expr                    { 0 }
-    | expr GEQ expr                    { 0 }
-    | expr LEQ expr                    { 0 }
-    | expr NEQ expr                    { 0 }
-    | expr EQ expr                    { 0 }
+    | expr GT expr                    	  { Binop($1, Greater_than , $3) }
+    | expr LT expr                        { Binop($1, Less_than , $3) }
+    | expr GEQ expr                       { Binop($1, Geq, $3) }
+    | expr LEQ expr                       { Binop($1, Leq, $3) }
+    | expr NEQ expr                       { Binop($1, Neq, $3) }
+    | expr EQ expr                        { Binop($1, Equal, $3) }
 
-    | expr AND expr                    { 0 }
-    | expr OR expr                    { 0 }
+    | expr AND expr                       { Binop($1, And, $3) }
+    | expr OR expr                        { Binop($1, Or, $3) }
 
-    | PLUS expr                    { 0 }
-    | MINUS expr                    { 0 }
-    | AT expr                    { 0 }
-    | DOLLAR expr                    { 0 }
-    | FATHER expr                    { 0 }
-    | NOT expr                    { 0 }
-    | HASH expr                    { 0 }
-    | DEG_AND expr                    { 0 }
+    | PLUS expr                           { Uniop(Add,$2) }
+    | MINUS expr                          { Uniop(Sub,$2 ) }
+    | AT expr                    		  { Uniop(At,$2) }
+    | DOLLAR expr                         { Uniop(Dollar,$2) }
+    | FATHER expr                         { Uniop(Child,$2) }
+    | NOT expr                            { Uniop(Not, $2) }
+    | HASH expr                           { Uniop(Hsh, $2) }
+    | DEG_AND expr                        { Uniop(Deg_a,$2) }
 
-    | lvalue                    { 0 }
+    | lvalue                              { $1 }
 
-    | lvalue ASSIGN expr                    { 0 }
+    | lvalue ASSIGN expr                  { Binop($1,Equal,$3) }
     
-    | lvalue CONNECT LPAREN node_list RPAREN                    { 0 }
+    | lvalue CONNECT LPAREN node_list RPAREN  { Conn($1,$4) }
     
-    | LPAREN expr RPAREN                    { 0 }
-    | ID LPAREN arg_list RPAREN                    { 0 }
+    | LPAREN expr RPAREN                  { $2 }
+    | ID LPAREN arg_list RPAREN           { Call($1,$3) }
 
     
 /* End of the second */
 
 literal:
-    INT                    { 0 }
-    | FLOAT                    { 0 }
-    | STRING                    { 0 }
-    | CHAR                    { 0 }
-    | BOOL                    { 0 }
-    | NULL                    { 0 }
+    INT                                   { IntLit($1) }
+    | FLOAT                               { FloatLit($1) }
+    | STRING                              { StringLit($1) }
+    | CHAR                                { CharLit($1) }
+    | BOOL                                { BoolLit($1) }
+    | NULL                                { Null }         /*We dont have a NULL type defined in ast yet*/
 
 node_list:
-    expr                    { 0 }
-    | node_list COLON expr                    { 0 }
+    expr                                  { $1 }
+    | node_list COLON expr                { 0 }
 
 lvalue:
-    ID                    { 0 }
-    | expr DOT ID                    { 0 }
-    | expr LBRACK expr RBRACK                    { 0 }
+    ID                                    { $1 }
+    | expr DOT ID                         { Binop($1,Dot,$3) }
+    | expr LBRACK expr RBRACK             { 0 }
 
 arg_list:
-    /* nothing */                    { 0 }
-    | expr                    { 0 }
-    | arg_list COMMA expr                    { 0 }
-    
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    /* nothing */                         { [] }
+    | expr                                { $1 }
+    | arg_list COMMA expr                 { $3::$1 }
+   
