@@ -9,7 +9,7 @@ let wordlist =
 let rec next l =
 	let word = 
 		match Scanner.token lexbuf with
-			| EOF -> "EOF"
+		  | EOF -> "EOF"
 		  | ID(id) -> "ID(" ^ id ^ ")"
 		  | IF -> "IF"
 		  | ELSE -> "ELSE"
@@ -77,7 +77,7 @@ let rec next l =
 		  | FATHER -> "FATHER"
 		  | LPAREN -> "LPAREN"
 		  | RPAREN -> "RPAREN"
-			| _ -> "UNKNOWN"
+		  | _ -> "UNKNOWN"
 	  in if word = "EOF" then l
 				else next (word :: l)
 in next []

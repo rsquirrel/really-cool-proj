@@ -10,6 +10,8 @@ type literal =
   | StringLit of string
   | TreeLit (* can only be ~ *)
 
+
+
 type expr = (* Expressions *)
     Literal of literal (* 42 *)
   | Id of string (* foo *)
@@ -17,7 +19,7 @@ type expr = (* Expressions *)
   | Call of string * (expr list) (* foo(1, 25) *)
   | Noexpr (* While() *)
   | Uniop of op*expr   (*for unary operators *)
-  | Conn of string * (expr list)
+  | Conn of expr * (expr list)
 
 type init = WithInit of string * expr
 			| WithoutInit of string
@@ -36,9 +38,10 @@ type tree_def = {
 type traverse_order = Preorder | Inorder | Postorder | Levelorder (* different traversal orders *)
 
 type stmt = (* Statements  nothing *)
-     Block of stmt list
+     Block of (stmt list)
    | Expr of expr   (*foo = bar + 3; *)
    | Return of expr (* return 42 also includes return function_name *)
+   | ReturnVoid
    | If of expr * stmt * stmt (* if (foo == 42) {} else {} *)
    | Foreach of string * expr * traverse_order * stmt   (* for each loop *)
    | For of expr * expr * expr * stmt (* for loop *)
@@ -47,12 +50,12 @@ type stmt = (* Statements  nothing *)
    | Break  (* break *)
    | Continue  (* continue *)
    | Vardecl of var_decl
-   | Empty
+   | Empty 
    
 type func_decl = {
     fname : string;
     params : (type_specifier * string) list;
-    body : stmt;
+    body : stmt list;
 }
 
 type construct = 
