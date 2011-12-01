@@ -1,13 +1,12 @@
 all: scanner_test tmlc
 
 tmlc: scanner.cmo parser.cmo compiler.cmo
-	#ocamlc -c ast.mli
 	ocamlc -o tmlc scanner.cmo parser.cmo compiler.cmo
 
 scanner.ml: scanner.mll
 	ocamllex scanner.mll
 
-parser.ml parser.mli: parser.mly
+parser.ml parser.mli: parser.mly ast.cmi
 	ocamlyacc parser.mly
 
 scanner_test: scanner.cmo parser.cmo

@@ -1,5 +1,6 @@
 /* parser.mly */
 /* @authors: Shuai Sun, Yan Zou, Jiabin Hu, Akash */
+%{ open Ast %}
 
 %token <string> ID
 %token IF ELSE WHILE DO FOR BREAK CONTINUE FOREACH IN BY RETURN
@@ -47,30 +48,36 @@
 %left DOT
 
 %start program
-%type <int> program      /* this type should be AST.program. just put int because AST is not finished */
+%type <Ast.program> program      /* this type should be AST.program. just put int because AST is not finished */
 %%
 
 
 program:
-    /* nothing */                             { [],[] }   /*this part should be differnt and it should be similar to MicroC unsure about it */
-    | program type_def                        { $1::$2 }
-    | program decl                            { $1::$2 }
-    | program func_def                        { $1::$2 }
+    /* nothing */                             { [] }   /*this part should be differnt and it should be similar to MicroC unsure about it */
+    | program type_def                        { Treedef($2)::$1 }
+    | program decl                            { Globalvar($2)::$1 }
+    | program func_def                        { Funcdef($2)::$1 }
     
 type_def:
-    TREETYPE LT INT GT ID LBRACE decl_list RBRACE                                      { }
-    | TREETYPE LT INT COMMA LBRACK alias_list RBRACK GT ID LBRACE decl_list RBRACE     { } /*Not sure how to do this..*/
+    TREETYPE LT INT GT ID LBRACE decl_list RBRACE                                      { { typename = $5;
+                                                                                           members = $7;
+                                                                                           degree = $3;
+                                                                                           aliases = [] }}
+    | TREETYPE LT INT COMMA LBRACK alias_list RBRACK GT ID LBRACE decl_list RBRACE     { { typename = $9;
+                                                                                           members = $11;
+                                                                                           degree = $3;
+                                                                                           aliases = $6 } }
 
 alias_list:
-    ID                                       { $1 }
-    | alias_list COMMA ID                    { $1::$3 }
+    ID                                       { [$1] }
+    | alias_list COMMA ID                    { $3::$1 }
 
 decl_list:
-    decl                                     { $1 }
-    | decl_list decl                         { $1::$2 }
+    decl                                     { [$1] }
+    | decl_list decl                         { $2::$1 }
 
 decl:
-    type_specifier init_list SEMI            { $1::$2 }
+    type_specifier init_list SEMI            { ($1, $2) }
 
 type_specifier:
     INT_T                                   { Int }
@@ -78,7 +85,7 @@ type_specifier:
     | CHAR_T                                { Char }
     | STRING_T                              { String }
     | BOOL_T                                { Boolean }
-    | ID                                    { $1 }       
+    | ID                                    { Tree_type($1) }       
 	| VOID                                  { Void }
 
 /*    
@@ -88,37 +95,37 @@ return_type:
 */
 
 init_list:
-    init                                    { type_specifier }
-    | init_list COMMA init                  { $1::$3 }
+    init                                    { [$1] }
+    | init_list COMMA init                  { $3::$1 }
 
 init:
-    ID                                      { $1 }
-    | ID ASSIGN expr                        { Binop($1,Equal,$3) }
+    ID                                      { WithoutInit($1) }
+    | ID ASSIGN expr                        { WithInit($1 ,$3) }
 
 func_def:
-    type_specifier ID LPAREN para_list RPAREN stmt_block           { {fname: $2;     /*We should have return type in ast defined*/
-																	  params: $4;
-																	  body : $6	
+    type_specifier ID LPAREN para_list RPAREN stmt_block           { {fname = $2;     (*We should have return type in ast defined*)
+																	  params = $4;
+																	  body = $6	
 																	} }
 
 para_list:
     /* nothing */					        {[]}
-    | para_decl                             { $1 }
+    | para_decl                             { [$1] }
     | para_list COMMA para_decl             { $3::$1 }
 
 para_decl:
-    type_specifier ID                       { $1::$2 }
+    type_specifier ID                       { ($1, $2) }
     
 stmt_block:
-    LBRACE stmt_list RBRACE                 { Block($2) }
+    LBRACE stmt_list RBRACE                 { $2 }
 
 stmt_list:
-    /* nothing */						    { [] }
+    /* nothing */                           { [] }
     | stmt_list stmt                        { $2::$1 }
 
 stmt:
-    expr SEMI                               				  { $1 }
-    | decl                                                    { $1 }
+    expr SEMI                               				  { Expr($1) }
+    | decl                                                    { Vardecl($1) }
     | stmt_block                                              { Block($1) }
     | IF LPAREN expr RPAREN stmt %prec NOELSE                 { If($3,$5,Block([])) }
     | IF LPAREN expr RPAREN stmt ELSE stmt                    { If($3,$5,$7) }
@@ -130,7 +137,7 @@ stmt:
     | CONTINUE SEMI                                           { Continue }
     | RETURN expr SEMI                                        { Return($2) }
     | RETURN SEMI                                             { Return }
-    | SEMI                                                    { 0 }      /*No action really.. ?*/
+    | SEMI                                                    { Empty }      /*No action really.. ?*/
 
 trvs_order:
     INORDER                                                   { Inorder }    /*I doubt what exactly these should contain..?*/

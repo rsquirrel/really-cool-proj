@@ -1,6 +1,6 @@
 type op = Add | Sub | Mult | Div | Equal | Neq | Less_than | Leq | Greater_than | Or |And |Not |Geq |Mod |Dollar | At | Deg_a | Dot | Hsh | Child | Assign
 
-type type_specifier = Int | Float | Char | String | Boolean | Void | Tree_type(* including return type of even main function *)
+type type_specifier = Int | Float | Char | String | Boolean | Void | Tree_type of string(* including return type of even main function *)
 
 type literal = 
     IntLit of int
@@ -18,11 +18,16 @@ type expr = (* Expressions *)
   | Noexpr (* While() *)
   | Uniop of op*expr   (*for unary operators *)
   | Conn of string * (expr list)
-  
-type var_decl = WithInit of string * type_specifier * expr
-				| WithoutInit of string * type_specifier
+
+type init = WithInit of string * expr
+			| WithoutInit of string
+
+type init_list = init list
+
+type var_decl = type_specifier * init_list
 
 type tree_def = {
+    typename: string;
 	members : var_decl list;
 	degree :int;
 	aliases : string list;
@@ -42,6 +47,7 @@ type stmt = (* Statements  nothing *)
    | Break  (* break *)
    | Continue  (* continue *)
    | Vardecl of var_decl
+   | Empty
    
 type func_decl = {
     fname : string;
