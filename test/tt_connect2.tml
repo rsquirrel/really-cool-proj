@@ -16,8 +16,7 @@ void main ()
 	tc.vstr = "i'm tc";
 	
 	
-	ta -> ( : tb -> ( :tc));
-	//ta -> (~ : tb -> (~ :tc));
+	ta -> ( ~ : tb -> ( ~ :tc));
 	
 	
 	print (ta.vstr);				// root

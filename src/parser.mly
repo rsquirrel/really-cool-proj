@@ -132,11 +132,11 @@ stmt:
     | WHILE LPAREN expr RPAREN stmt                           { While($3,$5) }
     | DO stmt WHILE LPAREN expr RPAREN SEMI                   { Do($2,$5) }
     | FOR LPAREN expr SEMI expr SEMI expr RPAREN stmt         { For($3,$5,$7,$9) }
-    | FOREACH LPAREN ID IN ID RPAREN BY trvs_order stmt       { Foreach($3,$5,$8,$9) }
+    | FOREACH LPAREN ID IN expr BY trvs_order RPAREN stmt       { Foreach($3,$5,$7,$9) }
     | BREAK SEMI                                              { Break }
     | CONTINUE SEMI                                           { Continue }
     | RETURN expr SEMI                                        { Return($2) }
-    | RETURN SEMI                                             { Return }
+    | RETURN SEMI                                             { ReturnVoid }
     | SEMI                                                    { Empty }      /*No action really.. ?*/
 
 trvs_order:
@@ -241,19 +241,19 @@ literal:
     | STRING                              { StringLit($1) }
     | CHAR                                { CharLit($1) }
     | BOOL                                { BoolLit($1) }
-    | NULL                                { Null }         /*We dont have a NULL type defined in ast yet*/
+    | NULL                                { TreeLit }         /*We dont have a NULL type defined in ast yet*/
 
 node_list:
-    expr                                  { $1 }
-    | node_list COLON expr                { 0 }
+    expr                                  { [$1] }
+    | node_list COLON expr                { $3::$1 }
 
 lvalue:
-    ID                                    { $1 }
-    | expr DOT ID                         { Binop($1,Dot,$3) }
-    | expr LBRACK expr RBRACK             { 0 }
+    ID                                    { Id($1) }
+    | expr DOT ID                         { Binop($1, Dot, Id($3)) }
+    | expr LBRACK expr RBRACK             { Binop($1, Child, $3) }
 
 arg_list:
     /* nothing */                         { [] }
-    | expr                                { $1 }
+    | expr                                { [$1] }
     | arg_list COMMA expr                 { $3::$1 }
    
