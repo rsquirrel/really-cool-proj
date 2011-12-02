@@ -2,7 +2,7 @@
 # Usage:
 #   1. Run "make scanner_test" in src to generate a scanner_test.
 #   2. Run "scanner_test.bash" and pass in the path of scanner_test as the first argument.
-#      If no path is specified, "../src/scanner_test" is used as default.
+#      If no path is specified, "../src/TML_Compiler/scanner_test" is used as default.
 #      This script will generate .scan file for each .tml file, recording the result of the scanner
 #   3. Run "scanner_test.bash clean" to remove all the .s files.
 
@@ -10,8 +10,8 @@
 
 if [ $# -lt 1 ]
 then
-	echo "No path for the scanner_test specified, use ../src/scanner_test as default" 
-	tmlc="../src/scanner_test"
+	echo "No path for the scanner_test specified, use ../src/TML_Compiler/scanner_test as default" 
+	tmlc="../src/TML_Compiler/scanner_test"
 elif [ "$1" = "clean" ]
 then
 	rm *.scan

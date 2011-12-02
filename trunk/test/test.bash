@@ -1,14 +1,14 @@
 # Author: Yan Zou
 # Usage: test.bash <path>
 #        The path is for the compiler.
-#        If no path is specified, ../src/tmlc is used as default
+#        If no path is specified, ../src/TML_Compiler/tmlc is used as default
 
 #!/bin/bash
 
 if [ $# -lt 1 ]
 then
-	echo "No path for the compiler specified, use ../src/tmlc as default" 
-	tmlc="../src/tmlc"
+	echo "No path for the compiler specified, use ../src/TML_Compiler/tmlc as default" 
+	tmlc="../src/TML_Compiler/tmlc"
 else
 	tmlc=$1
 fi
