@@ -14,7 +14,7 @@ then
 	tmlc="../src/TML_Compiler/scanner_test"
 elif [ "$1" = "clean" ]
 then
-	rm *.scan
+	rm SrcCode/*.scan
 	exit
 else
 	tmlc=$1
@@ -26,7 +26,7 @@ then
 	exit
 fi
 
-for file in *.tml
+for file in SrcCode/*.tml
 do
 	filename=`expr $file : '\(^.*\)'[.]`
 	scan_result=$filename.scan
