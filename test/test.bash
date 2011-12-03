@@ -19,7 +19,7 @@ then
 	exit
 fi
 
-for file in *.tml
+for file in SrcCode/*.tml
 do
 	echo "$tmlc < $file"
 	$tmlc < $file
