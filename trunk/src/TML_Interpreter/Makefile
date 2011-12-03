@@ -6,6 +6,7 @@ JC = javac
 
 CLASSES = \
         Instruction.java \
+        Program.java \
         Main.java
 
 default: classes
