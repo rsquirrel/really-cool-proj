@@ -60,13 +60,13 @@ program:
     
 type_def:
     TREETYPE LT INT GT ID LBRACE decl_list RBRACE                                      { { typename = $5;
-                                                                                           members = $7;
+                                                                                           members = List.rev $7;
                                                                                            degree = $3;
                                                                                            aliases = [] }}
     | TREETYPE LT INT COMMA LBRACK alias_list RBRACK GT ID LBRACE decl_list RBRACE     { { typename = $9;
-                                                                                           members = $11;
+                                                                                           members = List.rev $11;
                                                                                            degree = $3;
-                                                                                           aliases = $6 } }
+                                                                                           aliases = List.rev $6 } }
 
 alias_list:
     ID                                       { [$1] }
@@ -77,7 +77,7 @@ decl_list:
     | decl_list decl                         { $2::$1 }
 
 decl:
-    type_specifier init_list SEMI            { ($1, $2) }
+    type_specifier init_list SEMI            { ($1, List.rev $2) }
 
 type_specifier:
     INT_T                                   { Int }
@@ -104,7 +104,7 @@ init:
 
 func_def:
     type_specifier ID LPAREN para_list RPAREN stmt_block           { {fname = $2;     (*We should have return type in ast defined*)
-																	  params = $4;
+																	  params = List.rev $4;
 																	  body = $6	
 																	} }
 
@@ -117,7 +117,7 @@ para_decl:
     type_specifier ID                       { ($1, $2) }
     
 stmt_block:
-    LBRACE stmt_list RBRACE                 { $2 }
+    LBRACE stmt_list RBRACE                 { List.rev $2 }
 
 stmt_list:
     /* nothing */                           { [] }
@@ -127,12 +127,12 @@ stmt:
     expr SEMI                               				  { Expr($1) }
     | decl                                                    { Vardecl($1) }
     | stmt_block                                              { Block($1) }
-    | IF LPAREN expr RPAREN stmt %prec NOELSE                 { If($3,$5,Block([])) }
-    | IF LPAREN expr RPAREN stmt ELSE stmt                    { If($3,$5,$7) }
-    | WHILE LPAREN expr RPAREN stmt                           { While($3,$5) }
-    | DO stmt WHILE LPAREN expr RPAREN SEMI                   { Do($2,$5) }
-    | FOR LPAREN expr SEMI expr SEMI expr RPAREN stmt         { For($3,$5,$7,$9) }
-    | FOREACH LPAREN ID IN expr BY trvs_order RPAREN stmt       { Foreach($3,$5,$7,$9) }
+    | IF LPAREN expr RPAREN stmt %prec NOELSE                 { If($3, $5, Block([])) }
+    | IF LPAREN expr RPAREN stmt ELSE stmt                    { If($3, $5, $7) }
+    | WHILE LPAREN expr RPAREN stmt                           { While($3, $5) }
+    | DO stmt WHILE LPAREN expr RPAREN SEMI                   { Do($2, $5) }
+    | FOR LPAREN expr SEMI expr SEMI expr RPAREN stmt         { For($3, $5, $7, $9) }
+    | FOREACH LPAREN ID IN expr BY trvs_order RPAREN stmt       { Foreach($3, $5, $7, $9) }
     | BREAK SEMI                                              { Break }
     | CONTINUE SEMI                                           { Continue }
     | RETURN expr SEMI                                        { Return($2) }
@@ -200,12 +200,12 @@ expr:
 
     | expr PLUS expr                      { Binop($1, Add, $3) }
     | expr MINUS expr                     { Binop($1, Sub, $3) }
-    | expr TIMES expr                     { Binop($1, Mult,$3) }
+    | expr TIMES expr                     { Binop($1, Mult, $3) }
     | expr DIVIDE expr                    { Binop($1, Div, $3) }
-    | expr MOD expr                       { Binop($1 ,Mod, $3) }
+    | expr MOD expr                       { Binop($1, Mod, $3) }
 
-    | expr GT expr                    	  { Binop($1, Greater_than , $3) }
-    | expr LT expr                        { Binop($1, Less_than , $3) }
+    | expr GT expr                    	  { Binop($1, Greater_than, $3) }
+    | expr LT expr                        { Binop($1, Less_than, $3) }
     | expr GEQ expr                       { Binop($1, Geq, $3) }
     | expr LEQ expr                       { Binop($1, Leq, $3) }
     | expr NEQ expr                       { Binop($1, Neq, $3) }
@@ -214,23 +214,23 @@ expr:
     | expr AND expr                       { Binop($1, And, $3) }
     | expr OR expr                        { Binop($1, Or, $3) }
 
-    | PLUS expr                           { Uniop(Add,$2) }
-    | MINUS expr                          { Uniop(Sub,$2 ) }
-    | AT expr                    		  { Uniop(At,$2) }
-    | DOLLAR expr                         { Uniop(Dollar,$2) }
-    | FATHER expr                         { Uniop(Child,$2) }
+    | PLUS expr                           { Uniop(Add, $2) }
+    | MINUS expr                          { Uniop(Sub, $2 ) }
+    | AT expr                    		  { Uniop(At, $2) }
+    | DOLLAR expr                         { Uniop(Dollar, $2) }
+    | FATHER expr                         { Uniop(Child, $2) }
     | NOT expr                            { Uniop(Not, $2) }
     | HASH expr                           { Uniop(Hsh, $2) }
-    | DEG_AND expr                        { Uniop(Deg_a,$2) }
+    | DEG_AND expr                        { Uniop(Deg_a, $2) }
 
     | lvalue                              { $1 }
 
-    | lvalue ASSIGN expr                  { Binop($1,Equal,$3) }
+    | lvalue ASSIGN expr                  { Binop($1, Equal, $3) }
     
-    | lvalue CONNECT LPAREN node_list RPAREN  { Conn($1,$4) }
+    | lvalue CONNECT LPAREN node_list RPAREN  { Conn($1, List.rev  $4) }
     
     | LPAREN expr RPAREN                  { $2 }
-    | ID LPAREN arg_list RPAREN           { Call($1,$3) }
+    | ID LPAREN arg_list RPAREN           { Call($1, List.rev $3) }
 
     
 /* End of the second */
