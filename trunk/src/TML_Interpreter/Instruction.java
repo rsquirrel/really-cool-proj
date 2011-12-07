@@ -2,9 +2,9 @@ public class Instruction
 {
     public enum Type
     {
-        Lit,
-        Drp,
-        Unp,
+        Psh,
+        Pop,
+        Uop,
         Bin,
         Lod,
         Str,
@@ -24,11 +24,11 @@ public class Instruction
         // Binops
         Add,
         Sub,
-        Mult,
+        Mul,
         Div,
-        Equal,
+        Eq,
         Neq,
-        Less,
+        Lt,
         Leq,
         Gt,
         Geq,
