@@ -4,6 +4,7 @@
 type bstmt =
 	| Psh of int (* Push a literal *)
 	| Pop (* Pop out a literal from the stack *)
+(*	| Pop of int (* Pop out several elements from the stack *)*)
 	| Uop of Ast.op (* Perform unary operation on top one element of stack *)
 	| Bin of Ast.op (* Perform binary operation on top two elements of stack *)
 	| Lod of int (* Fetch global variable *)
@@ -18,3 +19,4 @@ type bstmt =
 	| Bra of int (* Branch relative *)
 	| Hlt (* Terminate *) 
 	| Fld of int (* Add a new value field to a tree node *)
+	| Glb of int (* Indicate the number of global variables *)

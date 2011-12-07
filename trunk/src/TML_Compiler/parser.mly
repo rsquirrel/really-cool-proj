@@ -86,7 +86,7 @@ type_specifier:
     | STRING_T                              { String }
     | BOOL_T                                { Boolean }
     | ID                                    { Tree_type($1) }       
-	| VOID                                  { Void }
+		| VOID                                  { Void }
 
 /*    
 return_type:
@@ -127,7 +127,7 @@ stmt:
     expr SEMI                               				  { Expr($1) }
     | decl                                                    { Vardecl($1) }
     | stmt_block                                              { Block($1) }
-    | IF LPAREN expr RPAREN stmt %prec NOELSE                 { If($3, $5, Block([])) }
+    | IF LPAREN expr RPAREN stmt %prec NOELSE                 { If($3, $5, Empty) }
     | IF LPAREN expr RPAREN stmt ELSE stmt                    { If($3, $5, $7) }
     | WHILE LPAREN expr RPAREN stmt                           { While($3, $5) }
     | DO stmt WHILE LPAREN expr RPAREN SEMI                   { Do($2, $5) }
@@ -225,7 +225,7 @@ expr:
 
     | lvalue                              { $1 }
 
-    | lvalue ASSIGN expr                  { Binop($1, Equal, $3) }
+    | lvalue ASSIGN expr                  { Assign($1, $3) }
     
     | lvalue CONNECT LPAREN node_list RPAREN  { Conn($1, List.rev  $4) }
     

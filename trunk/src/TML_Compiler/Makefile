@@ -9,8 +9,11 @@ scanner.ml: scanner.mll
 parser.ml parser.mli: parser.mly ast.cmi
 	ocamlyacc parser.mly
 
-compiler.cmo: compiler.ml bytecode.cmi ast.cmi
+compiler.cmo: compiler.ml bytecode.cmi
 	ocamlc -c compiler.ml
+
+bytecode.cmi: bytecode.mli ast.cmi
+	ocamlc -c bytecode.mli
 
 scanner_test: scanner.cmo parser.cmo
 	ocamlc -o scanner_test scanner.cmo parser.cmo scanner_test.ml
