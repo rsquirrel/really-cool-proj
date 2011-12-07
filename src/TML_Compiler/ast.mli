@@ -1,4 +1,4 @@
-type op = Add | Sub | Mult | Div | Equal | Neq | Less_than | Leq | Greater_than | Or |And |Not |Geq |Mod |Dollar | At | Deg_a | Dot | Hsh | Child | Assign
+type op = Add | Sub | Mult | Div | Equal | Neq | Less_than | Leq | Greater_than | Or |And |Not |Geq |Mod |Dollar | At | Deg_a | Dot | Hsh | Child
 
 type type_specifier = Int | Float | Char | String | Boolean | Void | Tree_type of string(* including return type of even main function *)
 
@@ -16,6 +16,7 @@ type expr = (* Expressions *)
     Literal of literal (* 42 *)
   | Id of string (* foo *)
   | Binop of expr * op * expr (* a + b *)
+  | Assign of expr * expr (* a = b *)
   | Call of string * (expr list) (* foo(1, 25) *)
   | Noexpr (* While() *)
   | Uniop of op*expr   (*for unary operators *)
@@ -29,7 +30,7 @@ type init_list = init list
 type var_decl = type_specifier * init_list
 
 type tree_def = {
-    typename: string;
+  typename: string;
 	members : var_decl list;
 	degree :int;
 	aliases : string list;
