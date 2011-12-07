@@ -53,11 +53,11 @@ public class Program
             int operand = curIns.getOperand();
             switch(curIns.getType())
             {
-            case Lit:
+            case Psh:
                 stack[sp++] = curIns.getOperand();
                 pc++;
                 break;
-            case Drp:
+            case Pop:
                 sp--;
                 pc++;
                 break;
@@ -92,7 +92,7 @@ public class Program
             case Ent:
                 stack[sp] = fp;
                 fp = sp;
-                sp = sp + operand + 1;
+                sp = sp /* + operand */ + 1;
                 pc++;
                 break;
             case Rts:
@@ -124,19 +124,19 @@ public class Program
                 case Sub:
                     stack[sp - 2] = op1 - op2;
                     break;
-                case Mult:
+                case Mul:
                     stack[sp - 2] = op1 * op2;
                     break;
                 case Div:
                     stack[sp - 2] = op1 / op2;
                     break;
-                case Equal:
+                case Eq:
                     stack[sp - 2] = (op1 == op2) ? 1 : 0;
                     break;
                 case Neq:
                     stack[sp - 2] = (op1 != op2) ? 1 : 0;
                     break;
-                case Less:
+                case Lt:
                     stack[sp - 2] = (op1 < op2) ? 1 : 0;
                     break;
                 case Leq:
@@ -152,7 +152,7 @@ public class Program
                 sp--;
                 pc++;
                 break;
-            case Unp:
+            case Uop:
                 switch (curIns.getSubType())
                 {
                 case Neg:

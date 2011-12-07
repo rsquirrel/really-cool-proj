@@ -33,7 +33,7 @@ public class Main
                     switch (subType)
                     {
                     case Neg:
-                        type = Instruction.Type.Unp;
+                        type = Instruction.Type.Uop;
                         break;
                     default:
                         break;
@@ -43,7 +43,7 @@ public class Main
                 int operand = 0;
                 switch (type)
                 {
-                case Lit:
+                case Psh:
                 case Lod:
                 case Str:
                 case Lfp:
