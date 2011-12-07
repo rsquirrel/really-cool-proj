@@ -53,6 +53,9 @@ public class Program
             int operand = curIns.getOperand();
             switch(curIns.getType())
             {
+            case Glb:
+                globals = new int[curIns.getOperand()];
+                break;
             case Psh:
                 stack[sp++] = curIns.getOperand();
                 pc++;

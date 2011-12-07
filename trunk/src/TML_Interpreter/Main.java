@@ -43,6 +43,7 @@ public class Main
                 int operand = 0;
                 switch (type)
                 {
+                case Glb:
                 case Psh:
                 case Lod:
                 case Str:
