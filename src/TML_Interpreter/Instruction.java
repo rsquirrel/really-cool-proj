@@ -2,6 +2,7 @@ public class Instruction
 {
     public enum Type
     {
+        Glb,
         Psh,
         Pop,
         Uop,
