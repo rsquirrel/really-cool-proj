@@ -1,5 +1,5 @@
-(* ast.mli *)
-(* @authors: Akash, Shuai Sun *)
+(* sast.mli *)
+(* @authors: Yan Zou *)
 
 open Type
 
@@ -21,19 +21,15 @@ type expr = (* Expressions *)
   | Uniop of op * expr   (*for unary operators *)
   | Conn of expr * (expr list)
 
-type init = WithInit of string * expr
-			| WithoutInit of string
-
-type init_list = init list
-
-type var_decl = t * init_list
+type var_decl = t * string * (Ast.expr option)
 
 type tree_def = {
   typename: string;
 	members : var_decl list;
-	degree :int;
+	degree : int;
 	aliases : string list;
 }
+  
 
 type stmt = (* Statements  nothing *)
      Block of (stmt list)
@@ -53,12 +49,12 @@ type stmt = (* Statements  nothing *)
 type func_decl = {
     fname : string;
     params : (t * string) list;
+		locals : var_decl list;
     body : stmt list;
 }
-
-type construct = 
-     Globalvar of var_decl
-   | Funcdef of func_decl
-   | Treedef of tree_def
                
-type program = construct list 
+type program = {
+		treetypes: tree_def list;
+		globals: var_decl list;
+		functions: func_decl list;
+}

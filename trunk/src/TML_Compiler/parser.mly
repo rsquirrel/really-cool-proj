@@ -1,5 +1,6 @@
 /* parser.mly */
 /* @authors: Shuai Sun, Yan Zou, Jiabin Hu, Akash */
+%{ open Type %}
 %{ open Ast %}
 
 %token <string> ID
