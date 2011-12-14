@@ -146,56 +146,6 @@ trvs_order:
     | POSTORDER                                               { Postorder }
     | LEVELORDER                                              { Levelorder }
 
-/* To construct the expr, there are two ways.
-   The second causes more conflicts.
-   The first is: */
-/*Not writing anything for these as they are not being used*/
-/*
-binop:
-    PLUS                                                      { 0 }
-    | MINUS                                                   { 0 }
-    | TIMES                                                   { 0 }
-    | DIVIDE                                                  { 0 }
-    | MOD                                                     { 0 }
-
-    | GT                                                      { 0 }
-    | LT                                                      { 0 }
-    | GEQ                                                     { 0 }
-    | LEQ                                                     { 0 }
-    | NEQ                                                     { 0 }
-    | EQ                                                      { 0 }
-
-    | AND                                                     { 0 }
-    | OR                                                      { 0 }  
-
-unop:
-    PLUS                                                      { 0 }
-    | MINUS                                                   { 0 }
-    | AT                                                      { 0 }
-    | DOLLAR                                                  { 0 }
-    | FATHER                                                  { 0 }
-    | NOT                                                     { 0 }
-    | HASH                                                    { 0 }
-    | DEG_AND                                                 { 0 }
-
-tr_construct:
-    lvalue CONNECT LPAREN node_list RPAREN                    { 0 }
-
-expr:
-    lvalue                                                    { 0 }
-    | tr_construct                                            { 0 }
-    | literal                                                 { 0 }
-    | expr binop expr %prec BINOP                             { 0 }
-    | unop expr                                               { 0 }
-    | LPAREN expr RPAREN                                      { 0 }
-    | lvalue ASSIGN expr                                      { 0 }
-    | ID LPAREN arg_list RPAREN                               { 0 }
-*/    
-    
-/* End of the first.
-    
-    The second is: */
-   
 expr:
     | literal                             { Literal($1) }
 
@@ -233,8 +183,6 @@ expr:
     | LPAREN expr RPAREN                  { $2 }
     | ID LPAREN arg_list RPAREN           { Call($1, List.rev $3) }
 
-    
-/* End of the second */
 
 literal:
     INT                                   { IntLit($1) }
