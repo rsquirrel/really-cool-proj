@@ -17,7 +17,7 @@ public class Main
             scanner.useDelimiter("\\s+");
             while (scanner.hasNext())
             {
-                int lineNumber = scanner.nextInt();
+                //int lineNumber = scanner.nextInt();
                 Instruction.Type type = null;
                 Instruction.SubType subType = null;
                 String instruction = scanner.next();
@@ -51,7 +51,7 @@ public class Main
                 case Sfp:
                 case Jsr:
                 case Ent:
-                case Rts:
+                case Ret:
                 case Beq:
                 case Bne:
                 case Bra:

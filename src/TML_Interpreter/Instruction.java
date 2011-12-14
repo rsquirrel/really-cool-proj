@@ -13,7 +13,7 @@ public class Instruction
         Sfp,
         Jsr,
         Ent,
-        Rts,
+        Ret,
         Beq,
         Bne,
         Bra,
@@ -33,6 +33,7 @@ public class Instruction
         Leq,
         Gt,
         Geq,
+        Mod,
         
        // Uniops
         Neg
