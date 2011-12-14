@@ -3,14 +3,6 @@
 
 open Type
 
-type literal = 
-    IntLit of int
-  | FloatLit of float
-  | CharLit of char
-  | BoolLit of bool
-  | StringLit of string
-  | TreeLit (* can only be ~ *)
-
 type expr = (* Expressions *)
     Literal of literal (* 42 *)
   | Id of string (* foo *)
@@ -51,6 +43,7 @@ type stmt = (* Statements  nothing *)
    | Empty 
    
 type func_decl = {
+	  return_type: t;
     fname : string;
     params : (t * string) list;
     body : stmt list;
