@@ -3,6 +3,7 @@
 (* @authors: Yan Zou *)
 (* @description: Semantic Analysis and convert AST to SAST *)
 
+open Type
 open Ast
 open Sast
 
@@ -10,294 +11,213 @@ module StringMap = Map.Make(String)
 
 type symbol_table = {
 	parent : symbol_table option;
-	var : var_decl list;
-	func : func_decl list
+	var : (t * string) list;
+	func : (t * string * (t list)) list
 }
 
 let int_of_bool = function
 	| true -> 1
 	| false -> 0
 
+let rec find_var scope name = 
+	try
+		List.find (fun (_, var_name) -> var_name = name) scope.var
+	with Not_found -> 
+		match scope.parent with
+			| Some(parent) ->find_var parent name
+			| _ -> raise Not_found
+
+let rec find_func scope name =
+	try
+		List.find (fun (_, func_name, _) -> func_name = name) scope.func
+	with Not_found -> 
+		match scope.parent with
+			| Some(parent) -> find_func parent name
+			| _ -> raise Not_found
+
+let part decl = 
+		let t = fst decl in
+		List.rev (List.fold_left (fun l -> function
+			| WithInit (name, e) -> (t, name, Some(e))::l
+			| WithoutInit name -> (t, name, None)::l) [] (snd decl))
+
+let rec expr scope = function
+	| Ast.Literal lit ->
+			let lit_type = match lit with
+				| IntLit i -> Int
+				| FloatLit f -> Float
+				| CharLit c -> Char
+				| BoolLit b -> Boolean
+				| StringLit s -> String
+				| TreeLit -> Tree_type("~") (* universal tree type *)
+			in Sast.Literal(lit), lit_type
+  | Ast.Id id ->
+			let (var_type, _) = try
+					find_var scope id
+				with Not_found ->
+					raise (Failure ("undeclared identifier " ^ id))
+			in Sast.Id(id), var_type
+  | Ast.Binop (e1, bin_op, e2) ->
+			let et1 = expr scope e1 and et2 = expr scope e2 in
+			let (_, t1) = et1 and (_, t2) = et2 in
+			if t1 = t2 then (* Type match *)
+				Sast.Binop(et1, bin_op, et2), t1
+			else
+				raise (Failure ("type mismatch in binary operation"))
+	| Ast.Assign (e1, e2) ->
+			let et1 = expr scope e1 and et2 = expr scope e2 in
+			let (_, t1) = et1 and (_, t2) = et2 in
+			if t1 = t2 then (* Type match *)
+				Sast.Assign(et1, et2), t1
+			else
+				raise (Failure ("type mismatch in assignment"))
+  | Ast.Call (func_name, params) -> 
+			let (func_type, _, required_param_types) = try
+					find_func scope func_name
+				with Not_found -> 
+					raise (Failure ("undeclared identifier " ^ func_name))
+			in
+			let typed_params = List.map (expr scope) params in
+			let param_types = List.map (fun et -> snd et) typed_params in
+			if param_types = required_param_types then
+				Sast.Call(func_name, typed_params), func_type
+			else
+				raise (Failure ("calling function " ^ func_name ^ " parameters mismatch"))
+  | Ast.Uniop (un_op, e) ->
+			let et = expr scope e in
+			Sast.Uniop(un_op, et), (snd et)
+  | Ast.Conn (e, el) -> 
+			let et = expr scope e and etl = List.map (expr scope) el in
+			Sast.Conn(et, etl), (snd et) (* TODO *)
+	| Ast.Noexpr ->
+			Sast.Noexpr, Void (* TODO: What is this? *)
+
+(* convert Ast.expr to Sast.expr in the variable initialization *)
+let check_init scope = function
+	| Some(e) -> Some(expr scope e)
+	| None -> None
+
+let rec stmt scope = function
+	| Ast.Block sl ->
+			(* create a new empty scope for the block *)
+			let block_scope = { scope with (* func reserves *)
+				parent = Some(scope);
+				var = [];
+			} in
+			(* check each statement in the block. scope may change in this process *)
+			let check_stmt (block_scope, stl) s = match s with
+				| Ast.Vardecl var_decl -> 
+						let var_list = part var_decl in (* expand the multi-var declaration *)
+						(* add all var in var_list to block_scope *)
+						(* and convert the var_list(Ast.expr) to new_var_list(Sast.expr) *)
+						let add_var (block_scope, new_var_list) (t, name, init) =
+							let new_scope = { (* add var to block_scope, inverse order *)
+							  (* We don't need init info in block_scope *)
+								block_scope with var = (t, name)::block_scope.var
+							} and new_var_decl = (* convert from Ast.expr to Sast.expr *)
+								(t, name, check_init scope init)
+							in (* add new_var_decl to new_var_list, inverse order *)
+							(new_scope, Sast.Vardecl(new_var_decl)::new_var_list)
+						in
+						let (new_scope, new_var_list) =
+							List.fold_left add_var (block_scope, []) var_list
+						in
+						(new_scope, new_var_list @ stl) (* for one declaration *)
+				| _ -> (block_scope, (stmt block_scope s)::stl)
+			in
+			let (block_scope, stl) =
+				List.fold_left check_stmt (block_scope, []) sl
+			in (* Note we don't have init info in block_scope *)
+			(* The init is still in stmt list which can not be rearranged *)
+			Sast.Block(List.rev stl, List.rev block_scope.var)
+	| Ast.Expr e -> Sast.Expr(expr scope e)
+	| Ast.Return e -> Sast.Return(expr scope e)
+	| Ast.ReturnVoid -> Sast.Return(Sast.Noexpr, Void)
+	| Ast.If (e, s1, s2) ->
+			let et = expr scope e in
+			let st1 = stmt scope s1 and st2 = stmt scope s2 in
+			Sast.If(et, st1, st2)
+	| Ast.Foreach (id, e, order, s) ->
+			let (id_type, _) = try
+					find_var scope id
+				with Not_found ->
+					raise (Failure ("undeclared identifier " ^ id))
+			in (match id_type with
+				| Tree_type type_name ->
+						let et = expr scope e in 
+						if (snd et) = id_type then (* The same tree type *)
+							Sast.Foreach(id, et, order, stmt scope s)
+						else
+							raise (Failure ("foreach not in same tree type"))
+				| _ -> raise (Failure ("identifier " ^ id ^ " is not a tree type")))
+	| Ast.For (e1, e2, e3, s) -> 
+			Sast.For (expr scope e1, expr scope e2, expr scope e3, stmt scope s)
+	| Ast.Do (s, e) ->
+			Sast.Do (stmt scope s, expr scope e)
+	| Ast.While (e, s) ->
+			Sast.While (expr scope e, stmt scope s)
+	| Ast.Break -> Sast.Break
+	| Ast.Continue -> Sast.Continue
+	| Ast.Empty -> Sast.Empty
+	| Ast.Vardecl var_decl -> (* separately handled before *)
+			raise (Failure "Variable declaration in wrong position!") 
+
 let check program =
+	let init_glob_scope = {
+		parent = None;
+		var = [];
+		func = [];
+	} in
+	(* Global variable declarations and function definitions can be rearranged *)
+	(* But local variable declarations can not be rearranged with other statements *)
 	let (tree_list, glob_list, func_list) =
 		(* expand multiple variable declarations into declaration lists *)
-		let part decl = 
-			let t = fst decl in
-			List.rev (List.fold_left (fun l -> function
-				| WithInit (name, e) -> (t, name, Some(e))::l
-				| WithoutInit name -> (t, name, None)::l) [] (snd decl))
-		in
-		let rec classify tree_list glob_list func_list = function
-			| [] -> (tree_list, glob_list, func_list)
+		let rec classify tree_list glob_list func_list glob_scope = function
+			| [] -> (tree_list, glob_list, List.rev func_list)
 			| (Globalvar var_decl)::tl -> (* put it into the loop *)
-					classify tree_list (glob_list @ (part var_decl))  func_list tl
+					let var_list = part var_decl in
+					let new_var_list = (* convert Ast.expr to Sast.expr *)
+						List.map (fun (t, name, init) ->
+							(t, name, check_init glob_scope init)) var_list
+					in
+					let new_scope = { glob_scope with var =
+						glob_scope.var @ (* add only type and name info into scope *)
+						List.map (fun (vtype, name, init) -> (vtype, name)) var_list
+					} in (* add new_var_list to glob_list in normal order *)
+					classify tree_list (glob_list @ new_var_list) func_list new_scope tl
 			| (Funcdef func_decl)::tl ->
-					classify tree_list glob_list func_list tl
+					let ft = func_decl.Ast.return_type
+						and fn = func_decl.Ast.fname
+						and fp = func_decl.Ast.params
+					in
+					let required_param_types = 
+						List.map (fun p -> fst p) fp
+					in
+					let new_scope = { glob_scope with func =
+						(ft, fn, required_param_types)::glob_scope.func
+					} in
+					let func_block = 
+						stmt glob_scope (Ast.Block(func_decl.Ast.body))
+					in
+					let (new_body, local_var) = match func_block with
+						| Sast.Block(new_body, local_var) -> (new_body, local_var)
+						| _ -> raise (Failure ("unexpected fatal error"))
+					in
+					let new_func_decl = {
+						return_type = ft;
+						fname = fn;
+						params = fp;
+						locals = local_var;
+						(* Note we don't have init info in local_var *)
+						(* The init is still in function body which can not be rearranged *)
+						body = new_body;
+					} in (* add new_func_decl to func_list in reverse order *)
+					classify tree_list glob_list (new_func_decl::func_list) new_scope tl
 			| (Treedef tree_def)::tl ->
-					classify tree_list glob_list func_list tl
-		in classify [] [] [] (List.rev program)
+					classify tree_list glob_list func_list glob_scope tl
+		in classify [] [] [] init_glob_scope (List.rev program)
 	in {
 		treetypes = tree_list;
 		globals = glob_list;
 		functions = func_list
 	}
-	
-	(*
-	
-	let (global_init, func_bodies) =
-	  (* generate index and store it in map *)
-		(* The first one will have index "start", and the following *)
-		(* index is incremented by 1 one after another. *)
-		let rec gen_index map start = function
-			| [] -> map
-			| hd::tl -> let new_map =
-					StringMap.add (snd hd) start map in
-					gen_index new_map (start + 1) tl
-		in
-		(* translate expressions, used by both trans_global and trans_stmt *)
-		let trans_expr env locals e =
-			(* left value for assignment, get the address or use Sfp/Str *)
-			let rec lvalue = function
-				| Id id ->
-					(try [Sfp (StringMap.find id locals)]
-					 with Not_found ->
-						try [Str (StringMap.find id env.global_index)]
-						with Not_found ->
-							raise (Failure ("Variable " ^ id ^ "not found")))
-				| Binop (e1, bin_op, e2) ->
-					( match bin_op with
-							| Dot -> []
-							| Child -> []
-							| _ -> raise (Failure "Illegal left value") )
-				| _ -> raise (Failure "Illegal left value")
-			in
-			(* Evaluate expression, the result is on top of the stack *)
-			let rec expr = function
-				| Literal lit -> ( match lit with
-					| IntLit i -> [Psh i]
-					| FloatLit f -> [Psh (int_of_float f)]
-					| CharLit c -> [Psh (int_of_char c)]
-					| BoolLit b -> [Psh (int_of_bool b)]
-					| StringLit str -> [Psh 2000(*(int_of_string s)*)]
-					| TreeLit -> [Psh 10000] )
-  			| Id id ->
-					(try [Lfp (StringMap.find id locals)]
-					 with Not_found ->
-						try [Lod (StringMap.find id env.global_index)]
-						with Not_found ->
-							raise (Failure ("Variable " ^ id ^ "not found")))
-  			| Binop (e1, bin_op, e2) ->
-						(expr e1) @ (expr e2) @ [Bin bin_op]
-				| Assign (e1, e2) -> (expr e2) @ (lvalue e1)
-  			| Call (func_name, params) -> 
-						List.concat (List.map expr (List.rev params)) @
-						(try [Jsr (StringMap.find func_name env.func_index)]
-						 with Not_found ->
-							raise (Failure ("Function" ^ func_name ^ "not found")))
-  			| Uniop (un_op, e) -> (expr e) @ [Bin un_op]
-  			| Conn (e, el) -> [] (* TODO *)
-				| Noexpr -> [] (* TODO: What is this? *)
-			in expr e
-		in
-		(* add to locals according to the init_list *)
-		let trans_globals env next_index var_decl =
-			let rec add_global globals next_index byte_list = function
-				| [] -> (globals, List.rev byte_list)
-				| hd::tl ->
-					let (name, init) = match hd with
-						| WithInit (name, e) ->
-								let new_env = {env with global_index = globals} in
-								(name, (trans_expr new_env StringMap.empty e) @
-												[Str next_index; Pop])
-						| WithoutInit name -> (name, [])
-						(* Each local is allocated a unit on the stack *)
-					in
-						add_global (StringMap.add name next_index globals)
-											 (next_index + 1) (init::byte_list) tl
-			in add_global env.global_index next_index [] (snd var_decl)
-		in
-		(* translate one function body and return the list of bytecodes *)
-		let trans_func env func_decl =
-			let num_params = List.length func_decl.params in
-			(* generate repeat bytecode statements according to times *)
-			let rec repeat times byte_stmt =
-				if (times == 0) then []
-				else byte_stmt::(repeat (times - 1) byte_stmt)
-			in
-			(* translate one statement/block with certain locals *)
-			let rec trans_stmt locals next_index target =
-				(* add to locals according to the init_list *)
-				let rec add_local locals next_index byte_list = function
-					| [] -> (locals, next_index, byte_list)
-					| hd::tl ->
-						let (name, init) = match hd with
-							| WithInit (name, e) -> (name, trans_expr env locals e)
-							| WithoutInit name -> (name, [Psh 0])
-							(* Each local is allocated a unit on the stack *)
-						in
-							add_local (StringMap.add name next_index locals)
-												(next_index + 1) (byte_list @ init) tl
-				in
-				let rec loop_control sl continue_offset break_offset = 
-					let (_, new_sl) =
-						List.fold_left (fun (i, l) -> function
-							| Jsr (-3) -> (i + 1, (Bra (break_offset - i))::l) (* Break *)
-							| Jsr (-4) -> (i + 1, (Bra (continue_offset - i))::l) (* Continue *)
-							| _ as s -> (i + 1, s::l)) (0, []) sl
-					in List.rev new_sl
-				in
-				(* create the new locals for the coming stmt list *)
-				(* call trans_stmt instead of stmt after adding new locals *)
-				let rec stmts locals next_index = function
-					| [] -> []
-					| Vardecl var_decl::tl -> (* change the locals and next_index *)
-							(* The space allocated for the new locals move along with the sp *)
-							(* The locals must be consecutive in space as var_decl is a complete *)
-							(* statement. There should be any intermediate result on the stack *)
-							(* between statements, which only appears when evaluating expressions. *)
-							let (new_locals, new_next_index, new_byte_list) =
-								add_local locals next_index [] (snd var_decl)
-							in
-							new_byte_list @ (* first allocate the space for the new locals *)
-							(* following statements with new locals *)
-							(stmts new_locals new_next_index tl) @
-							(* get rid of the locals after finishing the statement list *)
-							(repeat (new_next_index - next_index) Pop)
-					| hd::tl -> (trans_stmt locals next_index hd) @ (* use new locals *)
-											(stmts locals next_index tl)
-				in
-				(* recursively deal with one statement with locals unchanged *)
-				let rec stmt = function 
-					| Block sl -> stmts locals next_index sl (* need new locals *)
-							(* let (new_next_index, byte_list) = stmts locals next_index [] sl
-							in byte_list @ (repeat (new_next_index - next_index) Pop) *)
-					| Expr e -> trans_expr env locals e @ [Pop]
-					| Return e -> trans_expr env locals e @ [Ret num_params]
-					| ReturnVoid -> [Ret num_params] (* TODO: same with Return first *)
-					| If (e, s1, s2) ->
-							let r1 = (stmt s1) and r2 = (stmt s2) in
-							trans_expr env locals e @ [Beq ((List.length r1) + 2)] @ r1 @
-							[Bra ((List.length r2) + 1)] @ r2
-					| Foreach (id, e, order, s) -> []
-					| For (e1, e2, e3, s) -> 
-							(* stmt (Block([Expr(e1); While(e2, Block([s; Expr(e3)]))])) *)
-							let re1 = stmt (Expr e1) and re2 = trans_expr env locals e2 and
-									re3 = stmt (Expr e3) and rs = stmt s
-							in
-							let continue_offset = List.length rs in
-							let check_offset = continue_offset + (List.length re3) in
-							let break_offset = check_offset + (List.length re2) + 1 in
-							re1 @ [Bra (check_offset + 1)] @
-							(loop_control rs continue_offset break_offset) @
-							re3 @ re2 @ [Bne (-break_offset + 1)]
-					| Do (s, e) ->
-							let rs = stmt s and re = trans_expr env locals e in
-							let continue_offset = List.length rs in
-							let break_offset = continue_offset + (List.length re) + 1 in
-							(loop_control rs continue_offset break_offset) @
-							re @ [Bne (-break_offset + 1)]
-					| While (e, s) ->
-							let re = trans_expr env locals e and rs = stmt s in
-							let continue_offset = List.length rs in
-							let break_offset = continue_offset + (List.length re) + 1 in
-							[Bra (continue_offset + 1)] @
-							(loop_control rs continue_offset break_offset) @
-							re @ [Bne (-break_offset + 1)]
-					| Break -> [Jsr (-3)] (* Indicate it's a break *)
-					| Continue -> [Jsr (-4)] (* Indicate it's a continue *)
-					| Vardecl var_decl -> (* separately dealt with *)
-							raise (Failure "Variable declaration in wrong position!") 
-					| Empty -> []
-				in stmt target
-			in
-			(* initialize locals with function parameters by negative index *)
-			let init_locals = 
-				gen_index StringMap.empty (-num_params) func_decl.params
-			in
-			[Ent 1] @
-			(trans_stmt init_locals 1 (Block func_decl.body)) @
-			[Ret num_params]
-		in
-		let init_env = {
-				func_index =
-					gen_index StringMap.empty (-2)
-						[(Void, "alloc"); (Void, "print")];
-				global_index = StringMap.empty;
-				tree_index = StringMap.empty;
-			} in
-		(* go through all the basic element in the program and classify *)
-		(* them into globals, functions and trees respectively *)
-		let rec classify global_init func_bodies env = function
-			| [] ->
-					let entry_func = 
-						(try [Jsr (StringMap.find "main" env.func_index); Hlt]
-						 with Not_found -> raise (Failure "No main function!"))
-					in
-						(global_init, entry_func::(List.rev func_bodies))
-			| (Globalvar var_decl)::tl -> (* put it into the loop *)
-					let (new_index, new_init) =
-						trans_globals env (List.length global_init) var_decl
-					in
-					let new_env = {env with global_index = new_index} in
-					classify (global_init @ new_init) func_bodies new_env tl
-			| (Funcdef func_decl)::tl ->
-					let new_env = { env with func_index = 
-						StringMap.add func_decl.fname
-							(List.length func_bodies + 1) env.func_index }
-							(* +1 to leave a position for entry_func *)
-					in
-					classify global_init ((trans_func env func_decl)::
-																func_bodies) new_env tl
-			| (Treedef tree_def)::tl ->
-					classify global_init func_bodies env tl
-		in classify [] [] init_env (List.rev program)
-	in
-	(* deal with the Jsr offsets for each function *)
-	let text = 
-		let global_init = List.concat global_init in
-		let (_, func_offsets) = (* generate the function offsets as a list *)
-				List.fold_left (fun (i, offsets) bl ->
-						(* each step plus the number of byte statements *)
-						((List.length bl) + i, i::offsets))
-					(* start from the end of global variable initialization *)
-					((List.length global_init) + 1, []) func_bodies
-					(* +1 is for Glb *)
-		in
-		let array_offsets = Array.of_list (List.rev func_offsets) in
-		let func_bodies =
-			List.map (function
-				| Jsr i when i >= 0 -> Jsr array_offsets.(i)
-				| _ as s -> s)
-				(List.concat func_bodies)
-		in
-		[Glb (List.length global_init)] @ global_init @ func_bodies
-	in
-	(* output to the bytecode file *)
-	let fout = open_out "test.byte" in
-		(* output_string fout ".data\n";
-		ignore (List.map (fun str_data -> output_string fout (str_data ^ "\n")) data);
-		output_string fout ".text\n"; *)
-		ignore (
-			let output_endline = fun str ->
-				output_string fout (str ^ "\n")
-			in
-			List.map (function
-				| Psh i -> output_endline ("Psh " ^ (string_of_int i))
-				| Pop -> output_endline "Pop"
-				| Uop un_op -> output_endline (string_of_op un_op)
-				| Bin bin_op -> output_endline (string_of_op bin_op)
-				| Lod i -> output_endline ("Lod " ^ (string_of_int i))
-				| Str i -> output_endline ("Str " ^ (string_of_int i))
-				| Lfp i -> output_endline ("Lfp " ^ (string_of_int i))
-				| Sfp i -> output_endline ("Sfp " ^ (string_of_int i))
-				| Jsr i -> output_endline ("Jsr " ^ (string_of_int i))
-				| Ent i -> output_endline ("Ent " ^ (string_of_int i))
-				| Ret i -> output_endline ("Ret " ^ (string_of_int i))
-				| Beq i -> output_endline ("Beq " ^ (string_of_int i))
-				| Bne i -> output_endline ("Bne " ^ (string_of_int i))
-				| Bra i -> output_endline ("Bra " ^ (string_of_int i))
-				| Hlt -> output_endline "Hlt"
-				| Fld i -> output_endline ("Fld " ^ (string_of_int i))
-				| Glb i -> output_endline ("Glb " ^ (string_of_int i))) text);
-		close_out fout
-*)

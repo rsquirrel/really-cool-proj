@@ -6,7 +6,15 @@ type t =
 	| Boolean 
 	| Void 
 	| Tree_type of string(* including return type of even main function *)
-	
+
+type literal = 
+    IntLit of int
+  | FloatLit of float
+  | CharLit of char
+  | BoolLit of bool
+  | StringLit of string
+  | TreeLit (* can only be ~ *)
+
 type op =
 	| Add 
 	| Sub 

@@ -104,10 +104,11 @@ init:
     | ID ASSIGN expr                        { WithInit($1 ,$3) }
 
 func_def:
-    type_specifier ID LPAREN para_list RPAREN stmt_block           { {fname = $2;     (*We should have return type in ast defined*)
-																	  params = List.rev $4;
-																	  body = $6	
-																	} }
+    type_specifier ID LPAREN para_list RPAREN stmt_block           { {  return_type = $1;
+																																				fname = $2;
+																	  																		params = List.rev $4;
+																	  																		body = $6	
+																																		} }
 
 para_list:
     /* nothing */					        {[]}

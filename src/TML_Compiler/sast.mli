@@ -3,25 +3,18 @@
 
 open Type
 
-type literal = 
-    IntLit of int
-  | FloatLit of float
-  | CharLit of char
-  | BoolLit of bool
-  | StringLit of string
-  | TreeLit (* can only be ~ *)
-
-type expr = (* Expressions *)
+type expr_c = (* Expressions *)
     Literal of literal (* 42 *)
   | Id of string (* foo *)
   | Binop of expr * op * expr (* a + b *)
   | Assign of expr * expr (* a = b *)
   | Call of string * (expr list) (* foo(1, 25) *)
   | Noexpr (* While() *)
-  | Uniop of op * expr   (*for unary operators *)
+  | Uniop of op * expr  (*for unary operators *)
   | Conn of expr * (expr list)
+and expr = expr_c * t
 
-type var_decl = t * string * (Ast.expr option)
+type var_decl = t * string * (expr option)
 
 type tree_def = {
   typename: string;
@@ -29,13 +22,11 @@ type tree_def = {
 	degree : int;
 	aliases : string list;
 }
-  
 
 type stmt = (* Statements  nothing *)
-     Block of (stmt list)
+     Block of (stmt list) * ((t * string) list) (* statement list and var list *)
    | Expr of expr   (*foo = bar + 3; *)
    | Return of expr (* return 42 also includes return function_name *)
-   | ReturnVoid
    | If of expr * stmt * stmt (* if (foo == 42) {} else {} *)
    | Foreach of string * expr * traverse_order * stmt   (* for each loop *)
    | For of expr * expr * expr * stmt (* for loop *)
@@ -47,10 +38,11 @@ type stmt = (* Statements  nothing *)
    | Empty 
    
 type func_decl = {
+		return_type : t;
     fname : string;
     params : (t * string) list;
-		locals : var_decl list;
-    body : stmt list;
+		locals : (t * string) list; (* we don't put init here, it's in body *)
+    body : stmt list; (* variable init is a stmt that can not be rearranged *)
 }
                
 type program = {

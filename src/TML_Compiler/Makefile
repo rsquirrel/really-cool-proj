@@ -1,12 +1,12 @@
 all: scanner_test analyzer_test tmlc
 
-tmlc: scanner.cmo parser.cmo analyzer.cmo generator.cmo
+tmlc: scanner.cmo parser.cmo analyzer.cmo generator.cmo tml.ml
 	ocamlc -o tmlc scanner.cmo parser.cmo analyzer.cmo generator.cmo tml.ml
 
-scanner_test: scanner.cmo parser.cmo
+scanner_test: scanner.cmo parser.cmo scanner_test.ml
 	ocamlc -o scanner_test scanner.cmo parser.cmo scanner_test.ml
 	
-analyzer_test: scanner.cmo parser.cmo analyzer.cmo
+analyzer_test: scanner.cmo parser.cmo analyzer.cmo analyzer_test.ml
 	ocamlc -o analyzer_test scanner.cmo parser.cmo analyzer.cmo analyzer_test.ml
 	
 scanner.ml: scanner.mll
