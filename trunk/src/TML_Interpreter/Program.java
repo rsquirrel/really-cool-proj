@@ -55,6 +55,7 @@ public class Program
             {
             case Glb:
                 globals = new int[curIns.getOperand()];
+                pc++;
                 break;
             case Psh:
                 stack[sp++] = curIns.getOperand();
@@ -98,7 +99,7 @@ public class Program
                 sp = sp /* + operand */ + 1;
                 pc++;
                 break;
-            case Rts:
+            case Ret:
                 int new_sp = fp - operand;
                 int new_pc = stack[fp - 1];
                 int new_fp = stack[fp];
@@ -150,6 +151,9 @@ public class Program
                     break;
                 case Geq:
                     stack[sp - 2] = (op1 >= op2) ? 1 : 0;
+                    break;
+                case Mod:
+                    stack[sp - 2] = op1 % op2;
                     break;
                 }
                 sp--;
