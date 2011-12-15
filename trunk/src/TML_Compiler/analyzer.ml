@@ -4,10 +4,7 @@
 (* @description: Semantic Analysis and convert AST to SAST *)
 
 open Type
-open Ast
 open Sast
-
-module StringMap = Map.Make(String)
 
 type symbol_table = {
 	parent : symbol_table option;
@@ -38,8 +35,8 @@ let rec find_func scope name =
 let part decl = 
 		let t = fst decl in
 		List.rev (List.fold_left (fun l -> function
-			| WithInit (name, e) -> (t, name, Some(e))::l
-			| WithoutInit name -> (t, name, None)::l) [] (snd decl))
+			| Ast.WithInit (name, e) -> (t, name, Some(e))::l
+			| Ast.WithoutInit name -> (t, name, None)::l) [] (snd decl))
 
 let rec expr scope = function
 	| Ast.Literal lit ->
@@ -61,7 +58,12 @@ let rec expr scope = function
 			let et1 = expr scope e1 and et2 = expr scope e2 in
 			let (_, t1) = et1 and (_, t2) = et2 in
 			if t1 = t2 then (* Type match *)
-				Sast.Binop(et1, bin_op, et2), t1
+				let t = match bin_op with
+					| Equal | Neq | Less_than | Leq | Greater_than | Geq -> Boolean
+					| Or | And | Not -> Boolean
+					| _ -> t1
+				in
+				Sast.Binop(et1, bin_op, et2), t
 			else
 				raise (Failure ("type mismatch in binary operation"))
 	| Ast.Assign (e1, e2) ->
@@ -79,7 +81,9 @@ let rec expr scope = function
 			in
 			let typed_params = List.map (expr scope) params in
 			let param_types = List.map (fun et -> snd et) typed_params in
-			if param_types = required_param_types then
+			if func_name = "print" or
+					func_name = "alloc" or
+					param_types = required_param_types then
 				Sast.Call(func_name, typed_params), func_type
 			else
 				raise (Failure ("calling function " ^ func_name ^ " parameters mismatch"))
@@ -135,8 +139,11 @@ let rec stmt scope = function
 	| Ast.ReturnVoid -> Sast.Return(Sast.Noexpr, Void)
 	| Ast.If (e, s1, s2) ->
 			let et = expr scope e in
-			let st1 = stmt scope s1 and st2 = stmt scope s2 in
-			Sast.If(et, st1, st2)
+			if ((snd et) = Boolean) then
+				let st1 = stmt scope s1 and st2 = stmt scope s2 in
+				Sast.If(et, st1, st2)
+			else
+				raise (Failure ("the expression in if statement is not boolean"))
 	| Ast.Foreach (id, e, order, s) ->
 			let (id_type, _) = try
 					find_var scope id
@@ -151,11 +158,23 @@ let rec stmt scope = function
 							raise (Failure ("foreach not in same tree type"))
 				| _ -> raise (Failure ("identifier " ^ id ^ " is not a tree type")))
 	| Ast.For (e1, e2, e3, s) -> 
-			Sast.For (expr scope e1, expr scope e2, expr scope e3, stmt scope s)
+			let et2 = expr scope e2 in
+			if ((snd et2) = Boolean) then
+				Sast.For (expr scope e1, et2, expr scope e3, stmt scope s)
+			else
+				raise (Failure ("the second expression in for statement is not boolean"))
 	| Ast.Do (s, e) ->
-			Sast.Do (stmt scope s, expr scope e)
+			let et = expr scope e in
+			if ((snd et) = Boolean) then
+				Sast.Do (stmt scope s, expr scope e)
+			else
+				raise (Failure ("the expression in do statement is not boolean"))
 	| Ast.While (e, s) ->
-			Sast.While (expr scope e, stmt scope s)
+			let et = expr scope e in
+			if ((snd et) = Boolean) then
+				Sast.While (expr scope e, stmt scope s)
+			else
+				raise (Failure ("the expression in while statement is not boolean"))
 	| Ast.Break -> Sast.Break
 	| Ast.Continue -> Sast.Continue
 	| Ast.Empty -> Sast.Empty
@@ -166,7 +185,7 @@ let check program =
 	let init_glob_scope = {
 		parent = None;
 		var = [];
-		func = [];
+		func = [(Tree_type("~"), "alloc", []); (Void, "print", [])]; (* built-in functions *)
 	} in
 	(* Global variable declarations and function definitions can be rearranged *)
 	(* But local variable declarations can not be rearranged with other statements *)
@@ -174,7 +193,7 @@ let check program =
 		(* expand multiple variable declarations into declaration lists *)
 		let rec classify tree_list glob_list func_list glob_scope = function
 			| [] -> (tree_list, glob_list, List.rev func_list)
-			| (Globalvar var_decl)::tl -> (* put it into the loop *)
+			| (Ast.Globalvar var_decl)::tl -> (* put it into the loop *)
 					let var_list = part var_decl in
 					let new_var_list = (* convert Ast.expr to Sast.expr *)
 						List.map (fun (t, name, init) ->
@@ -185,7 +204,7 @@ let check program =
 						List.map (fun (vtype, name, init) -> (vtype, name)) var_list
 					} in (* add new_var_list to glob_list in normal order *)
 					classify tree_list (glob_list @ new_var_list) func_list new_scope tl
-			| (Funcdef func_decl)::tl ->
+			| (Ast.Funcdef func_decl)::tl ->
 					let ft = func_decl.Ast.return_type
 						and fn = func_decl.Ast.fname
 						and fp = func_decl.Ast.params
@@ -213,7 +232,7 @@ let check program =
 						body = new_body;
 					} in (* add new_func_decl to func_list in reverse order *)
 					classify tree_list glob_list (new_func_decl::func_list) new_scope tl
-			| (Treedef tree_def)::tl ->
+			| (Ast.Treedef tree_def)::tl ->
 					classify tree_list glob_list func_list glob_scope tl
 		in classify [] [] [] init_glob_scope (List.rev program)
 	in {

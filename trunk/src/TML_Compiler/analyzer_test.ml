@@ -1,5 +1,8 @@
-open Type;;
-open Sast;;
+(* analyzer_test.ml *)
+(* @authors: Yan Zou *)
+
+open Type
+open Sast
 
 let print_type = function
 	| Int -> print_string "<int> "
