@@ -4,17 +4,17 @@ public class Program
 {
     private static final int stack_size = 1024;
     private ArrayList<Instruction> ins = new ArrayList<Instruction>();
-    private int[] globals;
-    private int[] stack = new int[stack_size];
+    private Object[] globals;
+    private Object[] stack = new Object[stack_size];
     private int fp, sp, pc;
     
     public Program(int numGlbs, ArrayList<Instruction> instructions)
     {
         if (numGlbs > 0)
         {
-            globals = new int[numGlbs];
-            for (int glb : globals)
-                glb = 0;
+            globals = new Object[numGlbs];
+            for (Object glb : globals)
+                glb = null;
         }
 
         ins = instructions;
@@ -32,12 +32,12 @@ public class Program
             else if (i == fp)
             {
                 mark = "fp->";
-                old_fp = stack[i];
+                old_fp = (Integer) stack[i];
             }
             else if (i == old_fp)
             {
                 mark = "old->";
-                old_fp = stack[i];
+                old_fp = (Integer) stack[i];
             }
             System.out.println(mark + "\t" + i + "\t" + stack[i]);
         }
@@ -50,39 +50,40 @@ public class Program
         while (ins.get(pc).getType() != Instruction.Type.Hlt)
         {
             Instruction curIns = ins.get(pc);
-            int operand = curIns.getOperand();
+            Object operand = curIns.getOperand();
             switch(curIns.getType())
             {
             case Glb:
-                globals = new int[curIns.getOperand()];
+                globals = new Object[(Integer) curIns.getOperand()];
                 pc++;
                 break;
-            case Psh:
-                stack[sp++] = curIns.getOperand();
+            case Psi:
+            case Psb:
+                stack[sp++] = operand;
                 pc++;
                 break;
             case Pop:
-                sp--;
+                sp -= (Integer) operand;
                 pc++;
                 break;
             case Lod:
-                stack[sp++] = globals[operand];
+                stack[sp++] = globals[(Integer) operand];
                 pc++;
                 break;
             case Str:
-                globals[operand] = stack[sp - 1];
+                globals[(Integer) operand] = stack[sp - 1];
                 pc++;
                 break;
             case Lfp:
-                stack[sp++] = stack[fp + operand];
+                stack[sp++] = stack[fp + (Integer) operand];
                 pc++;
                 break;
             case Sfp:
-                stack[fp + operand] = stack[sp - 1];
+                stack[fp + (Integer) operand] = stack[sp - 1];
                 pc++;
                 break;
             case Jsr:
-                if (operand == -1)
+                if ((Integer) operand == -1)
                 {
                     System.out.print(stack[sp - 1]);
                     pc++;
@@ -90,7 +91,7 @@ public class Program
                 else
                 {
                     stack[sp++] = pc + 1;
-                    pc = operand;
+                    pc = (Integer) operand;
                 }
                 break;
             case Ent:
@@ -100,61 +101,152 @@ public class Program
                 pc++;
                 break;
             case Ret:
-                int new_sp = fp - operand;
-                int new_pc = stack[fp - 1];
-                int new_fp = stack[fp];
-                stack[fp - operand - 1] = stack[sp - 1];
+                int new_sp = fp - (Integer) operand;
+                int new_pc = (Integer) stack[fp - 1];
+                int new_fp = (Integer) stack[fp];
+                stack[fp - (Integer) operand - 1] = stack[sp - 1];
                 sp = new_sp;
                 fp = new_fp;
                 pc = new_pc;
                 break;
             case Beq:
-                pc += (stack[--sp] == 0) ? operand : 1;
+                pc += ((Boolean) stack[--sp] == false) ? (Integer) operand : 1;
                 break;
             case Bne:
-                pc += (stack[--sp] != 0) ? operand : 1;
+                pc += ((Boolean) stack[--sp] == true) ? (Integer) operand : 1;
                 break;
             case Bra:
-                pc += operand;
+                pc += (Integer) operand;
                 break;
             case Bin:
-                int op1 = stack[sp - 2];
-                int op2 = stack[sp - 1];
+                Object op1 = stack[sp - 2];
+                Object op2 = stack[sp - 1];
                 switch (curIns.getSubType())
                 {
                 case Add:
-                    stack[sp - 2] = op1 + op2;
+                {
+                    if (op1 instanceof Integer)
+                        stack[sp - 2] = (Integer) op1 + (Integer) op2;
+                    else if (op1 instanceof Float)
+                        stack[sp - 2] = (Float) op1 + (Float) op2;
+                    else
+                        throw new RuntimeException("Type error!");
                     break;
+                }
                 case Sub:
-                    stack[sp - 2] = op1 - op2;
+                {
+                    if (op1 instanceof Integer)
+                        stack[sp - 2] = (Integer) op1 - (Integer) op2;
+                    else if (op1 instanceof Float)
+                        stack[sp - 2] = (Float) op1 - (Float) op2;
+                    else
+                        throw new RuntimeException("Type error!");
                     break;
+                }
                 case Mul:
-                    stack[sp - 2] = op1 * op2;
+                {
+                    if (op1 instanceof Integer)
+                        stack[sp - 2] = (Integer) op1 * (Integer) op2;
+                    else if (op1 instanceof Float)
+                        stack[sp - 2] = (Float) op1 * (Float) op2;
+                    else
+                        throw new RuntimeException("Type error!");
                     break;
+                }
                 case Div:
-                    stack[sp - 2] = op1 / op2;
+                {
+                    if (op1 instanceof Integer)
+                        stack[sp - 2] = (Integer) op1 / (Integer) op2;
+                    else if (op1 instanceof Float)
+                        stack[sp - 2] = (Float) op1 / (Float) op2;
+                    else
+                        throw new RuntimeException("Type error!");
                     break;
+                }
                 case Eq:
-                    stack[sp - 2] = (op1 == op2) ? 1 : 0;
+                {
+                    if (op1 instanceof Integer)
+                        stack[sp - 2] = (Integer) op1 == (Integer) op2;
+                    else if (op1 instanceof Float)
+                        stack[sp - 2] = (Float) op1 == (Float) op2;
+                    else
+                        throw new RuntimeException("Type error!");
                     break;
+                }
                 case Neq:
-                    stack[sp - 2] = (op1 != op2) ? 1 : 0;
+                {
+                    if (op1 instanceof Integer)
+                        stack[sp - 2] = (Integer) op1 != (Integer) op2;
+                    else if (op1 instanceof Float)
+                        stack[sp - 2] = (Float) op1 != (Float) op2;
+                    else
+                        throw new RuntimeException("Type error!");
                     break;
+                }
                 case Lt:
-                    stack[sp - 2] = (op1 < op2) ? 1 : 0;
+                {
+                    if (op1 instanceof Integer)
+                        stack[sp - 2] = (Integer) op1 < (Integer) op2;
+                    else if (op1 instanceof Float)
+                        stack[sp - 2] = (Float) op1 < (Float) op2;
+                    else
+                        throw new RuntimeException("Type error!");
                     break;
+                }
                 case Leq:
-                    stack[sp - 2] = (op1 <= op2) ? 1 : 0;
+                {
+                    if (op1 instanceof Integer)
+                        stack[sp - 2] = (Integer) op1 <= (Integer) op2;
+                    else if (op1 instanceof Float)
+                        stack[sp - 2] = (Float) op1 <= (Float) op2;
+                    else
+                        throw new RuntimeException("Type error!");
                     break;
+                }
                 case Gt:
-                    stack[sp - 2] = (op1 > op2) ? 1 : 0;
+                {
+                    if (op1 instanceof Integer)
+                        stack[sp - 2] = (Integer) op1 > (Integer) op2;
+                    else if (op1 instanceof Float)
+                        stack[sp - 2] = (Float) op1 > (Float) op2;
+                    else
+                        throw new RuntimeException("Type error!");
                     break;
+                }
                 case Geq:
-                    stack[sp - 2] = (op1 >= op2) ? 1 : 0;
+                {
+                    if (op1 instanceof Integer)
+                        stack[sp - 2] = (Integer) op1 >= (Integer) op2;
+                    else if (op1 instanceof Float)
+                        stack[sp - 2] = (Float) op1 >= (Float) op2;
+                    else
+                        throw new RuntimeException("Type error!");
                     break;
+                }
                 case Mod:
-                    stack[sp - 2] = op1 % op2;
+                {
+                    if (op1 instanceof Integer)
+                        stack[sp - 2] = (Integer) op1 % (Integer) op2;
+                    else
+                        throw new RuntimeException("Type error!");
                     break;
+                }
+                case And:
+                {
+                    if (op1 instanceof Boolean)
+                        stack[sp - 2] = (Boolean) op1 && (Boolean) op2;
+                    else
+                        throw new RuntimeException("Type error!");
+                    break;
+                }
+                case Or:
+                {
+                    if (op1 instanceof Boolean)
+                        stack[sp - 2] = (Boolean) op1 || (Boolean) op2;
+                    else
+                        throw new RuntimeException("Type error!");
+                    break;
+                }
                 }
                 sp--;
                 pc++;
@@ -163,10 +255,25 @@ public class Program
                 switch (curIns.getSubType())
                 {
                 case Neg:
-                    stack[sp - 1] *= -1;
-                    pc++;
+                {
+                    if (stack[sp - 1] instanceof Integer)
+                        stack[sp - 1] = (Integer) stack[sp - 1] * (-1);
+                    else if (stack[sp - 1] instanceof Float)
+                        stack[sp - 1] = (Float) stack[sp - 1] * (-1);
+                    else
+                        throw new RuntimeException("Type error!");
                     break;
                 }
+                case Not:
+                {
+                    if (stack[sp - 1] instanceof Boolean)
+                        stack[sp - 1] = !((Boolean) stack[sp - 1]);
+                    else
+                        throw new RuntimeException("Type error!");
+                    break;
+                }
+                }
+                pc++;
                 break;
             }
             

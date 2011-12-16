@@ -17,7 +17,7 @@ public class Main
             scanner.useDelimiter("\\s+");
             while (scanner.hasNext())
             {
-                //int lineNumber = scanner.nextInt();
+                int lineNumber = scanner.nextInt();
                 Instruction.Type type = null;
                 Instruction.SubType subType = null;
                 String instruction = scanner.next();
@@ -32,7 +32,24 @@ public class Main
 
                     switch (subType)
                     {
+                    case Add:
+                    case Sub:
+                    case Mul:
+                    case Div:
+                    case Mod:
+                    case Eq:
+                    case Neq:
+                    case Lt:
+                    case Leq:
+                    case Gt:
+                    case Geq:
+                    case And:
+                    case Or:
+                        scanner.next();
+                        break;
                     case Neg:
+                    case Not:
+                        scanner.next();
                         type = Instruction.Type.Uop;
                         break;
                     default:
@@ -40,11 +57,12 @@ public class Main
                     }
                 }
                 
-                int operand = 0;
+                Object operand = null;
                 switch (type)
                 {
                 case Glb:
-                case Psh:
+                case Pop:
+                case Psi:
                 case Lod:
                 case Str:
                 case Lfp:
@@ -57,6 +75,11 @@ public class Main
                 case Bra:
                     operand = scanner.nextInt();
                     break;
+                case Psb:
+                	operand = scanner.nextBoolean();
+                	break;
+                case Psc:
+                	break;
                 default:
                     break;
                 }

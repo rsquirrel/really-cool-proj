@@ -3,7 +3,9 @@ public class Instruction
     public enum Type
     {
         Glb,
-        Psh,
+        Psi,
+        Psb,
+        Psc,
         Pop,
         Uop,
         Bin,
@@ -27,23 +29,28 @@ public class Instruction
         Sub,
         Mul,
         Div,
+        Mod,
+        
         Eq,
         Neq,
         Lt,
         Leq,
         Gt,
         Geq,
-        Mod,
+
+        And,
+        Or,
         
        // Uniops
-        Neg
+        Neg,
+        Not
     }
     
     private Type type;
     private SubType subType;
-    private int operand;
+    private Object operand;
     
-    public Instruction(Type type, SubType subType, int operand)
+    public Instruction(Type type, SubType subType, Object operand)
     {
         this.type = type;
         this.subType = subType;
@@ -60,7 +67,7 @@ public class Instruction
         return subType;
     }
 
-    public int getOperand()
+    public Object getOperand()
     {
         return operand;
     }
