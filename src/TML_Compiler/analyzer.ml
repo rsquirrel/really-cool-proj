@@ -16,6 +16,38 @@ let int_of_bool = function
 	| true -> 1
 	| false -> 0
 
+let string_of_type = function
+	| Int -> "integer"
+	| Float -> "float"
+	| Char -> "character"
+	| String -> "string"
+	| Boolean -> "boolean"
+	| Tree_type tname -> ("Tree(" ^ tname ^ ")")
+	| Void -> "void"
+
+let string_of_op = function
+	  Add -> "+"
+	| Sub -> "-"
+	| Mult -> "*" 
+	| Div -> "/"
+	| Mod -> "%"
+	| Equal -> "=="
+	| Neq -> "!="
+	| Less_than -> "<"
+	| Leq -> "<="
+	| Greater_than -> ">"
+	| Geq -> ">="
+	| Or -> "||"
+	| And -> "&&"
+	| Not -> "!"
+	| Dollar -> "$"
+	| At -> "@"
+	| Father -> "^"
+	| Deg_a -> "Deg"
+	| Dot -> "."
+	| Hsh -> "#"
+	| Child -> "[]"
+
 let rec find_var scope name = 
 	try
 		List.find (fun (_, var_name) -> var_name = name) scope.var
@@ -38,6 +70,10 @@ let part decl =
 			| Ast.WithInit (name, e) -> (t, name, Some(e))::l
 			| Ast.WithoutInit name -> (t, name, None)::l) [] (snd decl))
 
+let e_op_type op t =
+	raise (Failure ("The operand of operator " ^
+		(string_of_op op) ^ " can not be " ^ (string_of_type t)))
+
 let rec expr scope = function
 	| Ast.Literal lit ->
 			let lit_type = match lit with
@@ -57,15 +93,42 @@ let rec expr scope = function
   | Ast.Binop (e1, bin_op, e2) ->
 			let et1 = expr scope e1 and et2 = expr scope e2 in
 			let (_, t1) = et1 and (_, t2) = et2 in
-			if t1 = t2 then (* Type match *)
-				let t = match bin_op with
-					| Equal | Neq | Less_than | Leq | Greater_than | Geq -> Boolean
-					| Or | And | Not -> Boolean
-					| _ -> t1
-				in
-				Sast.Binop(et1, bin_op, et2), t
-			else
-				raise (Failure ("type mismatch in binary operation"))
+			 (*
+			let e_right error =
+				raise (Failure ("Right operand of operator " ^
+					(string_of_op bin_op) ^ " can not be " ^ (string_of_type t2)))
+			in 
+			let check_match = match bin_op with
+				| Add | Sub | Mult | Div | Mod
+				| Equal | Neq | Less_than | Leq | Greater_than | Geq -> 
+					
+			in*)
+			let t = (* operands should have the same type except tree operators *)
+				if t1 <> t2 then
+						raise (Failure ("Type mismatch for operator " ^
+							(string_of_op bin_op) ^ ": left - " ^ (string_of_type t1) ^
+																			", right - " ^ (string_of_type t2)))
+				else match bin_op with
+					| Add -> (match t1 with
+								| Int | Float | String -> t1
+								| _ -> e_op_type bin_op t1)
+					| Sub | Mult | Div -> (match t1 with
+								| Int | Float -> t1
+								| _ -> e_op_type bin_op t1)
+					| Mod -> (match t1 with
+								| Int -> t1
+								| _ -> e_op_type bin_op t1)
+					| Equal | Neq -> (match t1 with
+								| Int | Float | Char | String | Boolean -> Boolean
+								| _ -> e_op_type bin_op t1)
+					| Less_than | Leq | Greater_than | Geq -> (match t1 with
+								| Int | Float | Char | String -> Boolean
+								| _ -> e_op_type bin_op t1)
+				  | And | Or -> (if t1 = Boolean then Boolean else
+						raise (Failure ("Only boolean is allowed for boolean operators")))
+					| _ -> t1 (* TODO Tree operators *)
+			in
+			Sast.Binop(et1, bin_op, et2), t
 	| Ast.Assign (e1, e2) ->
 			let et1 = expr scope e1 and et2 = expr scope e2 in
 			let (_, t1) = et1 and (_, t2) = et2 in
@@ -89,7 +152,21 @@ let rec expr scope = function
 				raise (Failure ("calling function " ^ func_name ^ " parameters mismatch"))
   | Ast.Uniop (un_op, e) ->
 			let et = expr scope e in
-			Sast.Uniop(un_op, et), (snd et)
+			let t = snd et in
+			let tt = match un_op with
+				| Add -> t
+				| Sub -> t
+				| Not -> if t = Boolean then Boolean else
+					raise (Failure ("Only boolean is allowed for boolean operators"))
+				| Dollar -> t
+				| At -> t
+				| Father -> t
+				| Deg_a -> Int
+				| Hsh -> Int
+				| _ -> raise (Failure ("The operator " ^
+								(string_of_op un_op) ^ " is not unary"))
+			in
+			Sast.Uniop(un_op, et), tt
   | Ast.Conn (e, el) -> 
 			let et = expr scope e and etl = List.map (expr scope) el in
 			Sast.Conn(et, etl), (snd et) (* TODO *)
@@ -105,9 +182,8 @@ let rec stmt scope = function
 	| Ast.Block sl ->
 			(* create a new empty scope for the block *)
 			let block_scope = { scope with (* func reserves *)
-				parent = Some(scope);
-				var = [];
-			} in
+				parent = Some(scope); var = []; }
+			in
 			(* check each statement in the block. scope may change in this process *)
 			let check_stmt (block_scope, stl) s = match s with
 				| Ast.Vardecl var_decl -> 
@@ -215,8 +291,11 @@ let check program =
 					let new_scope = { glob_scope with func =
 						(ft, fn, required_param_types)::glob_scope.func
 					} in
+					let param_scope = { glob_scope with 
+						parent = Some(new_scope); var = fp}
+					in
 					let func_block = 
-						stmt glob_scope (Ast.Block(func_decl.Ast.body))
+						stmt param_scope (Ast.Block(func_decl.Ast.body))
 					in
 					let (new_body, local_var) = match func_block with
 						| Sast.Block(new_body, local_var) -> (new_body, local_var)

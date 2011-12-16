@@ -20,26 +20,26 @@ type op =
 	| Sub 
 	| Mult 
 	| Div 
+	| Mod 
 	| Equal 
 	| Neq 
 	| Less_than 
 	| Leq 
 	| Greater_than 
+	| Geq 
 	| Or 
 	| And 
 	| Not 
-	| Geq 
-	| Mod 
 	| Dollar 
 	| At 
 	| Deg_a 
-	| Dot 
 	| Hsh 
+	| Dot 
 	| Child
+	| Father
 
 type traverse_order = 
 	| Preorder 
 	| Inorder 
 	| Postorder 
 	| Levelorder (* different traversal orders *)
-

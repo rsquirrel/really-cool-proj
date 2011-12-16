@@ -36,6 +36,7 @@ let string_of_op = function
 	| Mod -> "Mod"
 	| Dollar -> "Cln"
 	| At -> "At"
+	| Father -> "Fat"
 	| Deg_a -> "Deg"
 	| Dot -> "Val"
 	| Hsh -> "Num"

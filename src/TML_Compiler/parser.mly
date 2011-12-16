@@ -170,7 +170,7 @@ expr:
     | MINUS expr                          { Uniop(Sub, $2 ) }
     | AT expr                    		  { Uniop(At, $2) }
     | DOLLAR expr                         { Uniop(Dollar, $2) }
-    | FATHER expr                         { Uniop(Child, $2) }
+    | FATHER expr                         { Uniop(Father, $2) }
     | NOT expr                            { Uniop(Not, $2) }
     | HASH expr                           { Uniop(Hsh, $2) }
     | DEG_AND expr                        { Uniop(Deg_a, $2) }
