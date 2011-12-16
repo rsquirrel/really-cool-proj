@@ -23,7 +23,7 @@ echo "SrcCode tests"
 for file in SrcCode/*.tml
 do
 	echo "Testing $file"
-	$tmlc < $file
+	$tmlc $file
 	filename=`expr $file : '\(^.*\)'[.]`
 	output=$filename.output
 	#echo "Compare with $output"
