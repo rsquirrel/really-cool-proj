@@ -77,7 +77,7 @@ let rec next l =
 		  | FATHER -> "FATHER"
 		  | LPAREN -> "LPAREN"
 		  | RPAREN -> "RPAREN"
-		  | _ -> "UNKNOWN"
+		  (*| _ -> "UNKNOWN"*)
 	  in if word = "EOF" then l
 				else next (word :: l)
 in next []

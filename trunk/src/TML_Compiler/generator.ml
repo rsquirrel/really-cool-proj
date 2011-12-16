@@ -15,13 +15,13 @@ type environment = {
 }
 
 let string_of_type = function
-	| Int -> "int"
-	| Float -> "float"
-	| Char -> "char"
-	| String -> "string"
-	| Boolean -> "bool"
-	| Tree_type tname -> ("Tree(" ^ tname ^ ")")
-	| Void -> "void"
+	| Int -> "i"
+	| Float -> "f"
+	| Char -> "c"
+	| String -> "s"
+	| Boolean -> "b"
+	| Tree_type tname -> ("T(" ^ tname ^ ")")
+	| Void -> "v"
 
 let string_of_order = function
 	| Preorder -> "preorder"
@@ -46,6 +46,7 @@ let string_of_op = function
 	| Mod -> "Mod"
 	| Dollar -> "Cln"
 	| At -> "At"
+	| Father -> "Fat"
 	| Deg_a -> "Deg"
 	| Dot -> "Val"
 	| Hsh -> "Num"
@@ -59,7 +60,9 @@ let string_of_bytecode = function
 	| Psb b -> ("Psb " ^ (string_of_bool b))
 	| Pst -> ("Pst")
 	| Pop i -> ("Pop " ^ (string_of_int i))
-	| Uop (un_op, t) -> ((string_of_op un_op) ^ " " ^ (string_of_type t))
+	| Uop (un_op, t) ->
+			((if un_op = Sub then "Neg" else (string_of_op un_op)) ^
+					" " ^ (string_of_type t))
 	| Bin (bin_op, t) -> ((string_of_op bin_op) ^ " " ^ (string_of_type t))
 	| Lod i -> ("Lod " ^ (string_of_int i))
 	| Str i -> ("Str " ^ (string_of_int i))
@@ -85,7 +88,7 @@ let init_value t = function
 				| String -> StringLit("")
 				| Boolean -> BoolLit(false)
 				| Tree_type tname -> TreeLit
-				| Void -> raise (Failure ("Variables with type void shouldn't exist"))
+				| Void -> IntLit(0) (* "Variables with type void shouldn't exist" *)
 			in Literal(lit), t
 							
 (* add the names in the list to the map starting from start_index *)
@@ -117,7 +120,7 @@ let translate out_filename program =
 							with Not_found ->
 								raise (Failure ("Variable " ^ id ^ " not found")))
   		| Binop (e1, bin_op, e2), t ->
-					(expr e1) @ (expr e2) @ [Bin (bin_op, t)]
+					(expr e1) @ (expr e2) @ [Bin (bin_op, (snd e1))]
 			| Assign (e1, e2), _ ->
 					(* left value for assignment, get the address or use Sfp/Str *)
 					let lvalue = function
@@ -135,13 +138,23 @@ let translate out_filename program =
 						| _ -> raise (Failure "Illegal left value")
 					in (expr e2) @ (lvalue e1)
 	 		| Call (func_name, params), _ -> 
-					List.concat (List.map expr (List.rev params)) @
-					(try [Jsr (StringMap.find func_name func_index)]
-					 with Not_found ->
-						raise (Failure ("Function " ^ func_name ^ " not found")))
-	  	| Uniop (un_op, e), t -> (expr e) @ [Uop (un_op, t)]
+					if (func_name = "print") then
+						if (List.length params > 0) then
+							expr (List.hd params) @ [Jsr (-1)] @
+							List.concat (List.map (fun e -> [Pop 1] @ (expr e) @
+																				[Jsr (-1)]) (List.tl params))
+						else []
+					else if (func_name = "alloc") then
+						[]
+					else
+						List.concat (List.map expr params) @
+						(try [Jsr (StringMap.find func_name func_index)]
+						 with Not_found ->
+							raise (Failure ("Function " ^ func_name ^ " not found")))
+	  	| Uniop (un_op, e), t ->
+					if un_op = Add then (expr e) else ((expr e) @ [Uop (un_op, t)])
 	  	| Conn (e, el), _ -> [] (* TODO *)
-			| Noexpr, _ -> [] (* TODO: What is this? *)
+			| Noexpr, _ -> [Psi 0] (* void return of a function *)
 		in
 		let loop_control sl continue_offset break_offset = 
 			let (_, new_sl) =
@@ -210,6 +223,7 @@ let translate out_filename program =
 			List.map (fun (t, name, init) ->
 				Expr(Assign((Id(name), t), init_value t init), t)) program.globals
 		in
+		[Glb (List.length assign_globals)] @
 		block StringMap.empty 0 0 assign_globals @
 		[Jsr (StringMap.find "main" func_index); Hlt]
 	in
@@ -227,6 +241,14 @@ let translate out_filename program =
 			in
 			[Ent num_locals] @
 			block local_index (num_locals + 1) num_params f.body @
+			(match f.return_type with
+				| Int -> [Psi 0]
+				| Float -> [Psf 0.0]
+				| Char -> [Psc '\000']
+				| String -> [Pss ""]
+				| Boolean -> [Psb false]
+				| Tree_type tname -> [Pst]
+				| Void -> [Psi 0]) @
 			[Ret num_params]
 		in
 		let func_bodies = List.map trans_func program.functions in
@@ -235,7 +257,7 @@ let translate out_filename program =
 						(* each step plus the number of byte statements *)
 						((List.length body) + i, i::offsets))
 					(* start from the end of global variable initialization *)
-					((List.length data) + 1, []) func_bodies
+					((List.length data), []) func_bodies
 					(* +1 is for Glb *)
 		in
 		let array_offsets = Array.of_list (List.rev func_offsets) in
@@ -245,9 +267,9 @@ let translate out_filename program =
 			(List.concat (data::func_bodies))
 	in
 	let fout = open_out out_filename in
-		ignore ( List.fold_left (fun i b -> 
+		ignore ( List.fold_left (fun i b ->
 				(* output line number for debug *)
 				output_string fout ((string_of_int i) ^ "\t" ^ (string_of_bytecode b) ^ "\n");
-				(i + 1)) 1 text
+				(i + 1)) 0 text
 		);
 		close_out fout
