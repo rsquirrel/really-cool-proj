@@ -79,14 +79,24 @@ public class Main
                 	operand = scanner.nextBoolean();
                 	break;
                 case Psc:
-                	operand = Character.toChars(scanner.nextInt());
+                	operand = (char) scanner.nextInt();
                 	break;
                 case Psf:
                 	operand = scanner.nextFloat();
                 	break;
                 case Pss:
-                	operand = null;
+                {
+                	String line = scanner.nextLine();
+                	Scanner lineScanner = new Scanner(line);
+                	StringBuilder result = new StringBuilder();
+                	while (lineScanner.hasNextInt())
+                	{
+                		int ascii = lineScanner.nextInt();
+                		result.append((char) ascii);
+                	}
+                	operand = result.toString();
                 	break;
+                }
                 default:
                     break;
                 }
