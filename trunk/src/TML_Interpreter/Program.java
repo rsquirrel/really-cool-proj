@@ -59,6 +59,9 @@ public class Program
                 break;
             case Psi:
             case Psb:
+            case Psf:
+            case Psc:
+            case Pss:
                 stack[sp++] = operand;
                 pc++;
                 break;

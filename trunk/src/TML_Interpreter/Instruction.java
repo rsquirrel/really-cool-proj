@@ -4,6 +4,8 @@ public class Instruction
     {
         Glb,
         Psi,
+        Psf,
+        Pss,
         Psb,
         Psc,
         Pop,

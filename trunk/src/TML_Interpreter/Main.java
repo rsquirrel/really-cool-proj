@@ -79,6 +79,13 @@ public class Main
                 	operand = scanner.nextBoolean();
                 	break;
                 case Psc:
+                	operand = Character.toChars(scanner.nextInt());
+                	break;
+                case Psf:
+                	operand = scanner.nextFloat();
+                	break;
+                case Pss:
+                	operand = null;
                 	break;
                 default:
                     break;
@@ -91,6 +98,7 @@ public class Main
         {
             System.err.println("Error when processing input file.");
             e.printStackTrace();
+            System.exit(1);
         }
         finally
         {
