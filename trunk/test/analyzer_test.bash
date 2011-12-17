@@ -10,7 +10,7 @@
 
 if [ $# -lt 1 ]
 then
-	echo "No path for the scanner_test specified, use ../src/TML_Compiler/scanner_test as default" 
+	echo "No path for the analyzer_test specified, use ../src/TML_Compiler/analyzer_test as default" 
 	tmlc="../src/TML_Compiler/analyzer_test"
 elif [ "$1" = "clean" ]
 then

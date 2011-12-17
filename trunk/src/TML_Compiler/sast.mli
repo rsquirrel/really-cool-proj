@@ -19,8 +19,6 @@ type var_decl = t * string * (expr option)
 type tree_def = {
   typename: string;
 	members : var_decl list;
-	degree : int;
-	aliases : string list;
 }
 
 type stmt = (* Statements  nothing *)

@@ -18,6 +18,7 @@ void main ()
 	dgr2 = &tb;
 	dgr3 = &tc;
 	
-	print (dgr1 == dgr2 == dgr3);		// true
-	
+	//print (dgr1 == dgr2 == dgr3);		// true
+	print (dgr1 == dgr2);
+	print (dgr1 == dgr3);
 }
