@@ -2,7 +2,24 @@
 (* @authors: Shuai Sun *)
 (* modified by Jiabin Hu and Yan Zou on identifier and keyword order issues *)
 
-{ open Parser }
+{ 
+open Parser 
+
+let rec convert_str ori tar =
+	let convert_char c = match c with
+		'n' -> '\n'
+		| 'r' -> '\r'
+		| 't' -> '\t'
+		| 'b' -> '\b'
+		| '\'' -> '\''
+		| '\"' -> '\"'
+		| '\\' -> '\\'
+		| _ -> raise (Failure ("Illegal escpae character: "^"\\"^(String.make 1 c)))
+in
+	match ori with
+		"" -> tar
+		| _ -> if (String.get ori 0) = '\\' then convert_str (String.sub ori 2 ((String.length ori) - 2)) (tar^(String.make 1 (convert_char (String.get ori 1)))) else convert_str (String.sub ori 1 ((String.length ori) - 1)) (tar^(String.make 1 (String.get ori 0)))
+}
 
 (* letter, digit *)
 let letter = ['a'-'z' 'A'-'Z']
@@ -56,7 +73,7 @@ rule token = parse
     | "false"         as bool
                       { BOOL(bool_of_string bool) }
     | '"' (character | '\'')* '"' as string 
-                      { STRING(String.sub string 1 ((String.length string) - 2)) }
+                      { STRING(convert_str (String.sub string 1 ((String.length string) - 2)) "") }
     | '\'' (character | ''' | '"') '\'' as string
                       { CHAR(String.get string 1) }
     | '\'' '\\' 'n' '\'' 
