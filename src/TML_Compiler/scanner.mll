@@ -57,7 +57,7 @@ rule token = parse
                       { BOOL(bool_of_string bool) }
     | '"' (character | '\'')+ '"' as string 
                       { STRING(String.sub string 1 ((String.length string) - 2)) }
-    | '\'' (character | '"') '\'' as string
+    | '\'' (character | ''' | '"') '\'' as string
                       { CHAR(String.get string 1) }
     | '\'' '\\' 'n' '\'' 
                       { CHAR('\n') }

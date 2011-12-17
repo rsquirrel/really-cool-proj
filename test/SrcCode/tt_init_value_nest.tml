@@ -12,7 +12,7 @@ treetype <1, [next]> table
 
 void main()
 {
-	Bin_T t1;
+	table t1;
 	alloc (t1);
 	
 	

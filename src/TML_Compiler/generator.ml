@@ -52,11 +52,23 @@ let string_of_op = function
 	| Hsh -> "Num"
 	| Child -> "Chd"
 
+(* convert a string to a list of ascii codes *)
+let string_of_string s = 
+	let len = String.length s in
+	let rec toasc result i =
+		if i = len then result
+		else
+				let result =
+					(result ^ " " ^ (string_of_int (Char.code (String.get s i))))
+				in toasc result (i + 1)
+	in toasc "" 0
+
+(* convert bytecode to string *)
 let string_of_bytecode = function
 	| Psi i -> ("Psi " ^ (string_of_int i))
 	| Psf f -> ("Psf " ^ (string_of_float f))
-	| Psc c -> ("Psc " ^ (String.make 1 c))
-	| Pss s -> ("Pss " ^ s)
+	| Psc c -> ("Psc " ^ (string_of_int (Char.code c)))
+	| Pss s -> ("Pss" ^ (string_of_string s))
 	| Psb b -> ("Psb " ^ (string_of_bool b))
 	| Pst -> ("Pst")
 	| Pop i -> ("Pop " ^ (string_of_int i))
