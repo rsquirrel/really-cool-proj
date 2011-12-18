@@ -1,0 +1,24 @@
+int y=10;
+int foo()
+{
+	int k=10;
+	y = y +1;
+	return k;
+}
+int main()
+{
+	int i;
+	int j = foo();
+	print("Does that work...?");
+	for(i=0;i<10;i=i+1)
+	{
+		if(i == 6)
+		{
+			print("I am getting outaa here..");
+			break;
+		}
+		print("Currently i is..",i);
+	}
+	print("J is..", j);
+}
+
