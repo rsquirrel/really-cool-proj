@@ -25,7 +25,7 @@ void main ()
 	childnum1 = #ta;
 	childnum2 = #a1;
 	
-	ta ->(tb:tc:td:te:tf:~);
+	ta ->(tb:~:(tf->(tc:td->(~:te))):~:~:~);
 	a1->(a2:~);
 	te = $tf;
 	td = @tf;
