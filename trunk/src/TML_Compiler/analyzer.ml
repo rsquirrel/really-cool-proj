@@ -10,8 +10,8 @@ module StringMap = Map.Make(String)
 
 type tree_table = {
 	type_name : string;
-	degree : int;
-	aliases : int StringMap.t;
+	degree : int; (* convert all degrees to numbers in analyzer *)
+	aliases : int StringMap.t; (* convert all aliases to number *)
 	member_list : (t * string) list
 }
 
@@ -129,7 +129,7 @@ let rec expr scope = function
 				match (snd et1) with
 					| Tree_type tname ->
 							let tree = find_tree scope tname in
-							(* the expr following dot can only be tree members *)
+							(* the expr following dot can only be ID of tree members *)
 							let tree_scope = { scope with
 								parent = None; vars = tree.member_list }
 							in
@@ -251,7 +251,23 @@ let rec expr scope = function
 				Sast.Uniop(un_op, et), tt
   | Ast.Conn (e, el) -> 
 			let et = expr scope e and etl = List.map (expr scope) el in
-			Sast.Conn(et, etl), (snd et) (* TODO *)
+			let t1 = snd et in
+			(match t1 with
+				| Tree_type tname ->
+						let tree = find_tree scope tname in
+						if (List.length etl) > tree.degree then
+							raise (Failure ("Too many children in tree connection "^
+								"for tree-type " ^ tname ^ " whose degree is only " ^
+								(string_of_int tree.degree)))
+						else
+							let _ = List.iter (fun (_, t2) ->
+								if (t2 <> Tree_type("~") && t2 <> t1) then
+									raise (Failure ("Tree type mismatch in tree connection"))
+							) etl
+							in
+							Sast.Conn(et, etl), t1
+				| _ ->
+					raise (Failure ("Operator & takes only tree-typed operand")))
 	| Ast.Noexpr ->
 			Sast.Noexpr, Void (* TODO: What is this? *)
 
@@ -432,6 +448,7 @@ let check program =
 					let new_tree_def = {
 						typename = tn;
 						members = new_tm;
+						Sast.degree = tree_def.Ast.degree;
 					} in
 					classify (new_tree_def::tree_list) glob_list func_list new_scope tl
 		in classify [] [] [] init_glob_scope (List.rev program)

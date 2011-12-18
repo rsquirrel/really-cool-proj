@@ -11,7 +11,7 @@ module StringMap = Map.Make(String)
 type environment = {
 	func_index : int StringMap.t;
 	global_index : int StringMap.t;
-	tree_index : int StringMap.t;
+	tmember_index : int StringMap.t;
 }
 
 let string_of_type = function
@@ -65,6 +65,7 @@ let string_of_string s =
 
 (* convert bytecode to string *)
 let string_of_bytecode = function
+	| Glb i -> ("Glb " ^ (string_of_int i))
 	| Psi i -> ("Psi " ^ (string_of_int i))
 	| Psf f -> ("Psf " ^ (string_of_float f))
 	| Psc c -> ("Psc " ^ (string_of_int (Char.code c)))
@@ -86,9 +87,11 @@ let string_of_bytecode = function
 	| Beq i -> ("Beq " ^ (string_of_int i))
 	| Bne i -> ("Bne " ^ (string_of_int i))
 	| Bra i -> ("Bra " ^ (string_of_int i))
+	| Alc i -> ("Alc " ^ (string_of_int i))
+	| Fld t -> ("Fld " ^ (string_of_type t))
+	| Sfd i -> ("Sfd " ^ (string_of_int i))
+	| Scd -> "Scd"
 	| Hlt -> "Hlt"
-	| Fld i -> ("Fld " ^ (string_of_int i))
-	| Glb i -> ("Glb " ^ (string_of_int i))
 
 let init_value t = function
 	| Some(e) -> e
@@ -106,16 +109,67 @@ let init_value t = function
 (* add the names in the list to the map starting from start_index *)
 let add_to_map list map start_index =
 	snd (List.fold_left (fun (i, map) name ->
+		print_endline (name ^ ": " ^ (string_of_int i)); (* debug *)
 		(i + 1, StringMap.add name i map)) (start_index, map) list)
 
 let translate out_filename program =
-	let gname_list = List.map (fun (_, n, _) -> n) program.globals in
-	let fname_list = List.map (fun f -> f.fname) program.functions in
-	let glob_index = add_to_map gname_list StringMap.empty 0 in
-	let built_in = add_to_map ["alloc"; "print"] StringMap.empty (-2) in
-	let func_index = add_to_map fname_list built_in 0 in
+	(* index map for all globals - don't vary *)
+	let glob_index =
+		let gname_list =
+			List.map (fun (_, n, _) -> n) program.globals
+		in
+		add_to_map gname_list StringMap.empty 0
+	in
+	(* index map for all functions - don't vary *)
+	let func_index = 
+		let fname_list =
+			List.map (fun f -> f.fname) program.functions
+		in
+		(* tree allocation function names are same with the tree type names *)
+		(* after type checking, they can't be the same with other functions *)
+		let tname_list =
+			List.map (fun t -> t.typename) program.treetypes
+		in
+		let built_in = (* built-in functions *)
+			add_to_map ["print"] StringMap.empty (-1)
+		in
+		let func_index_without_trees =
+			add_to_map fname_list built_in 0
+		in (* append tree alloc functions to the end of funcs *)
+		add_to_map tname_list func_index_without_trees
+			(List.length fname_list) (* starting offset of tree alloc functions *)
+	in
+	let tmember_index =
+		let add_to_map_2 map t = (* for trees *)
+			let tree_name = t.typename in
+			let member_list = (* add tree_name before member names *)
+				(* this avoids conflicts because "." is not allowed in identifiers *)
+				List.map (fun (_, name, _) -> tree_name ^ "." ^ name) t.members
+			in
+			add_to_map member_list map 0
+		in
+		List.fold_left add_to_map_2 StringMap.empty program.treetypes
+	in
 	(* translate all the stmts in a block, local_index will not vary *)
 	let rec block local_index next_index num_params sl =	
+		(* common function for Binop and Assign in generating expr *)
+		let get_tmember_index e1 e2 =
+			match (snd e1) with (* get tree type name *)
+				| Tree_type tree_name -> 
+						(match e2 with
+							| Id id, _ -> (* tree_name.id *)
+									(let member_id = tree_name ^ "." ^ id in
+									try StringMap.find member_id tmember_index
+									with Not_found -> 
+										raise (Failure ("tree member " ^
+											member_id ^ " not found")))
+							| _ -> 
+									raise (Failure ("The right operand of operator " ^
+										". can only be an identifier")))
+				| _ ->
+						raise (Failure ("The left operand of operator " ^
+										". can only be tree type"))
+		in
 		(* Evaluate expression, the result is on top of the stack *)
 		let rec expr = function
 			| Literal lit, _ -> ( match lit with
@@ -125,39 +179,63 @@ let translate out_filename program =
 				| BoolLit b -> [Psb b]
 				| StringLit s -> [Pss s]
 				| TreeLit -> [Pst] )
-  		| Id id, _ ->
+  		| Id id, _ -> (* the ID of tree member won't get here *)
 					( try [Lfp (StringMap.find id local_index)]
 						with Not_found ->
 							try [Lod (StringMap.find id glob_index)]
 							with Not_found ->
 								raise (Failure ("Variable " ^ id ^ " not found")))
   		| Binop (e1, bin_op, e2), t ->
-					(expr e1) @ (expr e2) @ [Bin (bin_op, (snd e1))]
+					let be2 =
+						if bin_op = Dot then
+							[Psi (get_tmember_index e1 e2)]
+						else expr e2
+					in
+					(expr e1) @ be2 @ [Bin (bin_op, (snd e1))]
 			| Assign (e1, e2), _ ->
-					(* left value for assignment, get the address or use Sfp/Str *)
-					let lvalue = function
+					(* left value for assignment, get the address or use Sfp/Str/Sfd/Scd *)
+					(match e1 with
 						| Id id, t ->
-								( try [Sfp (StringMap.find id local_index)]
-									with Not_found ->
-										try [Str (StringMap.find id glob_index)]
+								let lvalue_bytecode =
+									( try [Sfp (StringMap.find id local_index)]
 										with Not_found ->
-											raise (Failure ("Variable " ^ id ^ "not found")))
-						| Binop (e1, bin_op, e2), t ->
+											try [Str (StringMap.find id glob_index)]
+											with Not_found ->
+												raise (Failure ("Variable " ^ id ^ "not found")))
+								in (expr e2) @ lvalue_bytecode
+						| Binop (e11, bin_op, e12), t ->
 								( match bin_op with
-										| Dot -> []
-										| Child -> []
+										| Dot -> let i = get_tmember_index e11 e12 in
+												(expr e11) @ (expr e2) @ [Sfd i]
+										| Child -> 
+												(expr e11) @ (expr e12) @ (expr e2) @ [Scd]
 										| _ -> raise (Failure "Illegal left value") )
-						| _ -> raise (Failure "Illegal left value")
-					in (expr e2) @ (lvalue e1)
-	 		| Call (func_name, params), _ -> 
+						| _ -> raise (Failure "Illegal left value"))
+	 		| Call (func_name, params), t -> 
 					if (func_name = "print") then
 						if (List.length params > 0) then
-							expr (List.hd params) @ [Jsr (-1)] @
+							(* expr (List.hd params) @ [Jsr (-1)] @
 							List.concat (List.map (fun e -> [Pop 1] @ (expr e) @
-																				[Jsr (-1)]) (List.tl params))
+																				[Jsr (-1)]) (List.tl params))*)
+							(List.concat (List.map (fun e ->
+								(expr e) @ [Jsr (-1); Pop 1]) params)) @
+							[Psi 0] (* return value of print *)
 						else []
 					else if (func_name = "alloc") then
-						[]
+						let alloc e =
+							match (snd e) with
+								| Tree_type tree_name -> 
+										(try (Jsr (StringMap.find tree_name func_index))
+										 with Not_found ->
+											raise (Failure ("Tree_type " ^ func_name ^ " not found")))
+								| _ ->
+										raise (Failure ("alloc function can only take in tree type"))
+						in
+						if (List.length params > 0) then
+							(List.concat (List.map (fun e ->
+								(expr e) @ [(alloc e); Pop 1]) params)) @
+							[Psi 0] (* void return of alloc *)
+						else []
 					else
 						List.concat (List.map expr params) @
 						(try [Jsr (StringMap.find func_name func_index)]
@@ -240,6 +318,7 @@ let translate out_filename program =
 		[Jsr (StringMap.find "main" func_index); Hlt]
 	in
 	let text = 
+		(* convert function bodies into bytecodes *)
 		let trans_func f =
 			let param_names = List.map snd f.params in (* get the names *)
 			let num_params = List.length param_names in
@@ -263,7 +342,26 @@ let translate out_filename program =
 				| Void -> [Psi 0]) @
 			[Ret num_params]
 		in
-		let func_bodies = List.map trans_func program.functions in
+		(* convert tree definitions into alloc functions *)
+		let trans_trees treetype =
+			let init_members = (* generate the member initialization statements *)
+				List.map (fun (t, name, init) ->
+					Expr(Assign((Binop((Id("."), Tree_type(treetype.typename)),
+						Dot, (Id(name), t)), t), init_value t init), t))
+					treetype.members
+			in
+			let tree_init_map = (* fake map only containing the tree itself *)
+				StringMap.add "." (-2) StringMap.empty
+			in
+			[Ent 0; Lfp (-2); Alc treetype.degree] @ (* get the tree - the only parameter *)
+			List.map (fun (t, _, _) -> Fld t) treetype.members @ [Pop 1] @
+			block tree_init_map 0 1 init_members @
+			[Psi 0] @ [Ret 1] (* return void *)
+		in
+		let func_bodies =
+			(List.map trans_func program.functions) @
+			(List.map trans_trees program.treetypes)
+		in
 		let (_, func_offsets) = (* generate the function offsets as a list *)
 				List.fold_left (fun (i, offsets) body ->
 						(* each step plus the number of byte statements *)
