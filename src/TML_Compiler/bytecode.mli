@@ -2,6 +2,7 @@
 (* @authors: Yan Zou *)
 
 type bstmt =
+	| Glb of int (* Indicate the number of global variables *)
 	| Psi of int (* Push an integer *)
 	| Psf of float (* Push a floating number *)
 	| Psc of char (* Push a cbaracter *)
@@ -22,6 +23,8 @@ type bstmt =
 	| Beq of int (* Branch relative if top-of-stack is zero *)
 	| Bne of int (* Branch relative if top-of-stack is non-zero *) 
 	| Bra of int (* Branch relative *)
+	| Alc of int (* new a tree for tree-typed variables, int is the degree *)
+	| Fld of Type.t (* Add a new value field to a tree node *)
+	| Sfd of int (* assign the value to the corresponding field of the tree *)
+	| Scd (* assign the corresponding child of the tree, need three arguments *)
 	| Hlt (* Terminate *) 
-	| Fld of int (* Add a new value field to a tree node *)
-	| Glb of int (* Indicate the number of global variables *)
