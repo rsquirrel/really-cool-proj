@@ -1,0 +1,43 @@
+int i;
+treetype <6, [a,b,c,d,e,f]> MyTree_t
+{
+	int num;
+	float numf;
+	string nums;
+	char numc;
+}
+
+treetype <3> NewTree
+{
+	int a;
+	float b;
+	string c;
+}
+void main ()
+{
+	MyTree_t ta, tb,tc,td,te,tf;
+	NewTree a1,a2;
+	ta[1].num = 1;
+	alloc(ta, tb, tc, td, te, tf);
+	alloc(a1,a2);
+	int childnum1,childnum2;
+	
+	childnum1 = #ta;
+	childnum2 = #a1;
+	
+	ta ->(tb:tc:td:te:tf:~);
+	a1->(a2:~);
+	te = $tf;
+	td = @tf;
+	te = tf;
+	if(childnum1 > childnum2)
+	{
+		print("degree of one is greater than the other...");
+	}
+	int j;
+	for(j=0;j<childnum1;j=j+1)
+	{
+		print(ta[j]);
+		ta[i].nums="hello world";
+	}
+}
