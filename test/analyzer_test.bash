@@ -14,7 +14,7 @@ then
 	tmlc="../src/TML_Compiler/analyzer_test"
 elif [ "$1" = "clean" ]
 then
-	rm SrcCode/*.sast
+	rm SastOutput/*.sast
 	exit
 else
 	tmlc=$1
@@ -28,8 +28,8 @@ fi
 
 for file in SrcCode/*.tml
 do
-	filename=`expr $file : '\(^.*\)'[.]`
-	scan_result=$filename.sast
+	filename=`expr $file : '[^/]*/\(.*\)'`
+	scan_result=SastOutput/$filename.sast
 	echo "$tmlc < $file > $scan_result"
 	$tmlc < $file > $scan_result
 done	
