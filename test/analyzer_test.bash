@@ -1,7 +1,7 @@
 # Author: Yan Zou
 # Usage:
 #   1. Run "make analyzer_test" in src to generate a scanner_test.
-#   2. Run "analyzer_test.bash" and pass in the path of scanner_test as the first argument.
+#   2. Run "analyzer_test.bash" and pass in the path of analyzer_test as the first argument.
 #      If no path is specified, "../src/TML_Compiler/analyzer_test" is used as default.
 #      This script will generate .sast file for each .tml file, recording the result of the scanner
 #   3. Run "analyzer_test.bash clean" to remove all the .sast files.
