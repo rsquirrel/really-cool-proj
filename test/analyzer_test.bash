@@ -34,4 +34,4 @@ do
 	$tmlc < $file > $scan_result
 done	
 
-echo "Scanner tests done."
+echo "Analyzer tests done."
