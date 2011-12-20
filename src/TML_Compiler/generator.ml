@@ -109,7 +109,7 @@ let init_value t = function
 (* add the names in the list to the map starting from start_index *)
 let add_to_map list map start_index =
 	snd (List.fold_left (fun (i, map) name ->
-		print_endline (name ^ ": " ^ (string_of_int i)); (* debug *)
+		(*print_endline (name ^ ": " ^ (string_of_int i)); (* debug *) *)
 		(i + 1, StringMap.add name i map)) (start_index, map) list)
 
 let translate out_filename program =
@@ -281,7 +281,7 @@ let translate out_filename program =
 					[Bra ((List.length r2) + 1)] @ r2
 			| Foreach (id, e, order, s) ->
 					let new_local_index =
-						print_endline (id ^ ": " ^ (string_of_int next_index));
+						(* print_endline (id ^ ": " ^ (string_of_int next_index)); (* debug *)*)
 						StringMap.add id next_index local_index
 					in
 					let bytecodes = (* regard the foreach statement as a block *)
@@ -377,7 +377,7 @@ let translate out_filename program =
 			[Ent 0; Lfp (-2); Alc treetype.degree] @ (* get the tree - the only parameter *)
 			List.map (fun (t, _, _) -> Fld t) treetype.members @ [Sfp (-2); Pop 1] @
 			block tree_init_map 0 1 init_members @
-			[Psi 0] @ [Ret 1] (* return void *)
+			[Lfp (-2); Ret 1] (* return the tree *)
 		in
 		let func_bodies =
 			(List.map trans_func program.functions) @
