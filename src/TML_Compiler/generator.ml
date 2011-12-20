@@ -23,11 +23,11 @@ let string_of_type = function
 	| Tree_type tname -> ("T(" ^ tname ^ ")")
 	| Void -> "v"
 
-let string_of_order = function
-	| Preorder -> "preorder"
-	| Inorder -> "inorder"
-	| Postorder -> "postorder"
-	| Levelorder -> "levelorder"
+let int_of_order = function
+	| Preorder -> 0
+	| Inorder -> 1
+	| Postorder -> 2
+	| Levelorder -> 3
 
 let string_of_op = function
 	  Add -> "Add"
@@ -217,12 +217,12 @@ let translate out_filename program =
 							(* expr (List.hd params) @ [Jsr (-1)] @
 							List.concat (List.map (fun e -> [Pop 1] @ (expr e) @
 																				[Jsr (-1)]) (List.tl params))*)
-							(List.concat (List.map (fun e ->
+							(List.concat (List.map (fun e -> (* print one by one *)
 								(expr e) @ [Jsr (-1); Pop 1]) params)) @
 							[Psi 0] (* return value of print *)
 						else []
 					else if (func_name = "alloc") then
-						let alloc e =
+						let alloc e = (* alloc one tree *)
 							match (snd e) with
 								| Tree_type tree_name -> 
 										(try (Jsr (StringMap.find tree_name func_index))
@@ -231,7 +231,7 @@ let translate out_filename program =
 								| _ ->
 										raise (Failure ("alloc function can only take in tree type"))
 						in
-						if (List.length params > 0) then
+						if (List.length params > 0) then (* alloc one by one *)
 							(List.concat (List.map (fun e ->
 								(expr e) @ [(alloc e); Pop 1]) params)) @
 							[Psi 0] (* void return of alloc *)
@@ -243,7 +243,12 @@ let translate out_filename program =
 							raise (Failure ("Function " ^ func_name ^ " not found")))
 	  	| Uniop (un_op, e), t ->
 					if un_op = Add then (expr e) else ((expr e) @ [Uop (un_op, t)])
-	  	| Conn (e, el), _ -> [] (* TODO *)
+	  	| Conn (e, el), _ -> (* add to children one by one *)
+					let (_, add_children_byte) =
+						List.fold_left (fun (i, bl) ec ->
+							(i + 1, bl @ [Psi i] @ (expr ec) @ [Scd])) (0, []) el
+					in
+					expr e @ add_children_byte
 			| Noexpr, _ -> [Psi 0] (* void return of a function *)
 		in
 		let loop_control sl continue_offset break_offset = 
@@ -271,7 +276,20 @@ let translate out_filename program =
 					let r1 = (stmt s1) and r2 = (stmt s2) in
 					expr e @ [Beq ((List.length r1) + 2)] @ r1 @
 					[Bra ((List.length r2) + 1)] @ r2
-			| Foreach (id, e, order, s) -> []
+			| Foreach (id, e, order, s) ->
+					let new_local_index =
+						print_endline (id ^ ": " ^ (string_of_int next_index));
+						StringMap.add id next_index local_index
+					in
+					let bytecodes = (* regard the foreach statement as a block *)
+						(* the id can only be used inside foreach *)
+						block new_local_index (next_index + 1) num_params [s]
+					in
+					expr e @ (* push the root node onto the stack *)
+					[Psi (int_of_order order)] @ (* traverse order *)
+					[Psi (List.length bytecodes)] @ (* number of lines in foreach *)
+					[Jsr (-2)] @ bytecodes @ [Pop 1] (* Jsr -2 should pop out two elements *)
+					(* in order to make variables in the right order on the stack *)
 			| For (e1, e2, e3, s) -> 
 					(* stmt (Block([Expr(e1); While(e2, Block([s; Expr(e3)]))])) *)
 					let re1 = stmt (Expr e1) and re2 = expr e2 and
