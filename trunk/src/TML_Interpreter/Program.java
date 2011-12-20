@@ -121,6 +121,35 @@ public class Program
             case Bra:
                 pc += (Integer) operand;
                 break;
+            case Sfd:
+            {
+            	Object data = stack[sp - 1];
+            	TMLTree tar = (TMLTree) stack[sp - 2];
+            	tar.setData((Integer) operand, data);
+            	pc++;
+            	sp--;
+            	break;
+            }
+            case Pst:
+            	sp++;
+            	pc++;
+            	break;
+            case Alc:
+            	stack[sp - 1] = new TMLTree((Integer) operand);
+            	pc++;
+            	break;
+            case Fld:
+            	char type = (Character) operand;
+            	switch (type)
+            	{
+            	case 'i':
+            		((TMLTree) stack[sp - 1]).addData(new Integer(0));
+            		break;
+            	default:
+            		throw new RuntimeException("Unknown type followed by instruction \"Fld\"");
+            	}
+            	pc++;
+            	break;
             case Bin:
                 Object op1 = stack[sp - 2];
                 Object op2 = stack[sp - 1];
@@ -249,6 +278,11 @@ public class Program
                     else
                         throw new RuntimeException("Type error!");
                     break;
+                }
+                case Val:
+                {
+                	Object data = ((TMLTree) op1).getData((Integer) op2);
+                	stack[sp - 2] = data;
                 }
                 }
                 sp--;
