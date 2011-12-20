@@ -201,7 +201,7 @@ let translate out_filename program =
 										with Not_found ->
 											try [Str (StringMap.find id glob_index)]
 											with Not_found ->
-												raise (Failure ("Variable " ^ id ^ "not found")))
+												raise (Failure ("Variable " ^ id ^ " not found")))
 								in (expr e2) @ lvalue_bytecode
 						| Binop (e11, bin_op, e12), t ->
 								( match bin_op with
@@ -221,19 +221,22 @@ let translate out_filename program =
 								(expr e) @ [Jsr (-1); Pop 1]) params)) @
 							[Psi 0] (* return value of print *)
 						else []
-					else if (func_name = "alloc") then
+					else if (func_name = "alloc") then 
 						let alloc e = (* alloc one tree *)
-							match (snd e) with
-								| Tree_type tree_name -> 
-										(try (Jsr (StringMap.find tree_name func_index))
-										 with Not_found ->
-											raise (Failure ("Tree_type " ^ func_name ^ " not found")))
-								| _ ->
-										raise (Failure ("alloc function can only take in tree type"))
+							match e with (* alloc only when the parameters are tree-type left values *)
+								| Id _, Tree_type tree_name
+								| Binop (_, Dot, _), Tree_type tree_name
+								| Binop (_, Child, _), Tree_type tree_name -> 
+										let ea =
+											Assign (e, (Call (tree_name, [e]),
+												Tree_type tree_name)), Tree_type tree_name
+										in
+										expr ea @ [Pop 1]
+								| _ -> (* else, do nothing *)
+										raise (Failure "illegal alloc parameters")
 						in
 						if (List.length params > 0) then (* alloc one by one *)
-							(List.concat (List.map (fun e ->
-								(expr e) @ [(alloc e); Pop 1]) params)) @
+							(List.concat (List.map (fun e -> alloc e) params)) @
 							[Psi 0] (* void return of alloc *)
 						else []
 					else
