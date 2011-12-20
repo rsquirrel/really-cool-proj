@@ -20,7 +20,7 @@ let string_of_type = function
 	| Char -> "c"
 	| String -> "s"
 	| Boolean -> "b"
-	| Tree_type tname -> ("T(" ^ tname ^ ")")
+	| Tree_type tname -> "T"
 	| Void -> "v"
 
 let int_of_order = function
@@ -336,7 +336,10 @@ let translate out_filename program =
 		in
 		[Glb (List.length assign_globals)] @
 		block StringMap.empty 0 0 assign_globals @
-		[Jsr (StringMap.find "main" func_index); Hlt]
+		try
+			[Jsr (StringMap.find "main" func_index); Hlt]
+		with Not_found -> 
+			raise (Failure "main function not found!")
 	in
 	let text = 
 		(* convert function bodies into bytecodes *)

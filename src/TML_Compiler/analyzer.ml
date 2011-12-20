@@ -95,9 +95,12 @@ let find_tree scope name =
 (* break the Ast.var_decl into lists of Sast.var_decl *)
 let part decl = 
 		let t = fst decl in
-		List.rev (List.fold_left (fun l -> function
-			| Ast.WithInit (name, e) -> (t, name, Some(e))::l
-			| Ast.WithoutInit name -> (t, name, None)::l) [] (snd decl))
+		if t = Void then
+			raise (Failure ("variables cannot be declared with type void"))
+		else
+			List.rev (List.fold_left (fun l -> function
+				| Ast.WithInit (name, e) -> (t, name, Some(e))::l
+				| Ast.WithoutInit name -> (t, name, None)::l) [] (snd decl))
 
 (* operand type error *)
 let e_op_type op t =
@@ -452,13 +455,16 @@ let check program =
 							List.find (fun (_, n, _) -> n = fn) glob_scope.funcs
 						in raise (Failure ("function " ^ fn ^ " redeclared"))
 					with Not_found -> (* no conflicts, begin to convert it *)
-						(List.iter (fun (_, name) -> (* check params with same name *)
-							let num = (* for each param, count the name in fp *)
-								List.fold_left (fun i (_, n) -> 
-									if (n = name) then i + 1 else i) 0 fp
-							in if (num > 1) then (* param name exists more than once *)
-								raise (Failure ("more than one parameter has the name " ^ 
-									name))) fp);
+						(List.iter (fun (t, name) -> (* check params with same name *)
+							if t = Void then
+								raise (Failure ("type of parameter " ^ name ^ " cannot be void"))
+							else
+								let num = (* for each param, count the name in fp *)
+									List.fold_left (fun i (_, n) -> 
+										if (n = name) then i + 1 else i) 0 fp
+								in if (num > 1) then (* param name exists more than once *)
+									raise (Failure ("more than one parameter has the name " ^ 
+										name))) fp);
 						let required_param_types = (* only type info of the params *)
 							List.map (fun p -> fst p) fp
 						in
