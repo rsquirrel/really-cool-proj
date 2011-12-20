@@ -1,0 +1,19 @@
+treetype<1> Data
+{
+	int a;
+	//char b;
+	//float c;
+}
+
+int main()
+{
+	Data node;
+	alloc(node);
+	node.a = 1;
+	//node.b = 'a';
+	//node.c = 2.0;
+	print(node.a);
+	//print(node.b);
+	//print(node.c);
+	print('\n');
+}
