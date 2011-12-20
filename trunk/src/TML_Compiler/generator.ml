@@ -372,7 +372,7 @@ let translate out_filename program =
 				StringMap.add "." (-2) StringMap.empty
 			in
 			[Ent 0; Lfp (-2); Alc treetype.degree] @ (* get the tree - the only parameter *)
-			List.map (fun (t, _, _) -> Fld t) treetype.members @ [Pop 1] @
+			List.map (fun (t, _, _) -> Fld t) treetype.members @ [Sfp (-2); Pop 1] @
 			block tree_init_map 0 1 init_members @
 			[Psi 0] @ [Ret 1] (* return void *)
 		in
