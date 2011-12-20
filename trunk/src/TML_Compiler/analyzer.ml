@@ -68,6 +68,7 @@ let is_same_type t1 t2 =
 				else (tt1 = tt2)
 		| (t1, t2) -> t1 = t2
 
+(* find the varible in the scope by its name *)
 let rec find_var scope name = 
 	try
 		List.find (fun (_, var_name) -> var_name = name) scope.vars
@@ -98,10 +99,12 @@ let part decl =
 			| Ast.WithInit (name, e) -> (t, name, Some(e))::l
 			| Ast.WithoutInit name -> (t, name, None)::l) [] (snd decl))
 
+(* operand type error *)
 let e_op_type op t =
 	raise (Failure ("The operand of operator " ^
 		(string_of_op op) ^ " can not be " ^ (string_of_type t)))
 
+(* convert Ast.expr to (Sast.expr, Type) by semantic analysis *)
 let rec expr scope = function
 	| Ast.Literal lit ->
 			let lit_type = match lit with
@@ -283,6 +286,7 @@ let rec stmt scope = function
 				parent = Some(scope); vars = []; }
 			in
 			(* check each statement in the block. scope may change in this process *)
+			(* Vardecl and Foreach are dealt with here because they can add locals *)
 			let check_stmt (block_scope, stl) s = match s with
 				| Ast.Vardecl var_decl ->
 						let _ = match (fst var_decl) with (* check tree type *)
@@ -293,13 +297,18 @@ let rec stmt scope = function
 						(* add all var in var_list to block_scope *)
 						(* and convert the var_list(Ast.expr) to new_var_list(Sast.expr) *)
 						let add_var (block_scope, new_var_list) (t, name, init) =
-							let new_scope = { (* add var to block_scope, inverse order *)
-							  (* We don't need init info in block_scope *)
-								block_scope with vars = (t, name)::block_scope.vars
-							} and new_var_decl = (* convert from Ast.expr to Sast.expr *)
-								(t, name, check_init scope init)
-							in (* add new_var_decl to new_var_list, inverse order *)
-							(new_scope, Sast.Vardecl(new_var_decl)::new_var_list)
+							try (* check if the variable has already been declared in this block *)
+								let _ = 
+									List.find (fun (_, n) -> n = name) block_scope.vars
+								in raise (Failure ("variable " ^ name ^ " redeclared"))
+							with Not_found -> (* no conflicts, simply continue *)
+								let new_scope = { (* add var to block_scope, inverse order *)
+								  (* We don't need init info in block_scope *)
+									block_scope with vars = (t, name)::block_scope.vars
+								} and new_var_decl = (* convert init from Ast.expr to Sast.expr *)
+									(t, name, check_init scope init)
+								in (* add new_var_decl to new_var_list, inverse order *)
+								(new_scope, Sast.Vardecl(new_var_decl)::new_var_list)
 						in
 						let (new_scope, new_var_list) =
 							List.fold_left add_var (block_scope, []) var_list
@@ -318,46 +327,86 @@ let rec stmt scope = function
 	| Ast.If (e, s1, s2) ->
 			let et = expr scope e in
 			if ((snd et) = Boolean) then
-				let st1 = stmt scope s1 and st2 = stmt scope s2 in
-				Sast.If(et, st1, st2)
+				let st1 = stmt scope s1 in
+				(* create a fake block for if statement to guarantee a new scope *)
+				let new_st1 = match st1 with
+					| Sast.Block(_, _) -> st1
+					| _ -> stmt scope (Ast.Block [s1])
+				in
+				let st2 = stmt scope s2 in
+				(* create a fake block for else clause to guarantee a new scope *)
+				let new_st2 = match st2 with
+					| Sast.Block(_, _) -> st1
+					| _ -> stmt scope (Ast.Block [s2])
+				in 
+				Sast.If(et, new_st1, new_st2)
 			else
 				raise (Failure ("the expression in if statement is not boolean"))
 	| Ast.Foreach (id, e, order, s) ->
-			let (id_type, _) = try
-					find_var scope id
-				with Not_found ->
-					raise (Failure ("undeclared identifier " ^ id))
-			in (match id_type with
-				| Tree_type type_name ->
-						let et = expr scope e in 
-						if (snd et) = id_type then (* The same tree type *)
-							Sast.Foreach(id, et, order, stmt scope s)
-						else
-							raise (Failure ("foreach not in same tree type"))
+			let et = expr scope e in
+			(match (snd et) with
+				| Tree_type tname ->
+						ignore(find_tree scope tname); (* check if the tree type exists *)
+						let new_scope = (* add id to the current scope temporarily *)
+							{ scope with vars = (Tree_type(tname), id)::scope.vars }
+						in
+						let st = stmt new_scope s in
+						(match st with (* check if id re-declared in the block *)
+							| Sast.Block(_, block_vars) ->
+									(try (* check if the id has been declared again inside foreach *)
+										let _ = 
+											List.find (fun (t, name) -> name = id) block_vars
+										in raise (Failure ("Foreach variable " ^ id ^ " redeclared"))
+									with Not_found -> (* no conflicts, convert it *)
+										Sast.Foreach (id, et, order, st))
+							| _ -> (* if the statement is not block, we do not need to check *)
+									let new_st = (* create a fake block for foreach to avoid errors *)
+										stmt new_scope (Ast.Block [s])
+									in
+									Sast.Foreach (id, et, order, new_st))
 				| _ -> raise (Failure ("identifier " ^ id ^ " is not a tree type")))
 	| Ast.For (e1, e2, e3, s) -> 
 			let et2 = expr scope e2 in
 			if ((snd et2) = Boolean) then
-				Sast.For (expr scope e1, et2, expr scope e3, stmt scope s)
+				let st = stmt scope s in
+				(* create a fake block for for statement to guarantee a new scope *)
+				let new_st = match st with
+					| Sast.Block(_, _) -> st
+					| _ -> stmt scope (Ast.Block [s])
+				in
+				Sast.For (expr scope e1, et2, expr scope e3, new_st)
 			else
 				raise (Failure ("the second expression in for statement is not boolean"))
 	| Ast.Do (s, e) ->
 			let et = expr scope e in
 			if ((snd et) = Boolean) then
-				Sast.Do (stmt scope s, expr scope e)
+				let st = stmt scope s in
+				(* create a fake block for for statement to guarantee a new scope *)
+				let new_st = match st with
+					| Sast.Block(_, _) -> st
+					| _ -> stmt scope (Ast.Block [s])
+				in
+				Sast.Do (new_st, expr scope e)
 			else
 				raise (Failure ("the expression in do statement is not boolean"))
 	| Ast.While (e, s) ->
 			let et = expr scope e in
 			if ((snd et) = Boolean) then
-				Sast.While (expr scope e, stmt scope s)
+				let st = stmt scope s in
+				(* create a fake block for for statement to guarantee a new scope *)
+				let new_st = match st with
+					| Sast.Block(_, _) -> st
+					| _ -> stmt scope (Ast.Block [s])
+				in
+				Sast.While (expr scope e, new_st)
 			else
 				raise (Failure ("the expression in while statement is not boolean"))
 	| Ast.Break -> Sast.Break
 	| Ast.Continue -> Sast.Continue
 	| Ast.Empty -> Sast.Empty
-	| Ast.Vardecl var_decl -> (* separately handled before *)
-			raise (Failure "Variable declaration in wrong position!") 
+	| Ast.Vardecl _ -> (* handled in block for scope change *)
+			raise (Failure ("Variable Declaration in wrong position!"))
+			(* this can happen: if (a == 1) int b = 2; *)
 
 let check program =
 	let init_glob_scope = {
@@ -381,7 +430,12 @@ let check program =
 					let var_list = part var_decl in
 					let new_var_list = (* convert Ast.expr to Sast.expr *)
 						List.map (fun (t, name, init) ->
-							(t, name, check_init glob_scope init)) var_list
+							try (* check if the variable has been declared before *)
+								let _ = 
+									List.find (fun (_, n) -> n = name) glob_scope.vars
+								in raise (Failure ("global variable " ^ name ^ " redeclared"))
+							with Not_found -> (* no conflicts, return the variable list *)
+								(t, name, check_init glob_scope init)) var_list
 					in
 					let new_scope = { glob_scope with vars =
 						glob_scope.vars @ (* add only type and name info into scope *)
@@ -393,64 +447,83 @@ let check program =
 						and fn = func_decl.Ast.fname
 						and fp = func_decl.Ast.params
 					in
-					let required_param_types = 
-						List.map (fun p -> fst p) fp
-					in
-					let new_scope = { glob_scope with funcs =
-						(ft, fn, required_param_types)::glob_scope.funcs
-					} in
-					let param_scope = { new_scope with 
-						parent = Some(new_scope); vars = fp}
-					in
-					let func_block = 
-						stmt param_scope (Ast.Block(func_decl.Ast.body))
-					in
-					let (new_body, local_var) = match func_block with
-						| Sast.Block(new_body, local_var) -> (new_body, local_var)
-						| _ -> raise (Failure ("unexpected fatal error"))
-					in
-					let new_func_decl = {
-						return_type = ft;
-						fname = fn;
-						params = fp;
-						locals = local_var;
-						(* Note we don't have init info in local_var *)
-						(* The init is still in function body which can not be rearranged *)
-						body = new_body;
-					} in (* add new_func_decl to func_list in reverse order *)
-					classify tree_list glob_list (new_func_decl::func_list) new_scope tl
+					(try (* check if the function has been declared before *)
+						let _ = 
+							List.find (fun (_, n, _) -> n = fn) glob_scope.funcs
+						in raise (Failure ("function " ^ fn ^ " redeclared"))
+					with Not_found -> (* no conflicts, begin to convert it *)
+						let required_param_types = 
+							List.map (fun p -> fst p) fp
+						in
+						let new_scope = { glob_scope with funcs =
+							(ft, fn, required_param_types)::glob_scope.funcs
+						} in
+						let param_scope = { new_scope with 
+							parent = Some(new_scope); vars = fp}
+						in
+						let func_block = 
+							stmt param_scope (Ast.Block(func_decl.Ast.body))
+						in
+						let (new_body, local_var) = match func_block with
+							| Sast.Block(new_body, local_var) ->
+									(* check if the parameters are redeclared in function body *)
+									List.iter (fun (_, pname) -> (* for each parameter *)
+										try 
+											let _ = (* search the function local variable list *)
+												List.find (fun (_, n) -> n = pname) local_var
+											in raise (Failure ("parameter " ^ pname ^
+																" redeclared in function " ^ fn))
+										with Not_found -> () (* no conflicts, accept the body *)
+									) fp; (new_body, local_var)
+							| _ -> raise (Failure ("unexpected fatal error"))
+						in
+						let new_func_decl = {
+							return_type = ft;
+							fname = fn;
+							params = fp;
+							locals = local_var;
+							(* Note we don't have init info in local_var *)
+							(* The init is still in function body which can not be rearranged *)
+							body = new_body;
+						} in (* add new_func_decl to func_list in reverse order *)
+						classify tree_list glob_list (new_func_decl::func_list) new_scope tl)
 			| (Ast.Treedef tree_def)::tl ->
 					let tn = tree_def.Ast.typename in
-					let (alias_map, _) =
-						List.fold_left (fun (m, i) s ->
-							(StringMap.add s i m, i + 1))
-							(StringMap.empty, 0) (tree_def.Ast.aliases)
-					in
-					let tm =
-						List.concat (List.map part tree_def.Ast.members)
-					in
-					let tree_table = {
-						type_name = tn;
-						degree = tree_def.Ast.degree;
-						aliases = alias_map;
-						member_list = List.map (fun (t, name, _) -> (t, name)) tm
-					} in
-					let new_scope = { glob_scope with trees = 
-						tree_table::glob_scope.trees }
-					in
-					let new_tm = (* convert Ast.expr to Sast.expr *)
-						List.map (fun (t, name, init) ->
-							let _ = match t with (* recursive tree type in members *)
-								| Tree_type tname -> ignore(find_tree new_scope tname)
-								| _ -> ()
-							in (t, name, check_init glob_scope init)) tm
-					in
-					let new_tree_def = {
-						typename = tn;
-						members = new_tm;
-						Sast.degree = tree_def.Ast.degree;
-					} in
-					classify (new_tree_def::tree_list) glob_list func_list new_scope tl
+					(try (* check if the tree_typed has been declared before *)
+						let _ = 
+							List.find (fun t -> t.type_name = tn) glob_scope.trees
+						in raise (Failure ("tree type " ^ tn ^ " redeclared"))
+					with Not_found -> (* no conflicts, simply continue *)
+						let (alias_map, _) =
+							List.fold_left (fun (m, i) s ->
+								(StringMap.add s i m, i + 1))
+								(StringMap.empty, 0) (tree_def.Ast.aliases)
+						in
+						let tm =
+							List.concat (List.map part tree_def.Ast.members)
+						in
+						let tree_table = {
+							type_name = tn;
+							degree = tree_def.Ast.degree;
+							aliases = alias_map;
+							member_list = List.map (fun (t, name, _) -> (t, name)) tm
+						} in
+						let new_scope = { glob_scope with trees = 
+							tree_table::glob_scope.trees }
+						in
+						let new_tm = (* convert Ast.expr to Sast.expr *)
+							List.map (fun (t, name, init) ->
+								let _ = match t with (* recursive tree type in members *)
+									| Tree_type tname -> ignore(find_tree new_scope tname)
+									| _ -> ()
+								in (t, name, check_init glob_scope init)) tm
+						in
+						let new_tree_def = {
+							typename = tn;
+							members = new_tm;
+							Sast.degree = tree_def.Ast.degree;
+						} in
+						classify (new_tree_def::tree_list) glob_list func_list new_scope tl)
 		in classify [] [] [] init_glob_scope (List.rev program)
 	in {
 		treetypes = tree_list;
