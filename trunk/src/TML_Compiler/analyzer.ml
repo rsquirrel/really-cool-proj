@@ -452,13 +452,20 @@ let check program =
 							List.find (fun (_, n, _) -> n = fn) glob_scope.funcs
 						in raise (Failure ("function " ^ fn ^ " redeclared"))
 					with Not_found -> (* no conflicts, begin to convert it *)
-						let required_param_types = 
+						(List.iter (fun (_, name) -> (* check params with same name *)
+							let num = (* for each param, count the name in fp *)
+								List.fold_left (fun i (_, n) -> 
+									if (n = name) then i + 1 else i) 0 fp
+							in if (num > 1) then (* param name exists more than once *)
+								raise (Failure ("more than one parameter has the name " ^ 
+									name))) fp);
+						let required_param_types = (* only type info of the params *)
 							List.map (fun p -> fst p) fp
 						in
-						let new_scope = { glob_scope with funcs =
+						let new_scope = { glob_scope with funcs = (* add function *)
 							(ft, fn, required_param_types)::glob_scope.funcs
 						} in
-						let param_scope = { new_scope with 
+						let param_scope = { new_scope with (* add params *)
 							parent = Some(new_scope); vars = fp}
 						in
 						let func_block = 
