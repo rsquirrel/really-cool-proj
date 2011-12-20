@@ -21,8 +21,14 @@ public class Instruction
         Beq,
         Bne,
         Bra,
-        Hlt
-    }
+        Hlt,
+        
+        // Instruction of trees
+        Alc,
+        Fld,
+        Sfd,
+        Pst
+}
     
     public enum SubType
     {
@@ -42,6 +48,8 @@ public class Instruction
 
         And,
         Or,
+        
+        Val,
         
        // Uniops
         Neg,

@@ -45,6 +45,7 @@ public class Main
                     case Geq:
                     case And:
                     case Or:
+                    case Val:
                         scanner.next();
                         break;
                     case Neg:
@@ -73,6 +74,8 @@ public class Main
                 case Beq:
                 case Bne:
                 case Bra:
+                case Alc:
+                case Sfd:
                     operand = scanner.nextInt();
                     break;
                 case Psb:
@@ -97,6 +100,9 @@ public class Main
                 	operand = result.toString();
                 	break;
                 }
+                case Fld:
+                	operand = scanner.next().charAt(0);
+                	break;
                 default:
                     break;
                 }

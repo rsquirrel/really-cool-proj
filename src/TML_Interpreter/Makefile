@@ -5,6 +5,7 @@ JC = javac
 	$(JC) $(JFLAGS) $*.java
 
 CLASSES = \
+        TMLTree.java \
         Instruction.java \
         Program.java \
         Main.java
