@@ -30,7 +30,7 @@ void main ()
 	te = $tf;
 	td = @tf;
 	te = tf;
-	if(childnum1 > childnum2)
+	if(childnum1 = childnum2)
 	{
 		print("degree of one is greater than the other...");
 	}
