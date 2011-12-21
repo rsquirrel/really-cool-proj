@@ -45,24 +45,15 @@ Shuai Sun (ss4088)\\
 Yan Zou (yz2437)\\\\
 \textit{Columbia University}
 }
-\date{\textit{December 20th, 2011}}
+\date{\textit{December 21th, 2011}}
 \maketitle
 
 \pagebreak
 \tableofcontents
 
-% Article starts here
-
-%\begin{abstract} 
-
-%\end{abstract} 
-
-%{\bf Keywords:} \\
-
-\pagebreak
 
 %Akash Begin
-
+\pagebreak
 \section{Introduction}
 
 \subsection{Motivation}
@@ -770,7 +761,7 @@ TML has some language restrictions, which are already mentioned in previous sect
 TML language formalization is done in ocamlyacc format. The production rules with operator precedence rules are listed below, followed by the ocamlyacc output.
 
 \begin{tt}
-\lstset{basicstyle=\footnotesize}
+\lstset{basicstyle=\scriptsize}
 \lstinputlisting[language=Caml]{../../src/TML_Compiler/parser.mly}
 \mbox{}
 \noindent
@@ -780,10 +771,6 @@ And the output of the parser in file "parser.output" is:
 
 91 grammar rules, 190 states
 \end{tt}
-%/* parser.output */
-
-%\lstinputlisting{../../src/parser.output}    too long!!!!!!!!
-
 
 \pagebreak
 \section{Project Plan}
@@ -831,47 +818,676 @@ Strictly use the automated code style in Eclipse.
 
 \subsubsection{TML source}
 \begin{itemize}
-\item Variables are named in lowercase with spaces replaced by underscores.
+\item Write the global variables and tree definitions in the beginning of the file.
 
-\item Types are named using lowercase letters with spaces replaced by underscores.
+\item Write the functions before it is first called. (required by the compiler)
 
-\item Tokens are named using uppercase letters without spaces.
-
-\item Constructors are named as first letters of words in uppercase and others in lowercase.
-
-\item Modules are named as first letters of words in uppercase and others in lowercase.
-
-\item Each tab takes the size of four spaces, and not converting to spaces.
-
-\item Comments about detailed implementation or questions are at the place where it occurs.
-
-\item Normally, use fewer than 125 characters in a single line.
-
-\item Keep ``let'' and ``in'' aligned if the function takes multiple lines.
-
-\item Keep functions aligned if they are in the same level of scope.
+\item Write the code in C-like style, if possible.
 \end{itemize}
 
+\subsubsection{Directory Arrangement}
+\begin{itemize}
+\item Source files of TML compiler should be under ./src/TML\_Compiler/ directory.
+\item Source files of TML interpreter should be under ./src/TML\_Interpreter/ directory.
+\item Test case TML source files should be under ./test/SrcCode/ directory.
+\item All documentation of the TML project should be under ./doc/ directory, each in a separate folder.
+\item The Makefile of the TML project is under ./src/ directory.
+\end{itemize}
 
+\subsection{Project Time line}
 %Show your project timeline
+\begin{code}
+\begin{tabbing}
+\=Sept.\=28~~~\=Decided on project planning and finished proposal.\\
+\>Oct. \>31 \>Finished first version of scanner, parser and definition of ast. \\
+\> \> \>Finalized Language Reference Manual. \\
+\>Nov. \>15 \>Added test cases. \\
+\>Dec. \>6 \> Finished a simple version compiler without supporting tree features.\\
+\>Dec. \>15 \> Finished type checking and code generator of non-tree part;\\
+\> \> \> Finished a simple version interpreter.\\
+\>Dec. \>20 \> Finished coding of the project.\\
+\>Dec. \>21\> Finalized the final report.\\
+\end{tabbing}
+\end{code}
+
+\subsection{Member Roles and Responsibilities}
 %Identify roles and responsibilities of each team member
+\subsubsection{Jiabin Hu}
+Participated in all discussions and contributed to the project management. Made great suggestions on design issues. Made reasonable arguments in language design. Wrote test cases for the expression features in TML. Designed the interpreter with the group and implemented the interpreter in Java. Helped and made suggestions in the design of the TML byte code. Fixed many bugs and rearranged the project repository directory. Modified the Makefiles. 
+
+Wrote a version of the Proposal. Wrote the expression part in the LRM. 
+
+\subsubsection{Akash Sharma}
+Participated in all discussions. Have a great understanding of the design issues and made suggestions on language designing. Wrote test cases for primitive type operations in TML. Wrote the definition of the AST. Helped figuring out the conflicts in parser and AST. Wrote the final complex test cases for TML.
+
+Wrote a version of the Proposal. Wrote the primitive type part, and language restriction part in the LRM. Made the presentation slice.
+
+
+\subsubsection{Shuai Sun}
+Managed the group meetings and was responsible for the project management. Initiated the SVN repository. Initiated the idea of TML and making all things as tree. Made contributions to language design. Wrote the scanner and parser. Working with Yan, designed the compiler, including starting with the parts similar with MICROC, designing the byte codes, translating to the SAST, type checking and code generating. Wrote the test cases for tree type features in TML. Fixed bugs and reorganized source codes.
+
+Wrote the final version of the Proposal. Wrote the type part in the LRM, and constructed the LRM portions into one. Wrote this final report.
+
+\subsubsection{Yan Zou}
+Participated in all discussions. Made great contribution on language design. Wrote the scanner test program. Designed the compiler, including analyzer, byte code and its generator. Made the mainly contribution to the implementation of compiler, including analyzer, byte code, and definition of SAST, all starting from scratch. Wrote the analyzer test program. Wrote the test cases for control flow of TML. Fixed bugs in the compiler. Wrote and modified the Makefiles.
+
+Worked on the final version of the Proposal. Wrote the statement part in LRM. 
+
+\subsection{Developing Tools and Environment}
 %Describe the software development environment used (tools and languages)
+The team used O'Caml, Java, and bash scripting to complete the whole project. Our developing environment included Mac OS X, Windows Vista and Windows 7. We used OcalDE on Eclipse as our O'Caml developing tool, and Eclipse Java Development Tools as our Java developing tool. Besides, we used Google Code as our SVN server, and Subclipse on Eclipse and Tortoise as SVN client software. Our team used the Google Group to hold all our discussions and notifications. Our team also used Google Docs to share discussion notes and design drafts. The documentation of the TML project used TeXworks on both Mac OS and Windows.
+
+\subsection{Project Log}
 %Include your project log
+\begin{tt}
+\lstset{basicstyle=\scriptsize}
+\lstinputlisting{./code/svnlog.log}
+\end{tt}
 
 \pagebreak
 \section{Architectural Design}
+This section presents the compiling and executing process of TML programs.
 
+\subsection{Compiling and Executing}
+TML compiler takes TML source code files with extension name .tml, as input. Firstly, the scanner scans the source code and break it into tokens. Then, the parser runs on the sequence of tokens and construct them into an abstract syntax tree(AST) according to the production rules. Taking the AST as the input, the analyzer check the types on it. It raises exceptions if there are type errors on the AST. Otherwise, the analyzer translate the AST to a "semantically-checked AST"(SAST). Besides type checking, the analyzer also computes some information, such as changing child aliases to child index number, and mark the information onto the SAST. By doing this, it helps the generator to generate codes. With this SAST, the generator then generates the byte code. The TML byte code is defined in bytecode.mli, and is based on stack. The generator outputs the byte code as text-format files with extension .tmb, which is the result of compiling.
+
+The interpreter then takes the byte code file as input, run the instructions in it on stack, and output the result. 
+
+\begin{figure}[hb]
+{\centering \resizebox*{189pt}{200pt}{\includegraphics{TMLframe.png}} \par}
+\caption{TML Compiling Process}
+\label{TMLrun}
+\end{figure}
+
+The compiling and interpreting process is illustrated in Figure~\ref{TMLrun}.
+
+\subsubsection{Interfaces between Components}
+The input of the compiler, which is first processed by the scanner is .tml source files. The scanner then generates a sequence of tokens, and the parser parses them into an AST. The analyzer translate the AST to SAST, which is further taken by the generator and turned into a text-format byte code file with extension .tmb.
+The .tmb byte code file is the output of the compiler and the input of the interpreter. The interpreter runs the code and gives output of the program.
+
+\subsubsection{Responsibility}
+Generally, everyone is well on the track of the project. 
+The scanner and parser were implemented by Shuai.
+The definition of AST is written by Akash.
+The analyzer, generator and definition of SAST is written by Yan.
+The interpreter is implemented by Jiabin.
+For more details, please refer to the project log.
 
 \pagebreak
 \section{Test Plan}
+\subsection{Representative Source}
+%Show two or three representative source language programs along with the target language program generated for each
+\subsubsection{While Loop}
 
+\begin{itemize}
+\item while.tml
+\begin{tt}
+\lstset{basicstyle=\footnotesize}
+\lstinputlisting{./code/while.tml}
+\end{tt}
+
+\item while.tmb
+\begin{tt}
+\lstset{basicstyle=\footnotesize}
+\lstinputlisting{./code/while.tmb}
+\end{tt}
+\end{itemize}
+
+\subsubsection{Tree Connecting}
+
+\begin{itemize}
+\item tt\_connect.tml
+\begin{tt}
+\lstset{basicstyle=\footnotesize}
+\lstinputlisting{./code/tt_connect.tml}
+\end{tt}
+
+\item tt\_connect.tmb
+\begin{tt}
+\lstset{basicstyle=\footnotesize}
+\lstinputlisting{./code/tt_connect.tmb}
+\end{tt}
+\end{itemize}
+
+\subsubsection{Foreach Loop}
+
+\begin{itemize}
+\item foreach.tml
+\begin{tt}
+\lstset{basicstyle=\footnotesize}
+\lstinputlisting{./code/foreach.tml}
+\end{tt}
+
+\item foreach.tmb
+\begin{tt}
+\lstset{basicstyle=\footnotesize}
+\lstinputlisting{./code/foreach.tmb}
+\end{tt}
+\end{itemize}
+
+
+\subsection{Testing Details}
+%Show the test suites used to test your translator
+%Explain why and how these test cases were chosen
+%What kind of automation was used in testing
+%State who did what
+Our project has a test suite with 43 test cases, along with expected output for each. Our test cases is written before we started coding semantic checking. We used the test cases to test scanner analyzer and the whole compiler, which ensures the correctness for every step forward. 
+
+Our test cases were written by all members, separating by parts. They covered primitive type operations, statement control flow, user defined tree type operations, and expressions. The test cases were as simple and independent as possible, so that we can identify where was the problem. Also, Akash added two complex TML programs. The test cases in the test suite are listed below:
+
+\begin{code}
+\begin{tabbing}
+~~\=./test/SrcCode/arithmetic\_op.tml
+\\ \> ./test/SrcCode/assignment\_op.tml
+\\ \> ./test/SrcCode/comparison\_op.tml
+\\ \> ./test/SrcCode/complex1.tml
+\\ \> ./test/SrcCode/complex2.tml
+\\ \> ./test/SrcCode/compound.tml
+\\ \> ./test/SrcCode/continue.tml
+\\ \> ./test/SrcCode/dangling\_else.tml
+\\ \> ./test/SrcCode/do\_while.tml
+\\ \> ./test/SrcCode/empty.tml
+\\ \> ./test/SrcCode/empty\_str.tml
+\\ \> ./test/SrcCode/for.tml
+\\ \> ./test/SrcCode/foreach.tml
+\\ \> ./test/SrcCode/foreach\_3nodes.tml
+\\ \> ./test/SrcCode/foreach\_single.tml
+\\ \> ./test/SrcCode/function.tml
+\\ \> ./test/SrcCode/function\_forloop.tml
+\\ \> ./test/SrcCode/gcd.tml
+\\ \> ./test/SrcCode/global\_var.tml
+\\ \> ./test/SrcCode/if.tml
+\\ \> ./test/SrcCode/logical\_op.tml
+\\ \> ./test/SrcCode/loop\_control.tml
+\\ \> ./test/SrcCode/main.tml
+\\ \> ./test/SrcCode/print\_backslash\_chars.tml
+\\ \> ./test/SrcCode/print\_char.tml
+\\ \> ./test/SrcCode/print\_string.tml
+\\ \> ./test/SrcCode/recursion.tml
+\\ \> ./test/SrcCode/scope.tml
+\\ \> ./test/SrcCode/tree\_type1.tml
+\\ \> ./test/SrcCode/tree\_type2.tml
+\\ \> ./test/SrcCode/tree\_type3.tml
+\\ \> ./test/SrcCode/tt\_connect.tml
+\\ \> ./test/SrcCode/tt\_connect2.tml
+\\ \> ./test/SrcCode/tt\_data.tml
+\\ \> ./test/SrcCode/tt\_degree.tml
+\\ \> ./test/SrcCode/tt\_hash.tml
+\\ \> ./test/SrcCode/tt\_init\_value.tml
+\\ \> ./test/SrcCode/tt\_init\_value\_nest.tml
+\\ \> ./test/SrcCode/tt\_node\_copy.tml
+\\ \> ./test/SrcCode/tt\_parent.tml
+\\ \> ./test/SrcCode/tt\_tr\_copy.tml
+\\ \> ./test/SrcCode/var\_init.tml
+\\ \> ./test/SrcCode/while.tml
+\end{tabbing}
+\end{code}
 
 \pagebreak
 \section{Lessons Learned}
+\subsection{Jiabin Hu}
+Design is always much more difficult than implementation, or at least good design makes implementation trivial. With a good design, one just needs to translate the specification into code. With bad design, it's endless arguing and headache.
+
+AST should be designed from bottom up, not top down. Slowly fill out the output of parser one by one starting from the most trivial construct, until the whole program can be represented.
+
+Discover and handle the error as early as possible. If it can be detected in the scanner, don't wait until the parser.
+
+Rome is not built in a day, nor is an compiler. Start from a minimum working compiler, and slowly add features to it. Run regression tests after every modification.
+
+\subsection{Akash Sharma}
+
+Using tools like Ocamlyacc and ocamllex speeds up writing a compiler
+
+Version control was a good way to keep track of progress.
+
+Paying attention to details while designing language, goes a long way while implementing it.
+
+Regular team meetings were impetus to remain focused on task.
+
+
+\subsection{Shuai Sun}
+I was the team leader on this project. By ``leader'', it just means spending a little more time on planning. It was luck and amazing to have such teammates. We encountered problems and overcame them all along the semester. Finally, I learned a lot, which can be summarized as follows.
+
+Compromising. As we never worked together before, we were different in working style and way of thinking. Sometimes, we ran into arguments. At this point, compromising was necessary to keep moving onto the next problem.
+
+Planning. Our schedule was a little bit tight at the end of the semester, for members having other project dues. So, looking ahead for weeks even months was very necessary. 
+
+Getting into details. By this project, I got a more thoroughly understanding of how program codes are executed. But, before, when I was not willing to look deep into the code generation and executing, I just got to know the lexical, syntax and semantic parts.
+
+In this project, we tried things that I never tried before, and they seemed to promote our work very well. One of them was writing test case suite in advance. Another was write a clear specification in advance. By doing them, we were totally aware of what we had accomplished and what was left to do.
+
+\subsection{Yan Zou}
+In this project, I mainly focused on how to implement semantic checking and code generating in OCaml, based on my own understanding of the knowledge got from this course. There are so many detailed things that we've went through in designing and implementing a compiler. I've learned a lot in each stage of the project.
+
+%Stage 1: 
+Ideas. Brainstorm can bring about a lot of ideas, but it is difficult to choose. Everyone has his own thinking and concession is necessary. Voting is always good to try.
+%Stage 2: 
+Building the LRM was the most difficult stage in this project, with no one clear about the direction. I realized that problems cannot simply get easier to solve when there are many people doing it, since we spent most of the time discussing and arguing and dealing with disagreements.
+%Stage 3: 
+Coding can be done neatly by SVN. In this stage, I began to get a whole view of what a compiler is and how it works. By writing codes on every detail of a compiler, I came across the issues that professor has discussed during class one by one, like the order of parameter evaluation, scoping, and position of variable declaration, and so on.
+%Stage 4: 
+Assembling and Testing. Test cases were designed before coding, so that we can test and debug all the way during coding. When we assembly all the parts, it simply works right.
+Above all, this project introduces me to the area of language design and implementation. It really teaches me a lot.
+
+\subsection{Advice on future teams}
+%mainly written by Shuai. If you have advice, please add. :)
+Finish scanner, parser, and define the AST before finalize on the LRM.
+
+When you run into situations of endless argument, vote and let the leader make the call so that you can move on.
+
+Work as a team. When some one is not able to accomplish job on time, give some direction or look into it with him/her.
+
+Discussing is always making things clearer.
+
+Subversion control and group emailing is necessary. Set them up at the very start.
 
 
 \pagebreak
 \section{Appendix}
+The directories in the following subsections are in alphabetical order.
+
+\subsection{trunk/src/TML\_Compiler/}
+The following source code files are in alphabetical order.
+
+\subsubsection{analyzer\_test.ml}		% file name here
+\begin{tt}
+\lstset{tabsize=2, basicstyle=\scriptsize, numbers=left, numberstyle=\scriptsize, stepnumber=10, numbersep=5pt, breaklines=true, breakatwhitespace=true}
+\lstinputlisting{../../src/TML_Compiler/analyzer_test.ml}	% file name here
+\end{tt}
+
+\subsubsection{analyzer.ml}		% file name here
+\begin{tt}
+\lstset{tabsize=2, basicstyle=\scriptsize, numbers=left, numberstyle=\scriptsize, stepnumber=10, numbersep=5pt, breaklines=true, breakatwhitespace=true}
+\lstinputlisting{../../src/TML_Compiler/analyzer.ml}	% file name here
+\end{tt}
+
+\subsubsection{ast.mli}	% file name here
+\begin{tt}
+\lstset{tabsize=2, basicstyle=\scriptsize, numbers=left, numberstyle=\scriptsize, stepnumber=10, numbersep=5pt, breaklines=true, breakatwhitespace=true}
+\lstinputlisting{../../src/TML_Compiler/ast.mli}	% file name here
+\end{tt}
+
+\subsubsection{bytecode.mli}		% file name here
+\begin{tt}
+\lstset{tabsize=2, basicstyle=\scriptsize, numbers=left, numberstyle=\scriptsize, stepnumber=10, numbersep=5pt, breaklines=true, breakatwhitespace=true}
+\lstinputlisting{../../src/TML_Compiler/bytecode.mli}	% file name here
+\end{tt}
+
+\subsubsection{generator.ml}		% file name here
+\begin{tt}
+\lstset{tabsize=2, basicstyle=\scriptsize, numbers=left, numberstyle=\scriptsize, stepnumber=10, numbersep=5pt, breaklines=true, breakatwhitespace=true}
+\lstinputlisting{../../src/TML_Compiler/generator.ml}	% file name here
+\end{tt}
+
+\subsubsection{parser.mly}		% file name here
+\begin{tt}
+\lstset{tabsize=2, basicstyle=\scriptsize, numbers=left, numberstyle=\scriptsize, stepnumber=10, numbersep=5pt, breaklines=true, breakatwhitespace=true}
+\lstinputlisting{../../src/TML_Compiler/parser.mly}	% file name here
+\end{tt}
+
+\subsubsection{sast.mli}		% file name here
+\begin{tt}
+\lstset{tabsize=2, basicstyle=\scriptsize, numbers=left, numberstyle=\scriptsize, stepnumber=10, numbersep=5pt, breaklines=true, breakatwhitespace=true}
+\lstinputlisting{../../src/TML_Compiler/sast.mli}	% file name here
+\end{tt}
+
+\subsubsection{scanner\_test.ml}		% file name here
+\begin{tt}
+\lstset{tabsize=2, basicstyle=\scriptsize, numbers=left, numberstyle=\scriptsize, stepnumber=10, numbersep=5pt, breaklines=true, breakatwhitespace=true}
+\lstinputlisting{../../src/TML_Compiler/scanner_test.ml}	% file name here
+\end{tt}
+
+\subsubsection{scanner.mll}		% file name here
+\begin{tt}
+\lstset{tabsize=2, basicstyle=\scriptsize, numbers=left, numberstyle=\scriptsize, stepnumber=10, numbersep=5pt, breaklines=true, breakatwhitespace=true}
+\lstinputlisting{../../src/TML_Compiler/scanner.mll}	% file name here
+\end{tt}
+
+\subsubsection{tml.ml}		% file name here
+\begin{tt}
+\lstset{tabsize=2, basicstyle=\scriptsize, numbers=left, numberstyle=\scriptsize, stepnumber=10, numbersep=5pt, breaklines=true, breakatwhitespace=true}
+\lstinputlisting{../../src/TML_Compiler/tml.ml}	% file name here
+\end{tt}
+
+\subsubsection{type.mli}		% file name here
+\begin{tt}
+\lstset{tabsize=2, basicstyle=\scriptsize, numbers=left, numberstyle=\scriptsize, stepnumber=10, numbersep=5pt, breaklines=true, breakatwhitespace=true}
+\lstinputlisting{../../src/TML_Compiler/type.mli}	% file name here
+\end{tt}
+
+\subsection{trunk/src/TML\_Interpreter/}
+The following source code files are in alphabetical order.
+
+\subsubsection{InorderIterator.java}		% file name here
+\begin{tt}
+\lstset{tabsize=4, basicstyle=\scriptsize, numbers=left, numberstyle=\scriptsize, stepnumber=5, numbersep=5pt, breaklines=true, breakatwhitespace=true}
+\lstinputlisting[language=Java]{../../src/TML_Interpreter/InorderIterator.java}	% file name here
+\end{tt}
+
+\subsubsection{Instruction.java}		% file name here
+\begin{tt}
+\lstset{tabsize=4, basicstyle=\scriptsize, numbers=left, numberstyle=\scriptsize, stepnumber=5, numbersep=5pt, breaklines=true, breakatwhitespace=true}
+\lstinputlisting[language=Java]{../../src/TML_Interpreter/Instruction.java}	% file name here
+\end{tt}
+
+
+\subsubsection{LevelorderIterator.java}		% file name here
+\begin{tt}
+\lstset{tabsize=4, basicstyle=\scriptsize, numbers=left, numberstyle=\scriptsize, stepnumber=5, numbersep=5pt, breaklines=true, breakatwhitespace=true}
+\lstinputlisting[language=Java]{../../src/TML_Interpreter/LevelorderIterator.java}	% file name here
+\end{tt}
+
+
+\subsubsection{Main.java}		% file name here
+\begin{tt}
+\lstset{tabsize=4, basicstyle=\scriptsize, numbers=left, numberstyle=\scriptsize, stepnumber=5, numbersep=5pt, breaklines=true, breakatwhitespace=true}
+\lstinputlisting[language=Java]{../../src/TML_Interpreter/Main.java}	% file name here
+\end{tt}
+
+
+\subsubsection{PostorderIterator.java}		% file name here
+\begin{tt}
+\lstset{tabsize=4, basicstyle=\scriptsize, numbers=left, numberstyle=\scriptsize, stepnumber=5, numbersep=5pt, breaklines=true, breakatwhitespace=true}
+\lstinputlisting[language=Java]{../../src/TML_Interpreter/PostorderIterator.java}	% file name here
+\end{tt}
+
+\subsubsection{PreorderIterator.java}		% file name here
+\begin{tt}
+\lstset{tabsize=4, basicstyle=\scriptsize, numbers=left, numberstyle=\scriptsize, stepnumber=5, numbersep=5pt, breaklines=true, breakatwhitespace=true}
+\lstinputlisting[language=Java]{../../src/TML_Interpreter/PreorderIterator.java}	% file name here
+\end{tt}
+
+\subsubsection{TMLTree.java}		% file name here
+\begin{tt}
+\lstset{tabsize=4, basicstyle=\scriptsize, numbers=left, numberstyle=\scriptsize, stepnumber=5, numbersep=5pt, breaklines=true, breakatwhitespace=true}
+\lstinputlisting[language=Java]{../../src/TML_Interpreter/TMLTree.java}	% file name here
+\end{tt}
+
+\subsubsection{TreeIterator.java}		% file name here
+\begin{tt}
+\lstset{tabsize=4, basicstyle=\scriptsize, numbers=left, numberstyle=\scriptsize, stepnumber=5, numbersep=5pt, breaklines=true, breakatwhitespace=true}
+\lstinputlisting[language=Java]{../../src/TML_Interpreter/TreeIterator.java}	% file name here
+\end{tt}
+
+
+\subsection{truck/test/SrcCode}
+The following test case source files are in alphabetical order.
+
+\subsubsection{arithmetic\_op.tml}		% file name here
+\begin{tt}
+\lstset{tabsize=4, basicstyle=\scriptsize, numbers=left, numberstyle=\scriptsize, stepnumber=5, numbersep=5pt, breaklines=true, breakatwhitespace=true}
+\lstinputlisting{../../test/SrcCode/arithmetic_op.tml}	% file name here
+\end{tt}
+
+\subsubsection{assignment\_op.tml}		% file name here
+\begin{tt}
+\lstset{tabsize=4, basicstyle=\scriptsize, numbers=left, numberstyle=\scriptsize, stepnumber=5, numbersep=5pt, breaklines=true, breakatwhitespace=true}
+\lstinputlisting{../../test/SrcCode/assignment_op.tml}	% file name here
+\end{tt}
+
+\subsubsection{comparison\_op.tml}		% file name here
+\begin{tt}
+\lstset{tabsize=4, basicstyle=\scriptsize, numbers=left, numberstyle=\scriptsize, stepnumber=5, numbersep=5pt, breaklines=true, breakatwhitespace=true}
+\lstinputlisting{../../test/SrcCode/comparison_op.tml}	% file name here
+\end{tt}
+
+\subsubsection{complex1.tml}		% file name here
+\begin{tt}
+\lstset{tabsize=4, basicstyle=\scriptsize, numbers=left, numberstyle=\scriptsize, stepnumber=5, numbersep=5pt, breaklines=true, breakatwhitespace=true}
+\lstinputlisting{../../test/SrcCode/complex1.tml}	% file name here
+\end{tt}
+
+\subsubsection{complex2.tml}		% file name here
+\begin{tt}
+\lstset{tabsize=4, basicstyle=\scriptsize, numbers=left, numberstyle=\scriptsize, stepnumber=5, numbersep=5pt, breaklines=true, breakatwhitespace=true}
+\lstinputlisting{../../test/SrcCode/complex2.tml}	% file name here
+\end{tt}
+
+\subsubsection{compound.tml}		% file name here
+\begin{tt}
+\lstset{tabsize=4, basicstyle=\scriptsize, numbers=left, numberstyle=\scriptsize, stepnumber=5, numbersep=5pt, breaklines=true, breakatwhitespace=true}
+\lstinputlisting{../../test/SrcCode/compound.tml}	% file name here
+\end{tt}
+
+\subsubsection{continue.tml}		% file name here
+\begin{tt}
+\lstset{tabsize=4, basicstyle=\scriptsize, numbers=left, numberstyle=\scriptsize, stepnumber=5, numbersep=5pt, breaklines=true, breakatwhitespace=true}
+\lstinputlisting{../../test/SrcCode/continue.tml}	% file name here
+\end{tt}
+
+\subsubsection{dangling\_else.tml}		% file name here
+\begin{tt}
+\lstset{tabsize=4, basicstyle=\scriptsize, numbers=left, numberstyle=\scriptsize, stepnumber=5, numbersep=5pt, breaklines=true, breakatwhitespace=true}
+\lstinputlisting{../../test/SrcCode/dangling_else.tml}	% file name here
+\end{tt}
+
+\subsubsection{do\_while.tml}		% file name here
+\begin{tt}
+\lstset{tabsize=4, basicstyle=\scriptsize, numbers=left, numberstyle=\scriptsize, stepnumber=5, numbersep=5pt, breaklines=true, breakatwhitespace=true}
+\lstinputlisting{../../test/SrcCode/do_while.tml}	% file name here
+\end{tt}
+
+\subsubsection{empty\_str.tml}		% file name here
+\begin{tt}
+\lstset{tabsize=4, basicstyle=\scriptsize, numbers=left, numberstyle=\scriptsize, stepnumber=5, numbersep=5pt, breaklines=true, breakatwhitespace=true}
+\lstinputlisting{../../test/SrcCode/empty_str.tml}	% file name here
+\end{tt}
+
+\subsubsection{empty.tml}		% file name here
+\begin{tt}
+\lstset{tabsize=4, basicstyle=\scriptsize, numbers=left, numberstyle=\scriptsize, stepnumber=5, numbersep=5pt, breaklines=true, breakatwhitespace=true}
+\lstinputlisting{../../test/SrcCode/empty.tml}	% file name here
+\end{tt}
+
+\subsubsection{for.tml}		% file name here
+\begin{tt}
+\lstset{tabsize=4, basicstyle=\scriptsize, numbers=left, numberstyle=\scriptsize, stepnumber=5, numbersep=5pt, breaklines=true, breakatwhitespace=true}
+\lstinputlisting{../../test/SrcCode/for.tml}	% file name here
+\end{tt}
+
+\subsubsection{foreach\_3nodes.tml}		% file name here
+\begin{tt}
+\lstset{tabsize=4, basicstyle=\scriptsize, numbers=left, numberstyle=\scriptsize, stepnumber=5, numbersep=5pt, breaklines=true, breakatwhitespace=true}
+\lstinputlisting{../../test/SrcCode/foreach_3nodes.tml}	% file name here
+\end{tt}
+
+\subsubsection{foreach\_single.tml}		% file name here
+\begin{tt}
+\lstset{tabsize=4, basicstyle=\scriptsize, numbers=left, numberstyle=\scriptsize, stepnumber=5, numbersep=5pt, breaklines=true, breakatwhitespace=true}
+\lstinputlisting{../../test/SrcCode/foreach_single.tml}	% file name here
+\end{tt}
+
+\subsubsection{foreach.tml}		% file name here
+\begin{tt}
+\lstset{tabsize=4, basicstyle=\scriptsize, numbers=left, numberstyle=\scriptsize, stepnumber=5, numbersep=5pt, breaklines=true, breakatwhitespace=true}
+\lstinputlisting{../../test/SrcCode/foreach.tml}	% file name here
+\end{tt}
+
+\subsubsection{function\_forloop.tml}		% file name here
+\begin{tt}
+\lstset{tabsize=4, basicstyle=\scriptsize, numbers=left, numberstyle=\scriptsize, stepnumber=5, numbersep=5pt, breaklines=true, breakatwhitespace=true}
+\lstinputlisting{../../test/SrcCode/function_forloop.tml}	% file name here
+\end{tt}
+
+\subsubsection{function.tml}		% file name here
+\begin{tt}
+\lstset{tabsize=4, basicstyle=\scriptsize, numbers=left, numberstyle=\scriptsize, stepnumber=5, numbersep=5pt, breaklines=true, breakatwhitespace=true}
+\lstinputlisting{../../test/SrcCode/function.tml}	% file name here
+\end{tt}
+
+\subsubsection{gcd.tml}		% file name here
+\begin{tt}
+\lstset{tabsize=4, basicstyle=\scriptsize, numbers=left, numberstyle=\scriptsize, stepnumber=5, numbersep=5pt, breaklines=true, breakatwhitespace=true}
+\lstinputlisting{../../test/SrcCode/gcd.tml}	% file name here
+\end{tt}
+
+\subsubsection{global\_var.tml}		% file name here
+\begin{tt}
+\lstset{tabsize=4, basicstyle=\scriptsize, numbers=left, numberstyle=\scriptsize, stepnumber=5, numbersep=5pt, breaklines=true, breakatwhitespace=true}
+\lstinputlisting{../../test/SrcCode/global_var.tml}	% file name here
+\end{tt}
+
+\subsubsection{if.tml}		% file name here
+\begin{tt}
+\lstset{tabsize=4, basicstyle=\scriptsize, numbers=left, numberstyle=\scriptsize, stepnumber=5, numbersep=5pt, breaklines=true, breakatwhitespace=true}
+\lstinputlisting{../../test/SrcCode/if.tml}	% file name here
+\end{tt}
+
+\subsubsection{logical\_op.tml}		% file name here
+\begin{tt}
+\lstset{tabsize=4, basicstyle=\scriptsize, numbers=left, numberstyle=\scriptsize, stepnumber=5, numbersep=5pt, breaklines=true, breakatwhitespace=true}
+\lstinputlisting{../../test/SrcCode/logical_op.tml}	% file name here
+\end{tt}
+
+\subsubsection{loop\_control.tml}		% file name here
+\begin{tt}
+\lstset{tabsize=4, basicstyle=\scriptsize, numbers=left, numberstyle=\scriptsize, stepnumber=5, numbersep=5pt, breaklines=true, breakatwhitespace=true}
+\lstinputlisting{../../test/SrcCode/loop_control.tml}	% file name here
+\end{tt}
+
+\subsubsection{main.tml}		% file name here
+\begin{tt}
+\lstset{tabsize=4, basicstyle=\scriptsize, numbers=left, numberstyle=\scriptsize, stepnumber=5, numbersep=5pt, breaklines=true, breakatwhitespace=true}
+\lstinputlisting{../../test/SrcCode/main.tml}	% file name here
+\end{tt}
+
+\subsubsection{print\_backslash\_chars.tml}		% file name here
+\begin{tt}
+\lstset{tabsize=4, basicstyle=\scriptsize, numbers=left, numberstyle=\scriptsize, stepnumber=5, numbersep=5pt, breaklines=true, breakatwhitespace=true}
+\lstinputlisting{../../test/SrcCode/print_backslash_chars.tml}	% file name here
+\end{tt}
+
+\subsubsection{print\_char.tml}		% file name here
+\begin{tt}
+\lstset{tabsize=4, basicstyle=\scriptsize, numbers=left, numberstyle=\scriptsize, stepnumber=5, numbersep=5pt, breaklines=true, breakatwhitespace=true}
+\lstinputlisting{../../test/SrcCode/print_char.tml}	% file name here
+\end{tt}
+
+
+
+
+
+
+
+
+
+
+
+\subsubsection{print\_string.tml}		% file name here
+\begin{tt}
+\lstset{tabsize=4, basicstyle=\scriptsize, numbers=left, numberstyle=\scriptsize, stepnumber=5, numbersep=5pt, breaklines=true, breakatwhitespace=true}
+\lstinputlisting{../../test/SrcCode/print_string.tml}	% file name here
+\end{tt}
+
+\subsubsection{recursion.tml}		% file name here
+\begin{tt}
+\lstset{tabsize=4, basicstyle=\scriptsize, numbers=left, numberstyle=\scriptsize, stepnumber=5, numbersep=5pt, breaklines=true, breakatwhitespace=true}
+\lstinputlisting{../../test/SrcCode/recursion.tml}	% file name here
+\end{tt}
+
+\subsubsection{scope.tml}		% file name here
+\begin{tt}
+\lstset{tabsize=4, basicstyle=\scriptsize, numbers=left, numberstyle=\scriptsize, stepnumber=5, numbersep=5pt, breaklines=true, breakatwhitespace=true}
+\lstinputlisting{../../test/SrcCode/scope.tml}	% file name here
+\end{tt}
+
+\subsubsection{tree\_type1.tml}		% file name here
+\begin{tt}
+\lstset{tabsize=4, basicstyle=\scriptsize, numbers=left, numberstyle=\scriptsize, stepnumber=5, numbersep=5pt, breaklines=true, breakatwhitespace=true}
+\lstinputlisting{../../test/SrcCode/tree_type1.tml}	% file name here
+\end{tt}
+
+\subsubsection{tree\_type2.tml}		% file name here
+\begin{tt}
+\lstset{tabsize=4, basicstyle=\scriptsize, numbers=left, numberstyle=\scriptsize, stepnumber=5, numbersep=5pt, breaklines=true, breakatwhitespace=true}
+\lstinputlisting{../../test/SrcCode/tree_type2.tml}	% file name here
+\end{tt}
+
+\subsubsection{tree\_type3.tml}		% file name here
+\begin{tt}
+\lstset{tabsize=4, basicstyle=\scriptsize, numbers=left, numberstyle=\scriptsize, stepnumber=5, numbersep=5pt, breaklines=true, breakatwhitespace=true}
+\lstinputlisting{../../test/SrcCode/tree_type3.tml}	% file name here
+\end{tt}
+
+\subsubsection{tt\_connect.tml}		% file name here
+\begin{tt}
+\lstset{tabsize=4, basicstyle=\scriptsize, numbers=left, numberstyle=\scriptsize, stepnumber=5, numbersep=5pt, breaklines=true, breakatwhitespace=true}
+\lstinputlisting{../../test/SrcCode/tt_connect.tml}	% file name here
+\end{tt}
+
+\subsubsection{tt\_connect2.tml}		% file name here
+\begin{tt}
+\lstset{tabsize=4, basicstyle=\scriptsize, numbers=left, numberstyle=\scriptsize, stepnumber=5, numbersep=5pt, breaklines=true, breakatwhitespace=true}
+\lstinputlisting{../../test/SrcCode/tt_connect2.tml}	% file name here
+\end{tt}
+
+\subsubsection{tt\_data.tml}		% file name here
+\begin{tt}
+\lstset{tabsize=4, basicstyle=\scriptsize, numbers=left, numberstyle=\scriptsize, stepnumber=5, numbersep=5pt, breaklines=true, breakatwhitespace=true}
+\lstinputlisting{../../test/SrcCode/tt_data.tml}	% file name here
+\end{tt}
+
+\subsubsection{tt\_degree.tml}		% file name here
+\begin{tt}
+\lstset{tabsize=4, basicstyle=\scriptsize, numbers=left, numberstyle=\scriptsize, stepnumber=5, numbersep=5pt, breaklines=true, breakatwhitespace=true}
+\lstinputlisting{../../test/SrcCode/tt_degree.tml}	% file name here
+\end{tt}
+
+\subsubsection{tt\_hash.tml}		% file name here
+\begin{tt}
+\lstset{tabsize=4, basicstyle=\scriptsize, numbers=left, numberstyle=\scriptsize, stepnumber=5, numbersep=5pt, breaklines=true, breakatwhitespace=true}
+\lstinputlisting{../../test/SrcCode/tt_hash.tml}	% file name here
+\end{tt}
+
+\subsubsection{tt\_init\_value\_nest.tml}		% file name here
+\begin{tt}
+\lstset{tabsize=4, basicstyle=\scriptsize, numbers=left, numberstyle=\scriptsize, stepnumber=5, numbersep=5pt, breaklines=true, breakatwhitespace=true}
+\lstinputlisting{../../test/SrcCode/tt_init_value_nest.tml}	% file name here
+\end{tt}
+
+\subsubsection{tt\_init\_value.tml}		% file name here
+\begin{tt}
+\lstset{tabsize=4, basicstyle=\scriptsize, numbers=left, numberstyle=\scriptsize, stepnumber=5, numbersep=5pt, breaklines=true, breakatwhitespace=true}
+\lstinputlisting{../../test/SrcCode/tt_init_value.tml}	% file name here
+\end{tt}
+
+\subsubsection{tt\_node\_copy.tml}		% file name here
+\begin{tt}
+\lstset{tabsize=4, basicstyle=\scriptsize, numbers=left, numberstyle=\scriptsize, stepnumber=5, numbersep=5pt, breaklines=true, breakatwhitespace=true}
+\lstinputlisting{../../test/SrcCode/tt_node_copy.tml}	% file name here
+\end{tt}
+
+\subsubsection{tt\_parent.tml}		% file name here
+\begin{tt}
+\lstset{tabsize=4, basicstyle=\scriptsize, numbers=left, numberstyle=\scriptsize, stepnumber=5, numbersep=5pt, breaklines=true, breakatwhitespace=true}
+\lstinputlisting{../../test/SrcCode/tt_parent.tml}	% file name here
+\end{tt}
+
+\subsubsection{tt\_tr\_copy.tml}		% file name here
+\begin{tt}
+\lstset{tabsize=4, basicstyle=\scriptsize, numbers=left, numberstyle=\scriptsize, stepnumber=5, numbersep=5pt, breaklines=true, breakatwhitespace=true}
+\lstinputlisting{../../test/SrcCode/tt_tr_copy.tml}	% file name here
+\end{tt}
+
+\subsubsection{var\_init.tml}		% file name here
+\begin{tt}
+\lstset{tabsize=4, basicstyle=\scriptsize, numbers=left, numberstyle=\scriptsize, stepnumber=5, numbersep=5pt, breaklines=true, breakatwhitespace=true}
+\lstinputlisting{../../test/SrcCode/var_init.tml}	% file name here
+\end{tt}
+
+\subsubsection{while.tml}		% file name here
+\begin{tt}
+\lstset{tabsize=4, basicstyle=\scriptsize, numbers=left, numberstyle=\scriptsize, stepnumber=5, numbersep=5pt, breaklines=true, breakatwhitespace=true}
+\lstinputlisting{../../test/SrcCode/while.tml}	% file name here
+\end{tt}
+
+%\subsubsection{.tml}		% file name here
+%\begin{tt}
+%\lstset{tabsize=4, basicstyle=\scriptsize, numbers=left, numberstyle=\scriptsize, stepnumber=5, numbersep=5pt, breaklines=true, breakatwhitespace=true}
+%\lstinputlisting{../../test/SrcCode/.tml}	% file name here
+%\end{tt}
+
+
 
 
 %\begin{thebibliography}{}

@@ -1,0 +1,25 @@
+0	Glb 0
+1	Jsr 3
+2	Hlt
+3	Ent 1
+4	Psi 5
+5	Bra 14
+6	Lfp 1
+7	Jsr -1
+8	Pop 1
+9	Psc 10
+10	Jsr -1
+11	Pop 1
+12	Psi 0
+13	Pop 1
+14	Lfp 1
+15	Psi 1
+16	Add i
+17	Sfp 1
+18	Pop 1
+19	Lfp 1
+20	Psi 10
+21	Lt i
+22	Bne -16
+23	Psi 0
+24	Ret 0
