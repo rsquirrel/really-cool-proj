@@ -1,6 +1,10 @@
 import java.util.Stack;
 import java.util.ArrayList;
 
+/**
+ * @author Jiabin Hu
+ *
+ */
 public class PreorderIterator implements TreeIterator
 {
 	private Stack<TMLTree> stack = new Stack<TMLTree>();
