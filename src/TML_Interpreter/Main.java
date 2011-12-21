@@ -46,10 +46,15 @@ public class Main
                     case And:
                     case Or:
                     case Val:
+                    case Chd:
                         scanner.next();
                         break;
                     case Neg:
                     case Not:
+                    case Fat:
+                    case Num:
+                    case At:
+                    case Cln:
                         scanner.next();
                         type = Instruction.Type.Uop;
                         break;

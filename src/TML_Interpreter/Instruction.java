@@ -27,7 +27,8 @@ public class Instruction
         Alc,
         Fld,
         Sfd,
-        Pst
+        Pst,
+        Scd
 }
     
     public enum SubType
@@ -50,10 +51,15 @@ public class Instruction
         Or,
         
         Val,
+        Chd,
         
        // Uniops
         Neg,
-        Not
+        Not,
+        Num,
+        At,
+        Cln,
+        Fat
     }
     
     private Type type;

@@ -12,6 +12,8 @@ public class TMLTree
 	{
 		data = new ArrayList<Object>();
 		children = new ArrayList<TMLTree>(numOfChildren);
+		for (int i = 0; i < numOfChildren; i++)
+			children.add(null);
 		this.parent = parent;
 		this.id = TMLTree.count++;
 	}
@@ -31,14 +33,14 @@ public class TMLTree
 		this.parent = parent;
 	}
 
-	public ArrayList<TMLTree> getChildren()
+	public TMLTree getChildren(int index)
 	{
-		return children;
+		return children.get(index);
 	}
 
-	public void setChildren(ArrayList<TMLTree> children)
+	public void setChildren(int index, TMLTree child)
 	{
-		this.children = children;
+		this.children.set(index, child);
 	}
 
 	public Object getData(int index)
@@ -55,6 +57,40 @@ public class TMLTree
 	{
 		this.data.add(data);
 	}
+	
+	public int findChild(TMLTree child)
+	{
+		int result = -1;
+		for (int i = 0; i < children.size(); i++)
+			if (children.get(i) == child)
+				result = i;
+		
+		return result;
+	}
+	
+	public TMLTree cloneNode()
+	{
+		TMLTree result = new TMLTree(this.children.size());
+		result.data = (ArrayList<Object>) this.data.clone();
+		return result;
+	}
+	
+	public TMLTree cloneTree(boolean isRoot)
+	{
+		int degree = this.children.size();
+		TMLTree result = new TMLTree(degree);
+		result.data = (ArrayList<Object>) this.data.clone();
+		result.parent = isRoot ? null : this.parent;
+		for (int i = 0; i < degree; i++)
+		{
+			if (children.get(i) == null)
+				result.children.set(i, null);
+			else
+				result.children.set(i, children.get(i).cloneTree(false));
+		}
+		
+		return result;
+	}
 
 	@Override
 	public String toString()
@@ -64,7 +100,7 @@ public class TMLTree
 		if (children != null)
 		{
 			for (TMLTree child : children)
-				result.append(child.id + ",");
+				if (child != null) result.append(child.id + ",");
 		}
 		result.append("), d=(");
 		if (data != null)
