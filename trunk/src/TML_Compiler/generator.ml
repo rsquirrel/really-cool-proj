@@ -296,7 +296,8 @@ let translate out_filename program =
 					expr e @ (* push the root node onto the stack *)
 					[Psi (int_of_order order)] @ (* traverse order *)
 					(* [Psi (List.length bytecodes)] @ (* number of lines in foreach *) *)
-					[Jsr (-2)] @ (loop_control rs continue_offset break_offset) @
+					[Jsr (-2)] @
+					(loop_control rs continue_offset break_offset) @
 					[Nxt (- List.length rs)] @ [Pop 2] 
 					(* in order to make variables in the right order on the stack *)
 			| For (e1, e2, e3, s) -> 
@@ -323,8 +324,13 @@ let translate out_filename program =
 					[Bra (continue_offset + 1)] @
 					(loop_control rs continue_offset break_offset) @
 					re @ [Bne (-break_offset + 1)]
-			| Break -> [Jsr (-3)] (* Indicate it's a break *)
-			| Continue -> [Jsr (-4)] (* Indicate it's a continue *)
+			(* break and continue are just stubs *)
+			(* in case that local variables are declared in the loop scope *)
+			(* we need to record the current number of local variables in the stub *)
+			(* they will be adjusted later so that break or continue *)
+			(* will pop out all local variables in the loop scope before branching *)
+			| Break i -> [Pop i; Jsr (-3)] (* stub, Indicate it's a break *)
+			| Continue i -> [Pop i; Jsr (-4)] (* Indicate it's a continue *)
 			| Vardecl (t, name, init) -> expr (init_value t init) (* leave it on the stack *)
 				(* The stack space allocated for the new locals move along with the sp *)
 				(* The locals will be consecutive in space as var_decl is a complete *)
@@ -360,8 +366,15 @@ let translate out_filename program =
 			let local_index = (* the first local variable will have index 1 *)
 				add_to_map local_names param_index 1
 			in
-			[Ent num_locals] @
-			block local_index (num_locals + 1) num_params f.body @
+			let bodycodes =
+				block local_index (num_locals + 1) num_params f.body
+			in
+			(* check if there are break or continue statements not adjusted *)
+			List.iter (function
+				| Jsr (-3) -> raise (Failure "break not in loops")
+				| Jsr (-4) -> raise (Failure "continue not in loops")
+				| b -> ()) bodycodes;
+			[Ent num_locals] @ bodycodes @
 			(match f.return_type with
 				| Int -> [Psi 0]
 				| Float -> [Psf 0.0]
