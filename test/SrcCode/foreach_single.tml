@@ -1,0 +1,45 @@
+treetype <2> MyTree_t
+{
+	int val = 0;
+}
+
+
+void main ()
+{
+	int i = 0;
+	MyTree_t a;
+	alloc(a);
+	
+	foreach node in a by preorder
+	{
+		node.val = i;
+		i = i + 1;
+	}
+	
+	foreach node in a by preorder
+	{
+		print (node.val);
+		print (" ");
+	}
+	print ('\n');
+	
+	foreach node in a by inorder
+	{
+		print (node.val);
+		print (" ");
+	}
+	print ('\n');
+	
+	foreach node in a by postorder
+	{
+		print (node.val);
+		print (" ");
+	}
+	print ('\n');
+	
+	foreach node in a by levelorder
+	{
+		print (node.val);
+		print (" ");
+	}
+}
