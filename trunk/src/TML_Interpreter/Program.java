@@ -91,6 +91,10 @@ public class Program
                     System.out.print(stack[sp - 1]);
                     pc++;
                 }
+//                else if ((Integer) operand == -2)
+//                {
+//                	TMLTree root = stack[sp - 3];
+//                }
                 else
                 {
                     stack[sp++] = pc + 1;
@@ -131,7 +135,7 @@ public class Program
             	break;
             }
             case Pst:
-            	sp++;
+            	stack[sp++] = null;
             	pc++;
             	break;
             case Alc:
@@ -145,11 +149,37 @@ public class Program
             	case 'i':
             		((TMLTree) stack[sp - 1]).addData(new Integer(0));
             		break;
+            	case 'c':
+            		((TMLTree) stack[sp - 1]).addData(new Character('a'));
+            		break;
+            	case 'f':
+            		((TMLTree) stack[sp - 1]).addData(new Float(0.0));
+            		break;
+            	case 's':
+            		((TMLTree) stack[sp - 1]).addData(new String());
+            		break;
+            	case 'b':
+            		((TMLTree) stack[sp - 1]).addData(new Boolean(false));
+            		break;
+            	case 'T':
+            		((TMLTree) stack[sp - 1]).addData(null);
+            		break;
             	default:
             		throw new RuntimeException("Unknown type followed by instruction \"Fld\"");
             	}
             	pc++;
             	break;
+            case Scd:
+            {
+            	int index = (Integer) stack[sp - 2];
+            	TMLTree child = (TMLTree) stack[sp - 1];
+            	TMLTree parent = (TMLTree) stack[sp - 3];
+            	parent.setChildren(index, child);
+            	if (child != null) child.setParent(parent);
+            	sp -= 2;
+            	pc++;
+            	break;
+            }
             case Bin:
                 Object op1 = stack[sp - 2];
                 Object op2 = stack[sp - 1];
@@ -201,6 +231,8 @@ public class Program
                         stack[sp - 2] = (Integer) op1 == (Integer) op2;
                     else if (op1 instanceof Float)
                         stack[sp - 2] = (Float) op1 == (Float) op2;
+                    else if (op1 instanceof TMLTree || op1 == null)
+                    	stack[sp - 2] = (op1 == op2);
                     else
                         throw new RuntimeException("Type error!");
                     break;
@@ -211,6 +243,8 @@ public class Program
                         stack[sp - 2] = (Integer) op1 != (Integer) op2;
                     else if (op1 instanceof Float)
                         stack[sp - 2] = (Float) op1 != (Float) op2;
+                    else if (op1 instanceof TMLTree || op1 == null)
+                    	stack[sp - 2] = (op1 != op2);
                     else
                         throw new RuntimeException("Type error!");
                     break;
@@ -283,6 +317,13 @@ public class Program
                 {
                 	Object data = ((TMLTree) op1).getData((Integer) op2);
                 	stack[sp - 2] = data;
+                	break;
+                }
+                case Chd:
+                {
+                	int index = (Integer) op2;
+                	stack[sp - 2] = ((TMLTree) op1).getChildren(index);
+                	break;
                 }
                 }
                 sp--;
@@ -309,12 +350,40 @@ public class Program
                         throw new RuntimeException("Type error!");
                     break;
                 }
+                case Fat:
+                {
+                	if (stack[sp - 1] instanceof TMLTree)
+                		stack[sp - 1] = ((TMLTree) stack[sp - 1]).getParent();
+                	else
+                		throw new RuntimeException("Type error!");
+                	break;
+                }
+                case Num:
+                {
+                	int result = -1;
+                	TMLTree node = (TMLTree) stack[sp - 1];
+                	if (node != null && node.getParent() != null)
+                		result = node.getParent().findChild(node);
+                	stack[sp - 1] = result;
+                	break;
+                }
+                case At:
+                {
+                	stack[sp - 1] = ((TMLTree) stack[sp - 1]).cloneNode();
+                	break;
+                }
+                case Cln:
+                {
+                	stack[sp - 1] = ((TMLTree) stack[sp - 1]).cloneTree(true);
+                	break;
+                }
                 }
                 pc++;
                 break;
             }
-            
-            //dumpStack();
+
+            System.out.println("PC: " + pc);
+            dumpStack();
         }
     }
 }
