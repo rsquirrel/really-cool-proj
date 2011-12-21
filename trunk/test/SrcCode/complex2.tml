@@ -17,25 +17,27 @@ void main ()
 {
 	MyTree_t ta, tb,tc,td,te,tf;
 	NewTree a1,a2;
-	ta[1].num = 1;
+	
 	alloc(ta, tb, tc, td, te, tf);
 	alloc(a1,a2);
-	int childnum1,childnum2;
 	
-	childnum1 = #ta;
-	childnum2 = #a1;
+	int childnum1,childnum2;
 	
 	ta ->(tb:~:(tf->(tc:td->(~:te))):~:~:~);
 	a1->(a2:~);
+    childnum1 = #tb;
+	childnum2 = #a2;
 	te = $tf;
 	td = @tf;
 	te = tf;
+	ta[0].num = 1;
+	
 	if(childnum1 == childnum2)
 	{
-		print("degree of one is greater than the other...");
+		print("position of both nodes is same");
 	}
 	int j;
-	for(j=0;j<childnum1;j=j+1)
+	for(j=0;j<childnum1+1;j=j+1)
 	{
 		print(ta[j].num);
 		ta[i].nums="hello world";
