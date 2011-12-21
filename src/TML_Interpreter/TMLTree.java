@@ -6,7 +6,17 @@ public class TMLTree
 	private TMLTree parent;
 	private ArrayList<TMLTree> children;
 	private ArrayList<Object> data;
+
 	private int id;
+	public int getId()
+	{
+		return id;
+	}
+
+	public TMLTree(int numOfChildren)
+	{
+		this(numOfChildren, null);
+	}
 
 	public TMLTree(int numOfChildren, TMLTree parent)
 	{
@@ -18,63 +28,18 @@ public class TMLTree
 		this.id = TMLTree.count++;
 	}
 
-	public TMLTree(int numOfChildren)
-	{
-		this(numOfChildren, null);
-	}
-
-	public TMLTree getParent()
-	{
-		return parent;
-	}
-
-	public void setParent(TMLTree parent)
-	{
-		this.parent = parent;
-	}
-
-	public TMLTree getChildren(int index)
-	{
-		return children.get(index);
-	}
-
-	public void setChildren(int index, TMLTree child)
-	{
-		this.children.set(index, child);
-	}
-
-	public Object getData(int index)
-	{
-		return data.get(index);
-	}
-
-	public void setData(int index, Object data)
-	{
-		this.data.set(index, data);
-	}
-
 	public void addData(Object data)
 	{
 		this.data.add(data);
 	}
-	
-	public int findChild(TMLTree child)
-	{
-		int result = -1;
-		for (int i = 0; i < children.size(); i++)
-			if (children.get(i) == child)
-				result = i;
-		
-		return result;
-	}
-	
+
 	public TMLTree cloneNode()
 	{
 		TMLTree result = new TMLTree(this.children.size());
 		result.data = (ArrayList<Object>) this.data.clone();
 		return result;
 	}
-	
+
 	public TMLTree cloneTree(boolean isRoot)
 	{
 		int degree = this.children.size();
@@ -90,6 +55,52 @@ public class TMLTree
 		}
 		
 		return result;
+	}
+
+	public int findChild(TMLTree child)
+	{
+		int result = -1;
+		for (int i = 0; i < children.size(); i++)
+			if (children.get(i) == child)
+				result = i;
+		
+		return result;
+	}
+
+	public TMLTree getChild(int index)
+	{
+		return children.get(index);
+	}
+	
+
+	public ArrayList<TMLTree> getChildren()
+	{
+		return children;
+	}
+
+	public Object getData(int index)
+	{
+		return data.get(index);
+	}
+
+	public TMLTree getParent()
+	{
+		return parent;
+	}
+	
+	public void setChild(int index, TMLTree child)
+	{
+		this.children.set(index, child);
+	}
+	
+	public void setData(int index, Object data)
+	{
+		this.data.set(index, data);
+	}
+	
+	public void setParent(TMLTree parent)
+	{
+		this.parent = parent;
 	}
 
 	@Override
