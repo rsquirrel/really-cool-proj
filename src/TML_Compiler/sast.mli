@@ -24,15 +24,15 @@ type tree_def = {
 
 type stmt = (* Statements  nothing *)
      Block of (stmt list) * ((t * string) list) (* statement list and var list *)
-   | Expr of expr   (*foo = bar + 3; *)
+   | Expr of expr   (* foo = bar + 3; *)
    | Return of expr (* return 42 also includes return function_name *)
    | If of expr * stmt * stmt (* if (foo == 42) {} else {} *)
    | Foreach of string * expr * traverse_order * stmt   (* for each loop *)
    | For of expr * expr * expr * stmt (* for loop *)
-   | Do of stmt * expr   (*do while loop *)
+   | Do of stmt * expr   (* do while loop *)
    | While of expr * stmt (* while (i<10) { i = i + 1 } *)
-   | Break  (* break *)
-   | Continue  (* continue *)
+   | Break of int (* break, followed by the num of loop-scope locals need to be popped*)
+   | Continue of int (* continue, followed by the num of loop-scope locals need to be popped *)
    | Vardecl of var_decl
    | Empty 
    

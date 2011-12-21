@@ -21,6 +21,8 @@ type symbol_table = {
 	funcs : (t * string * (t list)) list;
 	trees : tree_table list;
 	child_enum : int StringMap.t;
+	is_loop : bool (* true means this is a loop scope, false otherwise *)
+	(* for break and continue to count the num of variables inside loop scope *)
 }
 
 let int_of_bool = function
@@ -221,12 +223,21 @@ let rec expr scope = function
 			in
 			let typed_params = List.map (expr scope) params in
 			let param_types = List.map (fun et -> snd et) typed_params in
-			if func_name = "print" or
-					func_name = "alloc" or
-					param_types = required_param_types then
-				Sast.Call(func_name, typed_params), func_type
-			else
-				raise (Failure ("calling function " ^ func_name ^ " parameters mismatch"))
+			let _ = match func_name with (* check parameter types *)
+				| "print" -> List.iter (function
+					| Tree_type _ -> (* print can only take in primitive types *)
+							raise (Failure "print function can only take in primitive types")
+					| _ -> ()) param_types
+				| "alloc" -> List.iter (function
+					| Tree_type _ -> ()
+					| _ -> (* alloc can only take in tree types *)
+							raise (Failure "alloc function can only take in tree types")
+					) param_types
+				| _ -> if param_types <> required_param_types then (* other functions *)
+						raise (Failure ("calling function " ^
+									func_name ^ " parameters mismatch"))
+			in
+			Sast.Call(func_name, typed_params), func_type
   | Ast.Uniop (un_op, e) ->
 			let et = expr scope e in
 			let t = snd et in
@@ -279,14 +290,23 @@ let rec expr scope = function
 
 (* convert Ast.expr to Sast.expr in the variable initialization *)
 let check_init scope = function
-	| Some(e) -> Some(expr scope e)
+	| Some e -> Some(expr scope e)
 	| None -> None
 
+(* count declared variables inside the current loop before break/continue *)
+(* break/continue will pop out those variables from the stack before branching *)
+let rec count_loop_vars scope num =
+	if scope.is_loop then num
+	else match scope.parent with
+		| Some s -> count_loop_vars s (num + List.length scope.vars)
+		| None -> raise (Failure "break/continue not in loops")
+
+(* convert Ast.stmt to Sast.stmt *)
 let rec stmt scope = function
 	| Ast.Block sl ->
-			(* create a new empty scope for the block *)
+			(* create a new empty scope for the block, parent is the old scope *)
 			let block_scope = { scope with (* func reserves *)
-				parent = Some(scope); vars = []; }
+				parent = Some(scope); vars = []; is_loop = false}
 			in
 			(* check each statement in the block. scope may change in this process *)
 			(* Vardecl and Foreach are dealt with here because they can add locals *)
@@ -354,14 +374,16 @@ let rec stmt scope = function
 							(* inorder only supports binary tree *)
 							raise (Failure ("Foreach by inorder can only support binary trees"))
 						else
-							let new_scope = (* add id to the current scope temporarily *)
-								{ scope with vars = (Tree_type(tname), id)::scope.vars }
+							let loop_scope = (* add id to the current scope temporarily *)
+								{ scope with
+										vars = (Tree_type(tname), id)::scope.vars;
+										is_loop = true }
 							in
 							let block_s = match s with
 								| Ast.Block _ -> s
 								| _ -> Ast.Block [s]
 							in
-							let st = stmt new_scope block_s in
+							let st = stmt loop_scope block_s in
 							(match st with (* check if id re-declared in the block *)
 								| Sast.Block(_, block_vars) ->
 										(try (* check if the id is re-declared inside foreach *)
@@ -376,41 +398,50 @@ let rec stmt scope = function
 	| Ast.For (e1, e2, e3, s) -> 
 			let et2 = expr scope e2 in
 			if ((snd et2) = Boolean) then
-				let st = stmt scope s in
-				(* create a fake block for for statement to guarantee a new scope *)
-				let new_st = match st with
-					| Sast.Block(_, _) -> st
-					| _ -> stmt scope (Ast.Block [s])
+				let loop_scope = (* mark it as a loop *)
+					{ scope with is_loop = true }
 				in
-				Sast.For (expr scope e1, et2, expr scope e3, new_st)
+				(* create a fake block for for statement to guarantee a new scope *)
+				let block_s = match s with
+					| Ast.Block _ -> s
+					| _ -> Ast.Block [s]
+				in
+				let st = stmt loop_scope block_s in
+				Sast.For (expr scope e1, et2, expr scope e3, st)
 			else
 				raise (Failure ("the second expression in for statement is not boolean"))
 	| Ast.Do (s, e) ->
 			let et = expr scope e in
 			if ((snd et) = Boolean) then
-				let st = stmt scope s in
-				(* create a fake block for for statement to guarantee a new scope *)
-				let new_st = match st with
-					| Sast.Block(_, _) -> st
-					| _ -> stmt scope (Ast.Block [s])
+				let loop_scope = (* mark it as a loop *)
+					{ scope with is_loop = true }
 				in
-				Sast.Do (new_st, expr scope e)
+				(* create a fake block for for statement to guarantee a new scope *)
+				let block_s = match s with
+					| Ast.Block _ -> s
+					| _ -> Ast.Block [s]
+				in
+				let st = stmt loop_scope block_s in
+				Sast.Do (st, expr scope e)
 			else
 				raise (Failure ("the expression in do statement is not boolean"))
 	| Ast.While (e, s) ->
 			let et = expr scope e in
 			if ((snd et) = Boolean) then
-				let st = stmt scope s in
-				(* create a fake block for for statement to guarantee a new scope *)
-				let new_st = match st with
-					| Sast.Block(_, _) -> st
-					| _ -> stmt scope (Ast.Block [s])
+				let loop_scope = (* mark it as a loop *)
+					{ scope with is_loop = true }
 				in
-				Sast.While (expr scope e, new_st)
+				(* create a fake block for for statement to guarantee a new scope *)
+				let block_s = match s with
+					| Ast.Block _ -> s
+					| _ -> Ast.Block [s]
+				in
+				let st = stmt loop_scope block_s in
+				Sast.While (expr scope e, st)
 			else
 				raise (Failure ("the expression in while statement is not boolean"))
-	| Ast.Break -> Sast.Break
-	| Ast.Continue -> Sast.Continue
+	| Ast.Break -> Sast.Break (count_loop_vars scope 0)
+	| Ast.Continue -> Sast.Continue (count_loop_vars scope 0)
 	| Ast.Empty -> Sast.Empty
 	| Ast.Vardecl _ -> (* handled in block for scope change *)
 			raise (Failure ("Variable Declaration in wrong position!"))
@@ -423,6 +454,7 @@ let check program =
 		funcs = [(Tree_type("~"), "alloc", []); (Void, "print", [])]; (* built-in functions *)
 		trees = [];
 		child_enum = StringMap.empty;
+		is_loop = false;
 	} in
 	(* Global variable declarations and function definitions can be rearranged *)
 	(* But local variable declarations can not be rearranged with other statements *)
@@ -477,7 +509,7 @@ let check program =
 							(ft, fn, required_param_types)::glob_scope.funcs
 						} in
 						let param_scope = { new_scope with (* add params *)
-							parent = Some(new_scope); vars = fp}
+							parent = Some(new_scope); vars = fp} (* is_loop is still false *)
 						in
 						let func_block = 
 							stmt param_scope (Ast.Block(func_decl.Ast.body))
@@ -544,7 +576,7 @@ let check program =
 							let new_tree_def = {
 								typename = tn;
 								members = new_tm;
-								Sast.degree = tree_def.Ast.degree;
+								Sast.degree = td;
 							} in
 							classify (new_tree_def::tree_list) glob_list func_list new_scope tl)
 		in classify [] [] [] init_glob_scope (List.rev program)

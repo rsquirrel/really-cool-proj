@@ -149,8 +149,8 @@ let rec print_stmt indent s =
 					| _ -> indent + 1
 				in
 				print_stmt new_indent s
-		| Break -> print_endline "break;"
-		| Continue -> print_endline "continue;"
+		| Break i -> print_endline ("break " ^ (string_of_int i) ^ ";")
+		| Continue i -> print_endline ("continue " ^ (string_of_int i) ^ ";")
 		| Empty ->  print_endline ";"
 		| Vardecl vd ->
 				print_decl vd;;
