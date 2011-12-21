@@ -1,4 +1,4 @@
-# Author: Yan Zou
+# Authors: Yan Zou, Akash
 # Usage:
 #   1. Run "make analyzer_test" in src to generate a scanner_test.
 #   2. Run "analyzer_test.bash" and pass in the path of analyzer_test as the first argument.

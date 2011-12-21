@@ -11,10 +11,8 @@ bool insert(Node root, int data)
 	{
 		if (root[left] == ~)				// ~ means null
 		{
-			Node l;
-			alloc(l);
-			l.data = data;
-			root[left] = l;
+			alloc(root[left]);
+			root[left].data = data;
 			return true;
 		}
 		else
@@ -24,10 +22,8 @@ bool insert(Node root, int data)
 	{
 		if (root[right] == ~)
 		{
-			Node r;
-			alloc(r);
-			r.data = data;
-			root[right] = r;
+			alloc(root[right]);
+			root[right].data = data;
 			return true;
 		}
 		else
