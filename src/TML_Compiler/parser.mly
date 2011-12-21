@@ -54,20 +54,23 @@
 
 
 program:
-    /* nothing */                             { [] }   /*this part should be differnt and it should be similar to MicroC unsure about it */
+    /* nothing */                             { [] }   /* this part should be differnt 
+                                                       and it should be similar to MicroC unsure about it */
     | program type_def                        { Treedef($2)::$1 }
     | program decl                            { Globalvar($2)::$1 }
     | program func_def                        { Funcdef($2)::$1 }
     
 type_def:
-    TREETYPE LT INT GT ID LBRACE decl_list RBRACE                                      { { typename = $5;
-                                                                                           members = List.rev $7;
-                                                                                           degree = $3;
-                                                                                           aliases = [] }}
-    | TREETYPE LT INT COMMA LBRACK alias_list RBRACK GT ID LBRACE decl_list RBRACE     { { typename = $9;
-                                                                                           members = List.rev $11;
-                                                                                           degree = $3;
-                                                                                           aliases = List.rev $6 } }
+    TREETYPE LT INT GT ID LBRACE decl_list RBRACE                                      
+                                                            { { typename = $5;
+                                                                members = List.rev $7;
+                                                                degree = $3;
+                                                                aliases = [] }}
+    | TREETYPE LT INT COMMA LBRACK alias_list RBRACK GT ID LBRACE decl_list RBRACE     
+                                                            { { typename = $9;
+                                                                members = List.rev $11;
+                                                                degree = $3;
+                                                                aliases = List.rev $6 } }
 
 alias_list:
     ID                                       { [$1] }
@@ -105,10 +108,10 @@ init:
 
 func_def:
     type_specifier ID LPAREN para_list RPAREN stmt_block           { {  return_type = $1;
-																																				fname = $2;
-																	  																		params = List.rev $4;
-																	  																		body = $6	
-																																		} }
+                                                                        fname = $2;
+                                                                        params = List.rev $4;
+																	  	body = $6	
+																    } }
 
 para_list:
     /* nothing */					        {[]}
@@ -134,7 +137,9 @@ stmt:
     | WHILE LPAREN expr RPAREN stmt                           { While($3, $5) }
     | DO stmt WHILE LPAREN expr RPAREN SEMI                   { Do($2, $5) }
     | FOR LPAREN expr SEMI expr SEMI expr RPAREN stmt         { For($3, $5, $7, $9) }
-    | FOREACH LPAREN ID IN expr BY trvs_order RPAREN stmt       { Foreach($3, $5, $7, $9) }
+    /*| FOREACH LPAREN ID IN expr BY trvs_order RPAREN stmt     { Foreach($3, $5, $7, $9) } */
+    | FOREACH ID IN expr BY trvs_order stmt                   { Foreach($2, $4, $6, $7) } 
+                                                                            /* drop the parenthesis */
     | BREAK SEMI                                              { Break }
     | CONTINUE SEMI                                           { Continue }
     | RETURN expr SEMI                                        { Return($2) }
@@ -142,10 +147,11 @@ stmt:
     | SEMI                                                    { Empty }      /*No action really.. ?*/
 
 trvs_order:
-    INORDER                                                   { Inorder }    /*I doubt what exactly these should contain..?*/
-    | PREORDER                                                { Preorder }
-    | POSTORDER                                               { Postorder }
-    | LEVELORDER                                              { Levelorder }
+    INORDER                                               { Inorder }    
+                                                            /*I doubt what exactly these should contain..?*/
+    | PREORDER                                            { Preorder }
+    | POSTORDER                                           { Postorder }
+    | LEVELORDER                                          { Levelorder }
 
 expr:
     | literal                             { Literal($1) }
@@ -191,7 +197,8 @@ literal:
     | STRING                              { StringLit($1) }
     | CHAR                                { CharLit($1) }
     | BOOL                                { BoolLit($1) }
-    | NULL                                { TreeLit }         /*We dont have a NULL type defined in ast yet*/
+    | NULL                                { TreeLit }         
+                                            /*We dont have a NULL type defined in ast yet*/
 
 node_list:
     expr                                  { [$1] }

@@ -1,0 +1,90 @@
+0	Glb 0
+1	Jsr 3
+2	Hlt
+3	Ent 3
+4	Pst
+5	Pst
+6	Pst
+7	Lfp 1
+8	Jsr 68
+9	Sfp 1
+10	Pop 1
+11	Lfp 2
+12	Jsr 68
+13	Sfp 2
+14	Pop 1
+15	Lfp 3
+16	Jsr 68
+17	Sfp 3
+18	Pop 1
+19	Psi 0
+20	Pop 1
+21	Lfp 1
+22	Pss 114 111 111 116
+23	Sfd 2
+24	Pop 1
+25	Lfp 2
+26	Pss 108 101 102 116 32 99 104 105 108 100
+27	Sfd 2
+28	Pop 1
+29	Lfp 3
+30	Pss 114 105 103 104 116 32 99 104 105 108 100
+31	Sfd 2
+32	Pop 1
+33	Lfp 1
+34	Psi 0
+35	Lfp 2
+36	Scd
+37	Psi 1
+38	Lfp 3
+39	Scd
+40	Pop 1
+41	Lfp 1
+42	Psi 2
+43	Val T
+44	Jsr -1
+45	Pop 1
+46	Psi 0
+47	Pop 1
+48	Lfp 1
+49	Psi 0
+50	Chd T
+51	Psi 2
+52	Val T
+53	Jsr -1
+54	Pop 1
+55	Psi 0
+56	Pop 1
+57	Lfp 1
+58	Psi 1
+59	Chd T
+60	Psi 2
+61	Val T
+62	Jsr -1
+63	Pop 1
+64	Psi 0
+65	Pop 1
+66	Psi 0
+67	Ret 0
+68	Ent 0
+69	Lfp -2
+70	Alc 2
+71	Fld i
+72	Fld f
+73	Fld s
+74	Sfp -2
+75	Pop 1
+76	Lfp -2
+77	Psi 0
+78	Sfd 0
+79	Pop 1
+80	Lfp -2
+81	Psf 1.
+82	Sfd 1
+83	Pop 1
+84	Lfp -2
+85	Pss 104 105
+86	Sfd 2
+87	Pop 1
+88	Lfp -2
+89	Ret 1
