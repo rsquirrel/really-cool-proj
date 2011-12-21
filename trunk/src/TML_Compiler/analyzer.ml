@@ -56,7 +56,7 @@ let string_of_op = function
 	| Dollar -> "$"
 	| At -> "@"
 	| Father -> "^"
-	| Deg_a -> "Deg"
+	| Deg_a -> "&"
 	| Dot -> "."
 	| Hsh -> "#"
 	| Child -> "[]"
