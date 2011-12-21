@@ -1,5 +1,9 @@
 import java.util.ArrayList;
 
+/**
+ * @author Jiabin Hu
+ * 
+ */
 public class TMLTree
 {
 	static private int count = 0;
@@ -8,6 +12,7 @@ public class TMLTree
 	private ArrayList<Object> data;
 
 	private int id;
+
 	public int getId()
 	{
 		return id;
@@ -33,6 +38,7 @@ public class TMLTree
 		this.data.add(data);
 	}
 
+	@SuppressWarnings("unchecked")
 	public TMLTree cloneNode()
 	{
 		TMLTree result = new TMLTree(this.children.size());
@@ -40,6 +46,7 @@ public class TMLTree
 		return result;
 	}
 
+	@SuppressWarnings("unchecked")
 	public TMLTree cloneTree(boolean isRoot)
 	{
 		int degree = this.children.size();
@@ -53,7 +60,7 @@ public class TMLTree
 			else
 				result.children.set(i, children.get(i).cloneTree(false));
 		}
-		
+
 		return result;
 	}
 
@@ -63,7 +70,7 @@ public class TMLTree
 		for (int i = 0; i < children.size(); i++)
 			if (children.get(i) == child)
 				result = i;
-		
+
 		return result;
 	}
 
@@ -71,7 +78,6 @@ public class TMLTree
 	{
 		return children.get(index);
 	}
-	
 
 	public ArrayList<TMLTree> getChildren()
 	{
@@ -87,17 +93,17 @@ public class TMLTree
 	{
 		return parent;
 	}
-	
+
 	public void setChild(int index, TMLTree child)
 	{
 		this.children.set(index, child);
 	}
-	
+
 	public void setData(int index, Object data)
 	{
 		this.data.set(index, data);
 	}
-	
+
 	public void setParent(TMLTree parent)
 	{
 		this.parent = parent;
@@ -107,11 +113,13 @@ public class TMLTree
 	public String toString()
 	{
 		StringBuilder result = new StringBuilder();
-		result.append("Tree " + id + ": [p=" + ((parent == null) ? -1 : parent.id) + ", c=(");
+		result.append("Tree " + id + ": [p="
+				+ ((parent == null) ? -1 : parent.id) + ", c=(");
 		if (children != null)
 		{
 			for (TMLTree child : children)
-				if (child != null) result.append(child.id + ",");
+				if (child != null)
+					result.append(child.id + ",");
 		}
 		result.append("), d=(");
 		if (data != null)

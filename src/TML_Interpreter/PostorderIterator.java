@@ -1,6 +1,10 @@
 import java.util.LinkedList;
 import java.util.Queue;
 
+/**
+ * @author Jiabin Hu
+ *
+ */
 public class PostorderIterator implements TreeIterator
 {
 	Queue<TMLTree> queue = new LinkedList<TMLTree>();
