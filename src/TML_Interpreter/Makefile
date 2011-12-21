@@ -1,5 +1,9 @@
 JFLAGS =
 JC = javac
+
+all: classes
+	jar -cfe ../tml.jar Main *.class
+
 .SUFFIXES: .java .class
 .java.class:
 	$(JC) $(JFLAGS) $*.java
@@ -22,3 +26,4 @@ classes: $(CLASSES:.java=.class)
 .PHONY: clean
 clean:
 	$(RM) *.class
+	$(RM) ../tml.jar
