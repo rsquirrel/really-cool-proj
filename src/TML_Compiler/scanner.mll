@@ -45,7 +45,7 @@ rule token = parse
     | "by"            { BY }
     | "preorder"      { PREORDER }
     | "inorder"       { INORDER }
-    | "postoder"      { POSTORDER }
+    | "postorder"      { POSTORDER }
     | "levelorder"    { LEVELORDER }
     | "return"        { RETURN }
     | "int"           { INT_T }

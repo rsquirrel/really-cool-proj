@@ -21,11 +21,10 @@ void main ()
 	
 	ta_c2 = $ta;
 	
-	if (ta_c2[left] == ~ && ta_c2[1] == ~ )
+	if (ta_c2[left] != ~ && ta_c2[1] != ~ )
 	{
 		print (ta_c2[left].vstr);	// left child
 		print (ta_c2[1].vstr);		// right child
 	}
 	
-
 }
