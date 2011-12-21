@@ -339,7 +339,7 @@ let rec stmt scope = function
 				let st2 = stmt scope s2 in
 				(* create a fake block for else clause to guarantee a new scope *)
 				let new_st2 = match st2 with
-					| Sast.Block(_, _) -> st1
+					| Sast.Block(_, _) -> st2
 					| _ -> stmt scope (Ast.Block [s2])
 				in 
 				Sast.If(et, new_st1, new_st2)
@@ -349,24 +349,29 @@ let rec stmt scope = function
 			let et = expr scope e in
 			(match (snd et) with
 				| Tree_type tname ->
-						ignore(find_tree scope tname); (* check if the tree type exists *)
-						let new_scope = (* add id to the current scope temporarily *)
-							{ scope with vars = (Tree_type(tname), id)::scope.vars }
-						in
-						let st = stmt new_scope s in
-						(match st with (* check if id re-declared in the block *)
-							| Sast.Block(_, block_vars) ->
-									(try (* check if the id has been declared again inside foreach *)
-										let _ = 
-											List.find (fun (t, name) -> name = id) block_vars
-										in raise (Failure ("Foreach variable " ^ id ^ " redeclared"))
-									with Not_found -> (* no conflicts, convert it *)
-										Sast.Foreach (id, et, order, st))
-							| _ -> (* if the statement is not block, we do not need to check *)
-									let new_st = (* create a fake block for foreach to avoid errors *)
-										stmt new_scope (Ast.Block [s])
-									in
-									Sast.Foreach (id, et, order, new_st))
+						let tree = find_tree scope tname in (* check if the tree type exists *)
+						if order = Inorder && tree.degree <> 2 then
+							(* inorder only supports binary tree *)
+							raise (Failure ("Foreach by inorder can only support binary trees"))
+						else
+							let new_scope = (* add id to the current scope temporarily *)
+								{ scope with vars = (Tree_type(tname), id)::scope.vars }
+							in
+							let block_s = match s with
+								| Ast.Block _ -> s
+								| _ -> Ast.Block [s]
+							in
+							let st = stmt new_scope block_s in
+							(match st with (* check if id re-declared in the block *)
+								| Sast.Block(_, block_vars) ->
+										(try (* check if the id is re-declared inside foreach *)
+											let _ = 
+												List.find (fun (t, name) -> name = id) block_vars
+											in raise (Failure ("Foreach variable " ^
+																							id ^ " redeclared"))
+										with Not_found -> (* no conflicts, convert it *)
+											Sast.Foreach (id, et, order, st))
+								| _ -> raise (Failure "unexpected failure for foreach block"))
 				| _ -> raise (Failure ("identifier " ^ id ^ " is not a tree type")))
 	| Ast.For (e1, e2, e3, s) -> 
 			let et2 = expr scope e2 in
@@ -507,36 +512,41 @@ let check program =
 							List.find (fun t -> t.type_name = tn) glob_scope.trees
 						in raise (Failure ("tree type " ^ tn ^ " redeclared"))
 					with Not_found -> (* no conflicts, simply continue *)
-						let (alias_map, _) =
-							List.fold_left (fun (m, i) s ->
-								(StringMap.add s i m, i + 1))
-								(StringMap.empty, 0) (tree_def.Ast.aliases)
-						in
-						let tm =
-							List.concat (List.map part tree_def.Ast.members)
-						in
-						let tree_table = {
-							type_name = tn;
-							degree = tree_def.Ast.degree;
-							aliases = alias_map;
-							member_list = List.map (fun (t, name, _) -> (t, name)) tm
-						} in
-						let new_scope = { glob_scope with trees = 
-							tree_table::glob_scope.trees }
-						in
-						let new_tm = (* convert Ast.expr to Sast.expr *)
-							List.map (fun (t, name, init) ->
-								let _ = match t with (* recursive tree type in members *)
-									| Tree_type tname -> ignore(find_tree new_scope tname)
-									| _ -> ()
-								in (t, name, check_init glob_scope init)) tm
-						in
-						let new_tree_def = {
-							typename = tn;
-							members = new_tm;
-							Sast.degree = tree_def.Ast.degree;
-						} in
-						classify (new_tree_def::tree_list) glob_list func_list new_scope tl)
+						let td = tree_def.Ast.degree in
+						let ta = tree_def.Ast.aliases in
+						if (td < List.length ta) then
+							raise (Failure ("Too many alias names for tree type " ^ tn))
+						else
+							let (alias_map, _) =
+								List.fold_left (fun (m, i) s ->
+									(StringMap.add s i m, i + 1))
+									(StringMap.empty, 0) ta
+							in
+							let tm =
+								List.concat (List.map part tree_def.Ast.members)
+							in
+							let tree_table = {
+								type_name = tn;
+								degree = td;
+								aliases = alias_map;
+								member_list = List.map (fun (t, name, _) -> (t, name)) tm
+							} in
+							let new_scope = { glob_scope with trees = 
+								tree_table::glob_scope.trees }
+							in
+							let new_tm = (* convert Ast.expr to Sast.expr *)
+								List.map (fun (t, name, init) ->
+									let _ = match t with (* recursive tree type in members *)
+										| Tree_type tname -> ignore(find_tree new_scope tname)
+										| _ -> ()
+									in (t, name, check_init glob_scope init)) tm
+							in
+							let new_tree_def = {
+								typename = tn;
+								members = new_tm;
+								Sast.degree = tree_def.Ast.degree;
+							} in
+							classify (new_tree_def::tree_list) glob_list func_list new_scope tl)
 		in classify [] [] [] init_glob_scope (List.rev program)
 	in {
 		treetypes = tree_list;

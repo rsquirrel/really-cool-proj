@@ -27,4 +27,5 @@ type bstmt =
 	| Fld of Type.t (* Add a new value field to a tree node *)
 	| Sfd of int (* assign the value to the corresponding field of the tree *)
 	| Scd (* assign the corresponding child of the tree, need three arguments *)
+	| Nxt of int (* next iteration of foreach loop *)
 	| Hlt (* Terminate *) 

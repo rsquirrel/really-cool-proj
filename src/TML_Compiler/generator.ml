@@ -91,6 +91,7 @@ let string_of_bytecode = function
 	| Fld t -> ("Fld " ^ (string_of_type t))
 	| Sfd i -> ("Sfd " ^ (string_of_int i))
 	| Scd -> "Scd"
+	| Nxt i -> ("Nxt " ^ (string_of_int i))
 	| Hlt -> "Hlt"
 
 let init_value t = function
@@ -257,6 +258,7 @@ let translate out_filename program =
 		let loop_control sl continue_offset break_offset = 
 			let (_, new_sl) =
 				List.fold_left (fun (i, l) -> function
+					(* the Jsr -3 and -4 here are just stubs which will be changed later *)
 					| Jsr (-3) -> (i + 1, (Bra (break_offset - i))::l) (* Break *)
 					| Jsr (-4) -> (i + 1, (Bra (continue_offset - i))::l) (* Continue *)
 					| _ as s -> (i + 1, s::l)) (0, []) sl
@@ -284,14 +286,18 @@ let translate out_filename program =
 						(* print_endline (id ^ ": " ^ (string_of_int next_index)); (* debug *)*)
 						StringMap.add id next_index local_index
 					in
-					let bytecodes = (* regard the foreach statement as a block *)
+					let rs = (* regard the foreach statement as a block *)
 						(* the id can only be used inside foreach *)
-						block new_local_index (next_index + 1) num_params [s]
+						(* index moves 2 forward because of id and order *)
+						block new_local_index (next_index + 2) num_params [s] (* double blocks *)
 					in
+					let continue_offset = List.length rs in
+					let break_offset = continue_offset + 1 in
 					expr e @ (* push the root node onto the stack *)
 					[Psi (int_of_order order)] @ (* traverse order *)
-					[Psi (List.length bytecodes)] @ (* number of lines in foreach *)
-					[Jsr (-2)] @ bytecodes @ [Pop 1] (* Jsr -2 should pop out two elements *)
+					(* [Psi (List.length bytecodes)] @ (* number of lines in foreach *) *)
+					[Jsr (-2)] @ (loop_control rs continue_offset break_offset) @
+					[Nxt (- List.length rs)] @ [Pop 2] 
 					(* in order to make variables in the right order on the stack *)
 			| For (e1, e2, e3, s) -> 
 					(* stmt (Block([Expr(e1); While(e2, Block([s; Expr(e3)]))])) *)
