@@ -1,12 +1,9 @@
-Author: Yan Zou
-
 Usage:
 
 1. Test compilers:
-   First of all, you need to compile our codes and generate the compiler (tmlc)
-   ./test.bash <path>
-   The path is for the compiler.
-   If no path is specified, ../src/tmlc is used as default
+   First of all, you need to build the compiler (cd into 'src' and type 'make')
+   To run all cases, type './test.bash'
+   To run a single test case, type './test.bash SrcCode/xxx.tml', where 'xxx.tml' is the name of the test case.
 
 2. Test scanners:
    1) Use my Makefile and run "make scanner_test" in src to generate a scanner_test.
