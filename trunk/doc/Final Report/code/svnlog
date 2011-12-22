@@ -1,0 +1,720 @@
+------------------------------------------------------------------------
+r155 | marksun1988@gmail.com | 2011-12-22 18:05:15 -0500 (Thu, 22 Dec 2011) | 4 lines
+
+1. Modified final report.
+2. Modified LRM: let it print the current parser.mly
+3. Modified test.bash: add clean operation
+4. Modified and added README/readme.txt
+------------------------------------------------------------------------
+r153 | probas.322@gmail.com | 2011-12-21 14:15:31 -0500 (Wed, 21 Dec 2011) | 3 lines
+
+small fix of analyzer
+add analyzer_test to test/README
+modify bst.tml to make it a little more concise
+------------------------------------------------------------------------
+r152 | hu.jiabin88@gmail.com | 2011-12-21 11:37:27 -0500 (Wed, 21 Dec 2011) | 2 lines
+
+Update the readme in test folder
+
+------------------------------------------------------------------------
+r151 | hu.jiabin88@gmail.com | 2011-12-21 11:28:40 -0500 (Wed, 21 Dec 2011) | 3 lines
+
+Update tml scripts to call tml.jar in the same directory as the script.
+Change bst, fix 'bool' from 'boolean'
+
+------------------------------------------------------------------------
+r150 | hu.jiabin88@gmail.com | 2011-12-21 10:50:28 -0500 (Wed, 21 Dec 2011) | 2 lines
+
+Add a bst sample/test case
+
+------------------------------------------------------------------------
+r149 | hu.jiabin88@gmail.com | 2011-12-21 09:37:17 -0500 (Wed, 21 Dec 2011) | 2 lines
+
+Add Interpreter scripts, readme file to src folder.
+
+------------------------------------------------------------------------
+r148 | hu.jiabin88@gmail.com | 2011-12-21 09:10:47 -0500 (Wed, 21 Dec 2011) | 2 lines
+
+Modifiy makefiles to output binaries to src folder
+
+------------------------------------------------------------------------
+r147 | hu.jiabin88@gmail.com | 2011-12-21 08:48:11 -0500 (Wed, 21 Dec 2011) | 2 lines
+
+Check in some test cases.. Forgot to do that yesterday.
+
+------------------------------------------------------------------------
+r146 | marksun1988@gmail.com | 2011-12-21 06:56:20 -0500 (Wed, 21 Dec 2011) | 2 lines
+
+1. modified parser to remove the parenthesis in foreach statement
+2. first full version of the final report, along with figures and codes needed.
+------------------------------------------------------------------------
+r145 | marksun1988@gmail.com | 2011-12-21 05:39:33 -0500 (Wed, 21 Dec 2011) | 1 line
+
+add test cases for foreach loop
+------------------------------------------------------------------------
+r144 | akash1531@gmail.com | 2011-12-21 01:52:33 -0500 (Wed, 21 Dec 2011) | 1 line
+
+final
+------------------------------------------------------------------------
+r143 | akash1531@gmail.com | 2011-12-21 01:51:54 -0500 (Wed, 21 Dec 2011) | 1 line
+
+final without errors
+------------------------------------------------------------------------
+r142 | hu.jiabin88@gmail.com | 2011-12-21 01:12:23 -0500 (Wed, 21 Dec 2011) | 1 line
+
+Delete non-source files.
+------------------------------------------------------------------------
+r141 | akash1531@gmail.com | 2011-12-21 01:03:39 -0500 (Wed, 21 Dec 2011) | 1 line
+
+out
+------------------------------------------------------------------------
+r140 | akash1531@gmail.com | 2011-12-21 01:03:20 -0500 (Wed, 21 Dec 2011) | 1 line
+
+check
+------------------------------------------------------------------------
+r139 | akash1531@gmail.com | 2011-12-21 00:53:59 -0500 (Wed, 21 Dec 2011) | 1 line
+
+bug
+------------------------------------------------------------------------
+r138 | probas.322@gmail.com | 2011-12-21 00:39:02 -0500 (Wed, 21 Dec 2011) | 4 lines
+
+break/continue bug fixed!!!!
+It can pop correct number of variables before leaving loop scope
+move the job of counting variable from generator to analyzer
+sast changed to record number of local variables before break/continue in the loop
+------------------------------------------------------------------------
+r137 | akash1531@gmail.com | 2011-12-21 00:27:12 -0500 (Wed, 21 Dec 2011) | 1 line
+
+test
+------------------------------------------------------------------------
+r136 | akash1531@gmail.com | 2011-12-21 00:22:00 -0500 (Wed, 21 Dec 2011) | 1 line
+
+continue.output
+------------------------------------------------------------------------
+r135 | akash1531@gmail.com | 2011-12-21 00:21:43 -0500 (Wed, 21 Dec 2011) | 1 line
+
+continue.tml
+------------------------------------------------------------------------
+r134 | akash1531@gmail.com | 2011-12-20 23:54:10 -0500 (Tue, 20 Dec 2011) | 1 line
+
+corrected
+------------------------------------------------------------------------
+r133 | hu.jiabin88@gmail.com | 2011-12-20 23:45:09 -0500 (Tue, 20 Dec 2011) | 2 lines
+
+Clean up test folder
+
+------------------------------------------------------------------------
+r132 | hu.jiabin88@gmail.com | 2011-12-20 23:40:26 -0500 (Tue, 20 Dec 2011) | 3 lines
+
+Fix a bug in scanner
+Fix several test cases
+
+------------------------------------------------------------------------
+r131 | hu.jiabin88@gmail.com | 2011-12-20 23:03:25 -0500 (Tue, 20 Dec 2011) | 3 lines
+
+Implemented foreach and nested foreach.
+Sign my names.
+Last commit barring bugs fixes.
+------------------------------------------------------------------------
+r130 | akash1531@gmail.com | 2011-12-20 22:48:03 -0500 (Tue, 20 Dec 2011) | 1 line
+
+ 
+------------------------------------------------------------------------
+r129 | akash1531@gmail.com | 2011-12-20 22:47:48 -0500 (Tue, 20 Dec 2011) | 1 line
+
+smaller loop
+------------------------------------------------------------------------
+r128 | akash1531@gmail.com | 2011-12-20 22:44:41 -0500 (Tue, 20 Dec 2011) | 1 line
+
+added output
+------------------------------------------------------------------------
+r127 | akash1531@gmail.com | 2011-12-20 22:44:23 -0500 (Tue, 20 Dec 2011) | 1 line
+
+added output
+------------------------------------------------------------------------
+r126 | hu.jiabin88@gmail.com | 2011-12-20 22:25:23 -0500 (Tue, 20 Dec 2011) | 1 line
+
+Add tree iterators.
+------------------------------------------------------------------------
+r125 | marksun1988@gmail.com | 2011-12-20 22:11:59 -0500 (Tue, 20 Dec 2011) | 1 line
+
+add some intermediate tex file to ignore list
+------------------------------------------------------------------------
+r124 | marksun1988@gmail.com | 2011-12-20 22:09:01 -0500 (Tue, 20 Dec 2011) | 3 lines
+
+first commit the final report: not finished yet.
+
+add the proposal folder to version control.
+------------------------------------------------------------------------
+r123 | probas.322@gmail.com | 2011-12-20 21:48:44 -0500 (Tue, 20 Dec 2011) | 4 lines
+
+modify bytecodes for foreach - Nxt of int
+break and continue for foreach
+check the tree degree for inorder foreach
+check the number of aliases for tree type
+------------------------------------------------------------------------
+r122 | hu.jiabin88@gmail.com | 2011-12-20 19:42:46 -0500 (Tue, 20 Dec 2011) | 1 line
+
+Implemented everything except foreach.
+------------------------------------------------------------------------
+r121 | probas.322@gmail.com | 2011-12-20 16:52:36 -0500 (Tue, 20 Dec 2011) | 1 line
+
+analyzer: reject all variables and parameters of type void
+------------------------------------------------------------------------
+r120 | probas.322@gmail.com | 2011-12-20 16:35:26 -0500 (Tue, 20 Dec 2011) | 2 lines
+
+allocation return bug fixed
+add code to analyzer to check if function parameters have the same name
+------------------------------------------------------------------------
+r119 | hu.jiabin88@gmail.com | 2011-12-20 16:23:38 -0500 (Tue, 20 Dec 2011) | 1 line
+
+Implement tree instructions.
+------------------------------------------------------------------------
+r118 | probas.322@gmail.com | 2011-12-20 16:09:43 -0500 (Tue, 20 Dec 2011) | 2 lines
+
+another bug of alloc found by Jiabin - the newly allocated tree bad been simply discarded
+The bug is fixed by changing it into assignments
+------------------------------------------------------------------------
+r117 | probas.322@gmail.com | 2011-12-20 11:54:40 -0500 (Tue, 20 Dec 2011) | 1 line
+
+small bug found by Jiabin in alloc function
+------------------------------------------------------------------------
+r116 | hu.jiabin88@gmail.com | 2011-12-20 11:52:46 -0500 (Tue, 20 Dec 2011) | 2 lines
+
+Add two test cases
+
+------------------------------------------------------------------------
+r115 | probas.322@gmail.com | 2011-12-20 00:05:52 -0500 (Tue, 20 Dec 2011) | 6 lines
+
+analyzer:
+1. deal with foreach
+2. add block scope to all if, for, while and do statement body
+3. check redeclaration (function, tree type, parameter, same scope local, global)
+generator:
+can generate codes for tree connection and foreach(Jsr -2) now
+------------------------------------------------------------------------
+r114 | probas.322@gmail.com | 2011-12-18 01:17:32 -0500 (Sun, 18 Dec 2011) | 1 line
+
+The generator can now generate bytecodes to manipulate trees
+------------------------------------------------------------------------
+r113 | akash1531@gmail.com | 2011-12-18 00:22:54 -0500 (Sun, 18 Dec 2011) | 1 line
+
+complex tree declaration
+------------------------------------------------------------------------
+r112 | akash1531@gmail.com | 2011-12-18 00:16:13 -0500 (Sun, 18 Dec 2011) | 1 line
+
+another test case
+------------------------------------------------------------------------
+r111 | akash1531@gmail.com | 2011-12-17 22:53:56 -0500 (Sat, 17 Dec 2011) | 1 line
+
+break inside for loop
+------------------------------------------------------------------------
+r110 | akash1531@gmail.com | 2011-12-17 22:48:55 -0500 (Sat, 17 Dec 2011) | 1 line
+
+analyzer test directory
+------------------------------------------------------------------------
+r109 | akash1531@gmail.com | 2011-12-17 22:48:22 -0500 (Sat, 17 Dec 2011) | 1 line
+
+output directory
+------------------------------------------------------------------------
+r108 | akash1531@gmail.com | 2011-12-17 22:04:40 -0500 (Sat, 17 Dec 2011) | 1 line
+
+combination of functions and for loops
+------------------------------------------------------------------------
+r107 | akash1531@gmail.com | 2011-12-17 20:07:19 -0500 (Sat, 17 Dec 2011) | 1 line
+
+comment
+------------------------------------------------------------------------
+r106 | akash1531@gmail.com | 2011-12-17 19:38:53 -0500 (Sat, 17 Dec 2011) | 1 line
+
+changed comments
+------------------------------------------------------------------------
+r105 | akash1531@gmail.com | 2011-12-17 19:33:31 -0500 (Sat, 17 Dec 2011) | 1 line
+
+changed comments
+------------------------------------------------------------------------
+r104 | hu.jiabin88@gmail.com | 2011-12-17 16:57:25 -0500 (Sat, 17 Dec 2011) | 1 line
+
+Update standard output for several test cases
+------------------------------------------------------------------------
+r103 | hu.jiabin88@gmail.com | 2011-12-17 16:52:52 -0500 (Sat, 17 Dec 2011) | 2 lines
+
+Implemented Pss.
+Modified scanner to recognize escape sequence in string literals.
+------------------------------------------------------------------------
+r102 | hu.jiabin88@gmail.com | 2011-12-17 11:48:04 -0500 (Sat, 17 Dec 2011) | 3 lines
+
+Update scanner to accept empty string.
+Update a test case.
+
+------------------------------------------------------------------------
+r101 | hu.jiabin88@gmail.com | 2011-12-17 11:40:15 -0500 (Sat, 17 Dec 2011) | 1 line
+
+Implement psf, psc, pss, TMLTree
+------------------------------------------------------------------------
+r100 | probas.322@gmail.com | 2011-12-17 02:39:16 -0500 (Sat, 17 Dec 2011) | 4 lines
+
+tree type checking of analyzer
+output ascii of char/string
+\' bug in scanner
+wrong test cases
+------------------------------------------------------------------------
+r99 | hu.jiabin88@gmail.com | 2011-12-16 11:33:12 -0500 (Fri, 16 Dec 2011) | 1 line
+
+Updating standard output for several test cases to eliminate extra new line at the end of file.
+------------------------------------------------------------------------
+r98 | hu.jiabin88@gmail.com | 2011-12-16 11:05:30 -0500 (Fri, 16 Dec 2011) | 2 lines
+
+Update the test script to compare results. Add option to run single tests.
+
+------------------------------------------------------------------------
+r97 | hu.jiabin88@gmail.com | 2011-12-16 10:41:12 -0500 (Fri, 16 Dec 2011) | 1 line
+
+
+------------------------------------------------------------------------
+r96 | probas.322@gmail.com | 2011-12-15 22:45:41 -0500 (Thu, 15 Dec 2011) | 1 line
+
+modify the original test.bash and add analyzer_test.bash
+------------------------------------------------------------------------
+r95 | probas.322@gmail.com | 2011-12-15 22:41:32 -0500 (Thu, 15 Dec 2011) | 5 lines
+
+append return to the end of all functions(default value)
+return void will return 0
+fix the recursion error
+unary operation on + and -
+bug of the father operator of the parser
+------------------------------------------------------------------------
+r94 | probas.322@gmail.com | 2011-12-15 00:07:35 -0500 (Thu, 15 Dec 2011) | 4 lines
+
+The first complete version of generator.
+Bytecode has been changed!!!
+The top level can now take in one argument (input file name) and generate the output file name according to the input file name.
+Some revision of the analyzer.
+------------------------------------------------------------------------
+r93 | probas.322@gmail.com | 2011-12-14 17:45:51 -0500 (Wed, 14 Dec 2011) | 3 lines
+
+The first complete version of analyzer.ml and analyzer_test.ml
+Add analyzer_test to Makefile
+analyzer_test can print out the SAST
+------------------------------------------------------------------------
+r92 | hu.jiabin88@gmail.com | 2011-12-14 17:30:13 -0500 (Wed, 14 Dec 2011) | 1 line
+
+Remove dead code in parser.mly
+------------------------------------------------------------------------
+r91 | hu.jiabin88@gmail.com | 2011-12-14 16:47:01 -0500 (Wed, 14 Dec 2011) | 2 lines
+
+Update make clean to clean analyzer_test
+
+------------------------------------------------------------------------
+r90 | hu.jiabin88@gmail.com | 2011-12-14 16:32:50 -0500 (Wed, 14 Dec 2011) | 1 line
+
+Update interpreter
+------------------------------------------------------------------------
+r89 | probas.322@gmail.com | 2011-12-13 18:35:31 -0500 (Tue, 13 Dec 2011) | 2 lines
+
+Adjust the code structures.
+Create 5 new files and do small modifications to all the existing compiler files
+------------------------------------------------------------------------
+r88 | marksun1988@gmail.com | 2011-12-07 18:20:18 -0500 (Wed, 07 Dec 2011) | 1 line
+
+add test.byte
+------------------------------------------------------------------------
+r87 | hu.jiabin88@gmail.com | 2011-12-07 18:15:29 -0500 (Wed, 07 Dec 2011) | 1 line
+
+Add instruction Glb.
+------------------------------------------------------------------------
+r86 | hu.jiabin88@gmail.com | 2011-12-07 18:08:17 -0500 (Wed, 07 Dec 2011) | 1 line
+
+Change the names of some instruction, change the meaning of Ent.
+------------------------------------------------------------------------
+r85 | probas.322@gmail.com | 2011-12-06 22:58:39 -0500 (Tue, 06 Dec 2011) | 16 lines
+
+A complete version of compiler along with other changes
+
+Makefile:
+	Add dependence of compiler and bytecode
+ast.mli:
+	Move Assign from "type op" to "type expr"
+bytecode.mli:
+	Add Glb to indicate the number of global variables
+parser.mly:
+	if statement without else: "Block[]" -> "Empty"
+	value ASSIGN expr: "Binop($1, Equal, $3)" -> "Assign($1, $3)"
+compiler.ml:
+	Add compilation of loading/storing local/global variables, 
+	Break/Continue statement, function calls, entry function,
+	main function, built-in functions.
+	All the function of MicroC has been implemented.
+------------------------------------------------------------------------
+r84 | probas.322@gmail.com | 2011-12-05 00:20:03 -0500 (Mon, 05 Dec 2011) | 1 line
+
+bytecode.ml, tml.ml(top level), first simple version of compiler, and modifier parser(Reverse the order of lists or there will be errors in compiling)
+------------------------------------------------------------------------
+r83 | hu.jiabin88@gmail.com | 2011-12-02 23:03:30 -0500 (Fri, 02 Dec 2011) | 1 line
+
+Modify test scripts to include interpreter tests
+------------------------------------------------------------------------
+r82 | hu.jiabin88@gmail.com | 2011-12-02 23:02:59 -0500 (Fri, 02 Dec 2011) | 1 line
+
+Fix a bug in interpreter Makefile
+------------------------------------------------------------------------
+r81 | hu.jiabin88@gmail.com | 2011-12-02 22:34:36 -0500 (Fri, 02 Dec 2011) | 1 line
+
+Missed a file in last commit..oops.
+------------------------------------------------------------------------
+r80 | hu.jiabin88@gmail.com | 2011-12-02 22:32:52 -0500 (Fri, 02 Dec 2011) | 1 line
+
+Change directory structure, add Makefiles for different directories.
+------------------------------------------------------------------------
+r79 | hu.jiabin88@gmail.com | 2011-12-02 22:09:03 -0500 (Fri, 02 Dec 2011) | 1 line
+
+Add test cases for byte code interpreter.
+------------------------------------------------------------------------
+r78 | hu.jiabin88@gmail.com | 2011-12-02 22:05:18 -0500 (Fri, 02 Dec 2011) | 1 line
+
+Implemented execute(). Now we're able to execute gcd().
+------------------------------------------------------------------------
+r77 | hu.jiabin88@gmail.com | 2011-12-02 20:40:54 -0500 (Fri, 02 Dec 2011) | 1 line
+
+Implement the data structures and reading from input.
+------------------------------------------------------------------------
+r76 | hu.jiabin88@gmail.com | 2011-12-02 17:59:00 -0500 (Fri, 02 Dec 2011) | 1 line
+
+First commit for interpreter.
+------------------------------------------------------------------------
+r75 | hu.jiabin88@gmail.com | 2011-12-02 17:52:15 -0500 (Fri, 02 Dec 2011) | 1 line
+
+Initial import.
+------------------------------------------------------------------------
+r74 | hu.jiabin88@gmail.com | 2011-12-02 17:50:36 -0500 (Fri, 02 Dec 2011) | 1 line
+
+Change directory structure
+------------------------------------------------------------------------
+r73 | marksun1988@gmail.com | 2011-11-30 20:00:55 -0500 (Wed, 30 Nov 2011) | 2 lines
+
+Ast works at this point.
+Ast Tests needed.
+------------------------------------------------------------------------
+r72 | marksun1988@gmail.com | 2011-11-30 19:28:17 -0500 (Wed, 30 Nov 2011) | 1 line
+
+not yet finished
+------------------------------------------------------------------------
+r71 | akash1531@gmail.com | 2011-11-30 17:32:16 -0500 (Wed, 30 Nov 2011) | 1 line
+
+hello
+------------------------------------------------------------------------
+r70 | hu.jiabin88@gmail.com | 2011-11-17 14:02:41 -0500 (Thu, 17 Nov 2011) | 1 line
+
+
+------------------------------------------------------------------------
+r69 | akash1531@gmail.com | 2011-11-16 18:30:15 -0500 (Wed, 16 Nov 2011) | 1 line
+
+checked in
+------------------------------------------------------------------------
+r68 | hu.jiabin88@gmail.com | 2011-11-16 15:59:24 -0500 (Wed, 16 Nov 2011) | 1 line
+
+Add and modify basic operator test cases
+------------------------------------------------------------------------
+r67 | akash1531@gmail.com | 2011-11-16 00:38:11 -0500 (Wed, 16 Nov 2011) | 1 line
+
+additions
+------------------------------------------------------------------------
+r66 | akash1531@gmail.com | 2011-11-15 23:53:30 -0500 (Tue, 15 Nov 2011) | 1 line
+
+some changes
+------------------------------------------------------------------------
+r65 | marksun1988@gmail.com | 2011-11-15 23:37:20 -0500 (Tue, 15 Nov 2011) | 2 lines
+
+modify examples:
+comma to colon.
+------------------------------------------------------------------------
+r64 | marksun1988@gmail.com | 2011-11-15 23:34:41 -0500 (Tue, 15 Nov 2011) | 1 line
+
+add a comment in. still leave the error open for discussion.
+------------------------------------------------------------------------
+r63 | akash1531@gmail.com | 2011-11-15 23:31:20 -0500 (Tue, 15 Nov 2011) | 1 line
+
+changed but has problems
+------------------------------------------------------------------------
+r62 | hu.jiabin88@gmail.com | 2011-11-15 23:23:50 -0500 (Tue, 15 Nov 2011) | 4 lines
+
+Update LRM to specify that in tree construction expression, children are seperated by COLONs, instead of COMMAs.
+Update test cases to reflect this change.
+
+
+------------------------------------------------------------------------
+r61 | hu.jiabin88@gmail.com | 2011-11-15 23:04:08 -0500 (Tue, 15 Nov 2011) | 2 lines
+
+Modify makefile and several test cases
+
+------------------------------------------------------------------------
+r60 | akash1531@gmail.com | 2011-11-15 21:39:46 -0500 (Tue, 15 Nov 2011) | 1 line
+
+changed file
+------------------------------------------------------------------------
+r59 | marksun1988@gmail.com | 2011-11-15 13:54:31 -0500 (Tue, 15 Nov 2011) | 1 line
+
+add some more tree op test cases
+------------------------------------------------------------------------
+r58 | akash1531@gmail.com | 2011-11-15 02:14:58 -0500 (Tue, 15 Nov 2011) | 1 line
+
+yet another attempt
+------------------------------------------------------------------------
+r57 | marksun1988@gmail.com | 2011-11-15 01:09:53 -0500 (Tue, 15 Nov 2011) | 1 line
+
+add test cases for tree type definition and some tree operators
+------------------------------------------------------------------------
+r56 | marksun1988@gmail.com | 2011-11-14 23:48:04 -0500 (Mon, 14 Nov 2011) | 2 lines
+
+fixed the scanner bug for \n \b \r \t \\
+add a test case to test these chars.
+------------------------------------------------------------------------
+r55 | marksun1988@gmail.com | 2011-11-14 22:36:21 -0500 (Mon, 14 Nov 2011) | 2 lines
+
+remove the following operators
+PLUS_ASN MINUS_ASN TIMES_ASN DIVIDE_ASN MOD_ASN
+------------------------------------------------------------------------
+r54 | hu.jiabin88@gmail.com | 2011-11-14 19:18:11 -0500 (Mon, 14 Nov 2011) | 2 lines
+
+Update Makefile again, apparently I have nothing better to do.
+
+------------------------------------------------------------------------
+r53 | hu.jiabin88@gmail.com | 2011-11-14 19:03:42 -0500 (Mon, 14 Nov 2011) | 2 lines
+
+Make makefile more intelligent.
+
+------------------------------------------------------------------------
+r52 | hu.jiabin88@gmail.com | 2011-11-14 18:25:45 -0500 (Mon, 14 Nov 2011) | 2 lines
+
+Fix scanner bug that extracts incorrect part of matched string for character and string literal.
+
+------------------------------------------------------------------------
+r51 | hu.jiabin88@gmail.com | 2011-11-14 18:19:27 -0500 (Mon, 14 Nov 2011) | 2 lines
+
+Fix parser bug-decl in stmt derivation should not be followed by a semicolon.
+
+------------------------------------------------------------------------
+r50 | probas.322@gmail.com | 2011-11-14 00:54:43 -0500 (Mon, 14 Nov 2011) | 4 lines
+
+1. Simple compiler
+2. Simple Makefile for compiler and scanner_test
+3. Test cases for statements and functions
+4. Test scripts for compiler and scanner(to debug) and README
+------------------------------------------------------------------------
+r49 | hu.jiabin88@gmail.com | 2011-11-13 00:17:36 -0500 (Sun, 13 Nov 2011) | 1 line
+
+Add test cases for arithmetic_op and logical_op
+------------------------------------------------------------------------
+r48 | akash1531@gmail.com | 2011-11-08 02:33:19 -0500 (Tue, 08 Nov 2011) | 1 line
+
+added again
+------------------------------------------------------------------------
+r47 | akash1531@gmail.com | 2011-11-08 02:12:36 -0500 (Tue, 08 Nov 2011) | 1 line
+
+added at el.. :)
+------------------------------------------------------------------------
+r46 | akash1531@gmail.com | 2011-11-08 02:11:25 -0500 (Tue, 08 Nov 2011) | 1 line
+
+based on Yan's recent comments
+------------------------------------------------------------------------
+r45 | akash1531@gmail.com | 2011-11-08 01:39:00 -0500 (Tue, 08 Nov 2011) | 1 line
+
+some more additions
+------------------------------------------------------------------------
+r44 | akash1531@gmail.com | 2011-11-08 01:01:00 -0500 (Tue, 08 Nov 2011) | 1 line
+
+removed multiple foreach statements
+------------------------------------------------------------------------
+r43 | hu.jiabin88@gmail.com | 2011-10-31 16:18:39 -0400 (Mon, 31 Oct 2011) | 1 line
+
+
+------------------------------------------------------------------------
+r42 | probas.322@gmail.com | 2011-10-31 14:53:45 -0400 (Mon, 31 Oct 2011) | 1 line
+
+Final revision of LRM
+------------------------------------------------------------------------
+r41 | probas.322@gmail.com | 2011-10-31 12:12:10 -0400 (Mon, 31 Oct 2011) | 1 line
+
+add parser_pdf.mly to append yacc file to LRM
+------------------------------------------------------------------------
+r40 | probas.322@gmail.com | 2011-10-31 12:10:37 -0400 (Mon, 31 Oct 2011) | 1 line
+
+Add the main and built-in functions in LRM, append the yacc file to the LRM, add authors to yacc
+------------------------------------------------------------------------
+r39 | marksun1988@gmail.com | 2011-10-30 03:35:20 -0400 (Sun, 30 Oct 2011) | 1 line
+
+
+------------------------------------------------------------------------
+r38 | marksun1988@gmail.com | 2011-10-30 03:34:13 -0400 (Sun, 30 Oct 2011) | 3 lines
+
+revised the LRM.
+
+Add alloc in scanner.
+------------------------------------------------------------------------
+r37 | marksun1988@gmail.com | 2011-10-29 22:02:09 -0400 (Sat, 29 Oct 2011) | 1 line
+
+
+------------------------------------------------------------------------
+r36 | marksun1988@gmail.com | 2011-10-29 21:54:23 -0400 (Sat, 29 Oct 2011) | 1 line
+
+add main and print as id tokens different from user-defined ids.
+------------------------------------------------------------------------
+r35 | hu.jiabin88@gmail.com | 2011-10-29 16:23:29 -0400 (Sat, 29 Oct 2011) | 2 lines
+
+Add test cases for treetype declaration.
+Fix the parser rules for treetype declaration.
+------------------------------------------------------------------------
+r34 | hu.jiabin88@gmail.com | 2011-10-29 16:16:37 -0400 (Sat, 29 Oct 2011) | 5 lines
+
+parser.mly:
+assign a {0} for every /* nothing */
+
+scanner.mll:
+move the ID to the end so that keywords and literals can be matched first.
+------------------------------------------------------------------------
+r33 | probas.322@gmail.com | 2011-10-29 16:08:43 -0400 (Sat, 29 Oct 2011) | 1 line
+
+a test for scanner
+------------------------------------------------------------------------
+r32 | hu.jiabin88@gmail.com | 2011-10-29 16:00:19 -0400 (Sat, 29 Oct 2011) | 2 lines
+
+Added two test cases.
+Remove code at the end of scanner.
+------------------------------------------------------------------------
+r31 | hu.jiabin88@gmail.com | 2011-10-29 15:41:05 -0400 (Sat, 29 Oct 2011) | 7 lines
+
+paresr.mly:
+Added EOF as a token
+Changed each rule as type of integer
+
+scanner.mll:
+Fixed match rules for string and char literals
+Fixed a typo.
+------------------------------------------------------------------------
+r30 | hu.jiabin88@gmail.com | 2011-10-29 14:52:30 -0400 (Sat, 29 Oct 2011) | 1 line
+
+Add sample test cases.
+------------------------------------------------------------------------
+r29 | probas.322@gmail.com | 2011-10-29 14:42:39 -0400 (Sat, 29 Oct 2011) | 1 line
+
+Solve all the conflicts
+------------------------------------------------------------------------
+r28 | akash1531@gmail.com | 2011-10-29 12:14:04 -0400 (Sat, 29 Oct 2011) | 2 lines
+
+Changed Foreach error as told by Yan
+so now....we have expr replace (expr in expr by _order do)
+------------------------------------------------------------------------
+r27 | probas.322@gmail.com | 2011-10-29 12:00:40 -0400 (Sat, 29 Oct 2011) | 1 line
+
+Fixed some small problems.
+------------------------------------------------------------------------
+r26 | probas.322@gmail.com | 2011-10-29 11:43:10 -0400 (Sat, 29 Oct 2011) | 1 line
+
+Some revisions on Statements and functions
+------------------------------------------------------------------------
+r25 | hu.jiabin88@gmail.com | 2011-10-29 11:29:08 -0400 (Sat, 29 Oct 2011) | 1 line
+
+Add missing operators.
+------------------------------------------------------------------------
+r24 | marksun1988@gmail.com | 2011-10-28 05:11:16 -0400 (Fri, 28 Oct 2011) | 1 line
+
+add non-source-code files to ignore list
+------------------------------------------------------------------------
+r23 | marksun1988@gmail.com | 2011-10-28 05:09:09 -0400 (Fri, 28 Oct 2011) | 3 lines
+
+scanner and parser is drafted.
+1 never reduce.
+34 shift/reduce conflicts
+------------------------------------------------------------------------
+r22 | marksun1988@gmail.com | 2011-10-25 23:05:53 -0400 (Tue, 25 Oct 2011) | 1 line
+
+fix a problem of floats
+------------------------------------------------------------------------
+r21 | probas.322@gmail.com | 2011-10-24 17:22:50 -0400 (Mon, 24 Oct 2011) | 1 line
+
+finished section 6 function and section 7 scope
+------------------------------------------------------------------------
+r20 | probas.322@gmail.com | 2011-10-24 14:00:26 -0400 (Mon, 24 Oct 2011) | 1 line
+
+Section 5 Statement done.
+------------------------------------------------------------------------
+r19 | akash1531@gmail.com | 2011-10-23 23:39:33 -0400 (Sun, 23 Oct 2011) | 1 line
+
+Added Initial ast.mli file similar to Micro C compiler
+------------------------------------------------------------------------
+r18 | marksun1988@gmail.com | 2011-10-22 22:42:28 -0400 (Sat, 22 Oct 2011) | 3 lines
+
+1. code scanner.mll
+2. add token types to parser.mly
+3. fix tml_lrm.tex: change char size and bool size
+------------------------------------------------------------------------
+r17 | marksun1988@gmail.com | 2011-10-21 01:04:46 -0400 (Fri, 21 Oct 2011) | 1 line
+
+add scanner.mll and parser.mly
+------------------------------------------------------------------------
+r16 | marksun1988@gmail.com | 2011-10-19 21:28:29 -0400 (Wed, 19 Oct 2011) | 1 line
+
+revised at discussion
+------------------------------------------------------------------------
+r15 | marksun1988@gmail.com | 2011-10-19 04:39:15 -0400 (Wed, 19 Oct 2011) | 1 line
+
+add constant definitions
+------------------------------------------------------------------------
+r14 | akash1531@gmail.com | 2011-10-19 03:56:57 -0400 (Wed, 19 Oct 2011) | 1 line
+
+some additions to Lexical conventions
+------------------------------------------------------------------------
+r13 | marksun1988@gmail.com | 2011-10-19 03:27:41 -0400 (Wed, 19 Oct 2011) | 2 lines
+
+conflict fixed.
+This is a good version.
+------------------------------------------------------------------------
+r12 | marksun1988@gmail.com | 2011-10-19 03:21:20 -0400 (Wed, 19 Oct 2011) | 1 line
+
+try to fix yan-akash-shuai conflict
+------------------------------------------------------------------------
+r11 | probas.322@gmail.com | 2011-10-18 21:03:04 -0400 (Tue, 18 Oct 2011) | 1 line
+
+
+------------------------------------------------------------------------
+r10 | akash1531@gmail.com | 2011-10-18 19:57:16 -0400 (Tue, 18 Oct 2011) | 1 line
+
+restrictions
+------------------------------------------------------------------------
+r9 | akash1531@gmail.com | 2011-10-18 19:41:48 -0400 (Tue, 18 Oct 2011) | 1 line
+
+Added more to introduction
+------------------------------------------------------------------------
+r8 | akash1531@gmail.com | 2011-10-18 19:23:23 -0400 (Tue, 18 Oct 2011) | 1 line
+
+Added Introduction partially
+------------------------------------------------------------------------
+r7 | probas.322@gmail.com | 2011-10-18 16:18:39 -0400 (Tue, 18 Oct 2011) | 1 line
+
+Test and add a new environment for typing codes
+------------------------------------------------------------------------
+r6 | hu.jiabin88@gmail.com | 2011-10-16 13:20:24 -0400 (Sun, 16 Oct 2011) | 2 lines
+
+Expressions in LRM.
+
+------------------------------------------------------------------------
+r5 | marksun1988@gmail.com | 2011-10-12 20:45:59 -0400 (Wed, 12 Oct 2011) | 1 line
+
+
+------------------------------------------------------------------------
+r4 | marksun1988@gmail.com | 2011-10-12 20:42:55 -0400 (Wed, 12 Oct 2011) | 1 line
+
+add the sections titles
+------------------------------------------------------------------------
+r3 | marksun1988@gmail.com | 2011-10-08 01:50:38 -0400 (Sat, 08 Oct 2011) | 1 line
+
+add the tex file for tml lrm
+------------------------------------------------------------------------
+r2 | marksun1988@gmail.com | 2011-09-28 23:05:37 -0400 (Wed, 28 Sep 2011) | 1 line
+
+ADD Docs directory and ADD two documents
+------------------------------------------------------------------------
+r1 | (no author) | 2011-09-21 18:26:27 -0400 (Wed, 21 Sep 2011) | 1 line
+
+Initial directory structure.
+------------------------------------------------------------------------
