@@ -1,0 +1,36 @@
+treetype<2> Node
+{
+	int id;
+	char c;
+}
+
+int main()
+{
+	Node a, b, c, d, e, f, g;
+	alloc(a, b, c, d, e, f, g);
+	a.id = 1;
+	b.id = 2;
+	c.id = 3;
+	d.id = 4;
+	e.id = 5;
+	f.id = 6;
+	g.id = 7;
+	a->((b->(d:e)):(c->(f:g)));
+
+	Node x, y, z;
+	alloc(x, y, z);
+	x.c = 'x';
+	y.c = 'y';
+	z.c = 'z';
+
+	x->(y:z);
+
+	foreach n in a by preorder
+	{
+		print(n.id);
+		foreach m in x by inorder
+			print(m.c);
+	}
+
+	print('\n');
+}

@@ -1,0 +1,11 @@
+int foo()
+{
+	print("This is a function foo\n");
+	return 2;
+}
+
+void main()
+{
+	int a = foo();
+	print("Function foo returns ", a, '\n');
+}

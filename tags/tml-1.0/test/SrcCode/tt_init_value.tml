@@ -1,0 +1,18 @@
+treetype <2, [left, right]> Bin_T
+{
+	int i = 1000;
+	int i2;
+	float f = 1e-3;
+	string s = "hello, TML.";
+}
+
+void main()
+{
+	Bin_T t1;
+	alloc (t1);
+	
+	print (t1.i);
+	print (t1.f);
+	print (t1.s);	
+	print (t1.i2);	//0
+}

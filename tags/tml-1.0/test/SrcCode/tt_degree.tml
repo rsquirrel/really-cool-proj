@@ -1,0 +1,25 @@
+treetype <2, [left, right]>MyTree_t
+{
+	int vint;
+	float vflt;
+	string vstr;
+}
+
+
+void main ()
+{
+	MyTree_t ta, tb, tc;
+	alloc(ta, tb, tc);
+	int dgr1, dgr2, dgr3;
+	
+	ta ->(tb: tc);
+	
+	dgr1 = &ta;
+	dgr2 = &tb;
+	dgr3 = &tc;
+	
+	//print (dgr1 == dgr2 == dgr3);		// true
+	print (dgr1 == dgr2);
+	print (dgr1 == dgr3);
+	print('\n');
+}

@@ -1,0 +1,653 @@
+\documentclass[12pt,psfig,a4]{article}
+\usepackage{geometry}
+%\geometry{a4paper}
+\geometry{left=28mm,right=28mm,top=21mm,bottom=21mm}
+
+%\gemoetry{verbose,a4paper,tmargin=21mm,bmargin=21mm,lmargin=18mm,rmargin=18mm}
+\usepackage{graphics}
+\usepackage{setspace}
+\usepackage{url}
+\usepackage{listings}
+\newcommand{\Lyx}{L\kern-.1667em\lower.25em\hbox{y}\kern-.125emX\spacefactor1000}
+\newcommand\bibname{References}
+\singlespacing
+%\setlength{\parskip}{0pt}
+%\setlength{\parsep}{0pt}
+%\setlength{\headsep}{0pt}
+%\setlength{\topskip}{0pt}
+%\setlength{\topmargin}{0pt}
+%\setlength{\topsep}{0pt}
+%\setlength{\partopsep}{0pt}
+\usepackage[compact]{titlesec}
+\titlespacing{\section}{0pt}{*1}{*1}
+\titlespacing{\subsection}{0pt}{*1}{*1}
+\titlespacing{\subsubsection}{0pt}{*1}{*1}
+
+\begin{document}
+\bibliographystyle{plain} 
+\pagestyle{plain} 
+\pagenumbering{arabic}
+%\rmfamily
+\newenvironment{code}
+{\sffamily
+ \setlength{\parskip}{0pt}
+}
+{}
+
+\title{\vspace{2in}\textbf{TML\\Language Reference Manual}}
+\author{
+Jiabin Hu (jh3240)\\
+Akash Sharma (as4122)\\
+Shuai Sun (ss4088)\\
+Yan Zou (yz2437)\\\\
+\textit{Columbia University}
+}
+\date{\textit{October 31, 2011}}
+\maketitle
+
+\pagebreak
+\tableofcontents
+
+% Article starts here
+
+%\begin{abstract} 
+
+%\end{abstract} 
+
+%{\bf Keywords:} \\
+
+\pagebreak
+
+%Akash Begin
+
+\section{Introduction}
+
+Tree manipulation language (TML) is a user friendly language that is designed to help users program trees. It allows users to create, manipulate and run algorithms on trees. Various existing programming languages make tree operations cumbersome and TML is intended to bridge this gap. In TML everything is of type Tree except primitive data types. Each node of the tree is of type Tree and it has fields associated with it like parent, child etc. Every node of the Tree is root for its subtree. Nodes of the tree can consist of user defined or primitive value types and they can be of any degree. We can refer to any child or parent node of a given node using predefined constructs. TML provides methods to perform trivial operations on trees such as tree traversal, node creation or deletion etc.
+%\textit{This section will be written later.}
+
+\section{Lexical Conventions} \label{lexCon}
+There are different classes of tokens that are supported in TML. Token types are identifiers, keywords, literals, strings and operators. As in C language, whitespace characters are ignored except insofar as they serve to delineate other tokens in the input stream. If the input stream has been parsed into tokens up to a given character,the next token is taken to include the longest string of characters which could possibly constitute a token.
+
+%Akash: try to reorganize the sentences
+
+\subsection{Character Set}
+TML takes the standard \textbf{ASCII} character set for source codes.
+
+\subsection{Comments}
+In TML, there are two ways to make comments. The first style starts with the characters \textbf{/*}, and ends with the characters \textbf{*/}, all contents between which are comments. Note that, just like C-style comments, TML supports only un-nested comments. The second style is inline comments. It starts with the characters \textbf{//}, all contents in the current line after which are regarded as comments.
+
+\begin{code}
+\begin{tabbing}
+~~~~~~~~\= /*  \=\textit{This is a} \\
+\> \> \textit{block comment.} */\\
+\> // \textit{This is an inline comment}.
+\end{tabbing}
+\end{code}
+
+\subsection{Identifiers} \label{lexConId}
+In TML, an identifier is a string that starts with a letter or an underscore, and consists of a sequece of letters, digits, and underscores. %The max length of an identifier is 26 characters. 
+All identifiers are case-sensitive in TML.
+
+\subsection{Keywords}
+%\textit{This section needs discussion.}\\
+In TML, the words listed in Table~\ref{keywords} are reserved as keywords, and are not allowed to be used as a user-defined identifier.
+
+\begin{table}[!ht]
+\begin{center}
+\begin{tabular}{| c | c | c | c | c |}
+\hline
+if & else & do & while & for \\
+\hline
+break & continue & foreach & in & by     \\  %%whether remove the keyword do??         %Shuai: yes, keep it for do-while-loop
+\hline
+return & void & main & print & alloc \\
+\hline
+preorder & inorder & postorder & levelorder & treetype\\
+\hline
+int & float & char & string & bool \\
+\hline
+true & false & & &\\
+\hline
+\end{tabular}
+\caption{Keywords in TML}
+\label{keywords}
+\end {center}
+\end{table}
+%Akash End
+
+% Shuai Begin
+\subsection {Constants}
+There are several kinds of constants in TML, which are listed as follows.
+\subsubsection {Integer constants}
+An integer constant consists of a sequence of digits, starting with a non-zero digit. All integer constants are considered to be decimal and of type integer.
+
+\subsubsection {Float constants}
+A floating constant consists of an integer part, a decimal point, a fraction part, and optionally an `e' with a signed integer exponent. The integer and fraction parts both consist of a sequence of digits, and either one could be missing, but not both. Either the decimal point or the `e' with the exponent could be missing, but not both. All floating constants are of type float.
+
+\subsubsection {Character constants}
+A character constant is a single ASCII character enclosed by $'$ $'$, which is of character type. Note that $'$\textbackslash$n'$, $'$\textbackslash$t'$, and $'$\textbackslash$r'$, are character constants.
+
+\subsubsection {String constants}
+A string constant consists of several character constants enclosed by $''$~~~$''$, and implicitly ends with $'$\textbackslash$0'$.
+
+\subsubsection {Boolean constants}
+There are only two boolean constants, \textit{true} and \textit{false}.
+
+\subsubsection {Tree constant}
+There is only one tree constant, which is the null constant. The null constant is a null value of any tree type. If a tree is null, then it means the tree reference is lost at the point of time. In TML, the null constant is written as a tilde, `$\sim$'.
+
+
+\section {Types}
+In TML, there are two kind of types, the \textit{primitive types} and the \textit{tree types}.
+
+\subsection {Primitive Types}
+There are several kinds of primitive types. The size and value range of each type is listed in Table~\ref{pri_types}. The type specifiers can be found in section~\ref{typeSpec}
+
+\begin{table}[!ht]
+\begin{center}
+\begin{tabular}{| c | c | c | c |}
+\hline
+\textbf{Primitive Type} & \textbf{Size} & \textbf{Range} & \textbf{Default value} \\
+\hline
+Integer & 4 bytes & -2 147 483 648 ~  2 147 483 647 & 0 \\
+\hline
+Float & 4 bytes & about $\pm$3.402 823 47E+38 & 0.0\\
+\hline
+Character & 2 byte &  ASCII & $'$\textbackslash$0'$\\  % check the java and boolean
+\hline
+String & $\geq$ 1 byte & combinations of characters & $'$$'$$'$$'$\textit{(empty)} \\
+\hline
+Boolean & 4 bytes & true, false & false \\
+\hline
+\end{tabular}
+\caption{Primitive Types in TML}
+\label{pri_types}
+\end {center}
+\end{table}
+
+\subsubsection {Intergers}
+In TML, there is only one type of integer. The integers are signed, and are of fixed size. The size of an integer is four bytes.
+
+\subsubsection {Floating point numbers}
+In TML, there is only one type of floating point number. The size of the float type is four bytes.
+
+\subsubsection {Characters}
+In TML, there is only one type of character. The size of a character is two bytes. The characters are interpreted as ASCII code.
+
+\subsubsection {Strings}
+Strings are considered as a primitive type in TML. A string is a permutation of more than one characters. A string can be compared with another string. The size of a string equals to the number of characters in it.
+
+\subsubsection {Booleans}
+Boolean type is a primitive type in TML. There are only two values, true and false, in the Boolean type, which is used to determinate logic conditions. There is no conversions between integers and these two values.
+
+\subsection {Tree Types}
+In TML, a \textit{tree type} is a type to represent trees. By using the tree types, users can define and use tree data structures in their programs.
+
+In a tree data structure, children of the root node can be also regarded as roots of sub trees. By this concept, in TML, all nodes in a tree are of the same tree type with the root. There is no tree node type in TML.
+
+\subsubsection {Define a tree type}
+\label{defTreetype}
+Tree types are defined by users before they can declare and define variables of the tree types. A tree type consists of necessary parts, \textit{type name}, \textit{degree} and \textit{member variable(s)}, and an optional part, \textit{children index aliases}. To define a tree type, the \textit{type name}, \textit{degree} and \textit{member variable(s)} must be defined, and the \textit{children index aliases} can be optionally defiined. The size of a tree type is the sum size of its member variable types.
+
+When defining each member variable, an intial value can be optimally defined. If the initial value of a member variable is not defined, it will be intialized with the default value of each type. For primitive types, the default values are defined in Table~\ref{pri_types}. For tree types, it will be assigned with null.
+
+An example of a tree type definition, MyTree\_t, is given below.
+
+\begin{code}
+\begin{tabbing}
+~~~~~~~~\= treet\=ype \textless2, [left, right]\textgreater MyTree\_t \\
+\> \{ \\
+\> \>int vint = 0;\\
+\> \>float vflt = 1.;\\
+\> \>string vstr = ''hi '';\\
+\> \}
+\end{tabbing}
+\end{code}
+
+\subsubsection {Type name}
+The \textit{type name} of a tree type follows the identifier definition in the section~\ref{lexConId}. After the tree type is defined, the type name can be used to define variables of this type.
+
+\subsubsection {Degree}
+In TML, each tree type must define a fixed \textit{degree} at definition. All nodes of the same tree type have the same degree. The value range of the degree is from 1 to 99. The degree of a tree type can be referred to by using  the operator ``\&'' introduced in the section~\ref{treeOp}.
+
+% use &a  to get the degree
+
+\subsubsection {Member variables}
+In TML, a tree type can define its own \textit{member variable(s)} to store values for algorithms and programs. Each tree type can have at most 99 member variables. Each member variable must have a name which is unique in its tree type, and can be of any primitive types or tree types. Note that if a member variable is defined as some tree type, the definition of the tree type must appear before the member variable definition. All member variables are public. The member variables of a tree type variable can be referred to by using dot operator introduced in the section~\ref{treeOp}.
+
+% limit the member tree varible have only primitive types
+
+\subsubsection {Children index and aliases}
+In TML, children sub roots of a root can be referred to by the index number, ranging from 0 to (degree-1). Optionally, at the definition of a tree type, user can define alias of the children indices. The alias follows the identifier definition in section~\ref{lexConId}. Note that if aliases are defined, then aliases for all Children indices must be defined. Only defining a subset of children indices is not allowed in TML. Whether using number indices or aliases, the children of a tree root can be referred to by using child access operator introduced in section~\ref{treeOp}.
+
+\subsection {Type Conversions}
+In TML, no type conversion is allowed.
+
+% Shuai End
+
+% Jiabin Begin
+
+\section{Expressions}
+In TML, expressions consist of operators and their operands. In this section, definition for each operator is given. To avoid ambiguity, precedence rules of the operators in TML are also defined in this section.
+
+\subsection{Arithmetic operators}
+In TML, arithmetic operators are $+$, $-$, $*$, $/$ and $\%$. $+$ means addition, $-$ means substruction, $*$ means multiplication, $/$ means division and $\%$ means modulation. All of them are binary and left associative. It requires that their operands must be of the same primitive types, and the result will be of the same type.
+
+\subsection{Comparative operators}
+In TML, comparative operators are $>$ (greater than), $<$ (less than), $>=$ (greater than or equal to), $<=$ (less than or equal to), $!=$ (not equal) and $==$ (equal). All of them are binary operators and left-associative. It requires that their operands must be of the same primitive types . The return value is a boolean value indicates the predicate.
+
+\subsection{Logical operators}
+Logical operators in TML include $\&\&$ (logical and), $||$ (logical or) and ! (logical not). \&\& and $||$ are binary operators and left-associative. They take two operands of type boolean, and return a boolean value. ! is unary and appears on the left side of the operand. They type of the operand must be of type boolean and the return type is also a boolean value.
+
+\subsection{Assignment operators}
+TML's assignment operator is =. it's binary operator and right-associative. The left operand must be a legal left value, and the right operand must be an expression. In TML, a legal left value can be a variable, a member variable of a tree type or a child of a tree. When an assignment is taken, the value of the expression on the right is assigned to the left value, and the new value of the left value is returned, which allows chained assignments. 
+
+\subsection{Parentheses}
+In TML, parentheses in expressions are used to overwrite the precedence rules. Expression enclosed by the parentheses is calculated before applying its adjacent operators.
+
+\subsection{Tree Operators}
+The TML is a set of operators that can be applied to trees. They are divided into three categories: tree-building operators, tree-copying operators and tree-querying operators.
+
+\subsubsection{Tree-building operators}
+The operator -\textgreater is the tree building operator. This operator is used to connect the root and its children to build a tree. It is binary and right-associative. Its left operand is a single tree node, representing the root. The right operand is a list of children trees, enclosed by parentheses. Each child tree is seperated by colons, representing the immediate children of the root. An example is given below. In this example, a tree is built with ta as root and tb as its left subtree, and tc as its right subtree. This operator returns the newly built tree, which is ta.
+\begin{code}
+\begin{tabbing}
+~~~~~~~~\= MyTree\_t ta, tb, tc;\\
+\> alloc(ta, tb, tc);\\
+\> ta~-\textgreater(tb : tc);
+\end{tabbing}
+\end{code}
+
+\subsubsection{Tree-copying operators}
+In TML, two operators are supplied to copying trees. They are the At(@) operator and the Dollar(\$) operator. Both of them are right-associative. And they both take only one operand of a tree type. 
+
+The At operator copies the root node of the operand and its values only, with all of its children set to null. The Dollar operator copies the whole tree referenced by the operand, including all sub trees and children. Both of them return the reference of the newly-copied tree.
+
+In the example below, ta\_copy1 gets only the ta node with both children set null, while ta\_copy2 get the copy of the whole ta tree, with the two children connected.
+\begin{code}
+\begin{tabbing}
+~~~~~~~~\= MyTree\_t ta, tb, tc;~~~~~~~\=\\
+\> alloc(ta, tb, tc);\\
+\> ta~-\textgreater(tb : tc);\\
+\> MyTree\_t ta\_copy1, ta\_copy2;\\
+\> ta\_copy1 = @ta;\>//\textit{copy ta node only}\\
+\> ta\_copy2 = \$ta;\>//\textit{copy the whole ta tree }
+\end{tabbing}
+\end{code}
+
+
+\subsubsection{Tree-querying operators}
+\label{treeOp}
+In TML, several tree-querying operators are defined to get properties of a tree. They are the Hash(\#) operator, the square bracket operator([]), the Dot(.) operator, the Ampersand(\&) operator and the Caret(\^{}) operator. The detailed definition for each operator is given below, followed by an example to illustrate their usages.
+
+The Hash operator takes one operand of a tree type, and returns and integer representing the order of the operand among its siblings. If the operand has no parent, the return value is -1. 
+
+The square bracket operator is used to get access to children of a tree. It takes two operands, the first on the left of the brackets and the second in the brackets. The first operand is of a tree type, and the second is either an integer index or children alias string index defined at the tree type definition. The return value is the reference to a the required child. Note that the operand inside the square bracket must be less than the degree of the tree. The behavior of an index exceeds the degree of the tree is unknown.
+
+The Dot operator is used to access the data fields associated with the node. It is a binary and left-associative operator. The left operand is of a tree type, and the right operand is the name of a data fields defined at the type definition. The return value is the value of that particular field.
+
+The Ampersand is used to get the degree of tree. It is a unary operator and appears in front of its operand, which is of a tree type. It returns an integer indicating the degree of the tree.
+
+The Caret operator is used to get the parent reference of the operand. It is a unary operator and appears on the left side of the operand, which is of a tree type. It returns the reference of the operand's parent.
+
+
+\begin{code}
+\begin{tabbing}
+~~~~~~~~\= MyTree\_t ta, tb, tc;~~~~~~~~~~~~~~~~\=//\textit{MyTree\_t is defined in section~\ref{defTreetype}}\\
+\> alloc(ta, tb, tc);\\
+\> ta~-\textgreater(tb : tc);\\
+\> int ta\_order = \#ta;\>//\textit{ta\_order = -1}\\
+\> int tb\_order = \#tb;\>//\textit{tb\_order = 0}\\
+\> int tc\_order = \#ta[1];\>//\textit{tc\_order = 1}\\
+\> MyTree\_t tb\_copy = ta[0];\>//\textit{tb\_copy has the same ref with tb}\\
+\> MyTree\_t tc\_copy = ta[1];\>//\textit{tc\_copy has the same ref with tc}\\
+\> MyTree\_t t\_err = ta[2];\>//\textit{this usage could cause unknown errors}\\
+\> int tmp1 = ta.vint;\>//\textit{tmp1 has the value of ta.vint, which is 0}\\
+\> float tmp2 = tb\_copy.vflt;\>//\textit{tmp2 has the value of tb.vflt, which is 1.0}\\
+\> string tmp3 = tc.vstr;\>//\textit{tmp3 is ''hi ''}\\
+\> int degree = \&ta;\>//\textit{degree is assigned with 2}\\
+\> MyTree\_t ta\_copy = \^{}tb;\>//\textit{ta\_copy has the same ref with ta}
+\end{tabbing}
+\end{code}
+
+\subsection{Precedence Rules}
+To eliminate the possibility of ambiguity, the precedence of operators in TML are defined in Table~\ref{preRule}.
+
+\begin{table}[ht]
+\begin{center}
+\begin{tabular}{| c | c |}
+\hline
+1 & () \\
+2 & . ~ , ~ [] \\
+2 & \# ~ \& \\
+3 & @ ~ \$ ~ \^{} \\
+4 & * ~ / ~ \% \\
+5 & + ~ - \\
+6 & $<$ ~ $>$ ~ $<=$ ~ $>=$ ~ $!=$ ~ == \\
+7 & ! \\
+8 & \&\& \\
+9 & $||$ \\
+10 & =\\%, +=, -=, *=, /=, \%= \\
+11 & -\textgreater \\
+\hline
+\end{tabular}
+\caption{Precedence Rules}
+\label{preRule}
+\end {center}
+\end{table}
+
+% Jiabin End
+
+% Yan Begin
+
+\section{Statements}
+
+\subsection{Variable Declarations and Initialization Statements}
+Variable Declarations and Initializations are considered as statements in TML. It has the following syntax (The square brackets means optional):
+
+\begin{code}
+\begin{tabbing}
+~~~~~~~~\= \textsl{type-specifier} \textsl{initializer-list}; \\
+\> \textsl{initializer-list}  $\rightarrow$ \textsl{initializer} $\mid$ \textsl{initializer-list} , \textsl{initializer}
+\end{tabbing}
+\end{code}
+
+\subsubsection{Type Specifiers} \label{typeSpec}
+\label{ts}
+Type Specifiers can be any basic type or user-defined tree type.
+
+For basic types, it can be:
+\begin{itemize}
+\setlength{\itemsep}{0pt}
+\setlength{\parskip}{0pt}
+\item int - Intergers
+\item float - Floating point numbers
+\item char - Characters
+\item string - Strings
+\item bool - Booleans
+\end{itemize}
+
+For user-defined tree type, just write the type name identifier.
+
+\subsubsection{Initializers}
+An initializer contains two parts: the name of the variable and the initial value for it. The first part is only an identifier. The second part is optional (We use square brackets to represent optional), and contains an equal sign and an expression that will be evaluated and assigned to that variable.
+
+\begin{code}
+\begin{tabbing}
+~~~~~~~~\textsl{Initializer} $\rightarrow$ identifier [= \textsl{expression}]
+\end{tabbing}
+\end{code}
+
+\subsection{Expression Statements}
+The expression statement is the most common one in TML. It consists of an expression and a semicolon at the end. Any expression can be used here. TML will evaluate the expression and ignore the final evaluation result.
+
+\begin{code}
+\begin{tabbing}
+~~~~~~~~\textsl{expression};
+\end{tabbing}
+\end{code}
+
+\subsection{Block Statements}
+The block statement is a list of statements surrounded by curly braces.
+
+\begin{code}
+\begin{tabbing}
+~~~~~~~~\{ [\textsl{statement-list}]
+%\\
+%statement
+%statement
+%...
+%\\
+\}
+\end{tabbing}
+\end{code}
+
+The \textsl{statement-list} consists of sequential statements one after another
+
+\begin{code}
+\begin{tabbing}
+~~~~~~~~\textsl{statement-list}  $\rightarrow$ \textsl{statement} $\mid$ \textsl{statement} \textsl{statement-list}
+\end{tabbing}
+\end{code}
+
+\subsection{Conditional Statements}
+The conditional statements contain only the if statement with the following syntax:
+
+\begin{code}
+\begin{tabbing}
+~~~~~~~~if (\textsl{expression}) \textsl{statement} [else \textsl{statement}]
+\end{tabbing}
+\end{code}
+
+If compound statements are used for both statements, as is used mostly, the if statement can be written as follows:
+
+\begin{code}
+\begin{tabbing}
+%make a concrete example
+~~~~~~~~\= if (x \= \textless \space 0) \\
+\> \{ \\
+\> \> real = false; \\
+\> \> y = sqrt(-x); \\
+\> \} \\
+\> else \\
+\> \{ \\
+\> \> real = true; \\
+\> \> y = sqrt(x); \\
+\> \}
+\end{tabbing}
+\end{code}
+
+\subsection{Iterative Statements}
+There are four kinds of iterative statements: while statement, do statement, for statement and foreach statement.
+
+\subsubsection{while statement}
+The while statement contains a condition-expression and a loop body. The codes in the loop body will be executed again and again as long as the evaluation result of the condition-expression is true. The condition-expression will be evaluated before each time the loop body is executed. This statement has the following syntax:
+
+\begin{code}
+\begin{tabbing}
+~~~~~~~~while (\textsl{expression}) \textsl{statement}
+\end{tabbing}
+\end{code}
+
+\subsubsection{do statement}
+Similar to the while statement, the do statement also contains a condition-expression and a loop body. The codes in the loop body will be executed again and again as long as the evaluation result of the condition-expression is true. But the condition-expression will be evaluated after each time the loop body is executed. This statement has the following syntax:
+
+\begin{code}
+\begin{tabbing}
+~~~~~~~~\= do \= \\
+\> \> \textsl{statement} \\
+\> while (\textsl{expression});
+\end{tabbing}
+\end{code}
+
+\subsubsection{for statement}
+The for statement takes three expressions: init-expression, cond-expression and loop-expression. At the beginning, the init-expression will be evaluated. And then, the cond-expresion is evaluated repeatedly until the result is false. For each time the evaluation has the result true, the codes of the loop body will be executed and the loop-expression will be evaluated afterwards. It has the following syntax:
+
+\begin{code}
+\begin{tabbing}
+~~~~~~~~\= for (\= \textsl{init-expression}; \textsl{cond-expression}; \textsl{loop-expression}) \\
+\> \> \textsl{statement}
+\end{tabbing}
+\end{code}
+
+\subsubsection{foreach statement}
+The foreach statement is used to enumerate the elements contained in an object, like all the characters in a string, all subtrees in a tree, and so on. It is mainly operated on trees. The syntax of this statement is:
+
+\begin{code}
+\begin{tabbing}
+~~~~~~~~\= forea\= ch \textsl{variable1} in \textsl{variable2} by \textsl{traverse-order} \\
+\> \> \textsl{statement} \\
+\> \textsl{traverse-order} $\rightarrow$ preorder $\mid$ inorder $\mid$ postorder $\mid$ levelorder
+\end{tabbing}
+\end{code}
+
+This statement will enumerate all the elements contained in variable2, and for each of the elements, it will store the element into variable1 and execute the loop body once. The order of the elements in each iteration will be determined by the \textsl{traverse-order}. And there are four kinds of tree traverse order: pre-order, in-order, post-order and level-order.
+
+\subsection{Other Statements}
+There are other statements that we may use in special conditions.
+
+\subsubsection{break statements}
+This statement is simply written as:
+
+\begin{code}
+\begin{tabbing}
+~~~~~~~~break;
+\end{tabbing}
+\end{code}
+
+It is used to immediately terminate a loop and execute the codes following the loop.
+
+\subsubsection{continue statements}
+This statement is simply written as:
+
+\begin{code}
+\begin{tabbing}
+~~~~~~~~continue;
+\end{tabbing}
+\end{code}
+
+It is used to immediately enter the next iteration of the loop ignoring the left of the codes in this iteration.
+
+\subsubsection{return statements}
+This statement is simply written as:
+
+\begin{code}
+\begin{tabbing}
+~~~~~~~~return [\textsl{expression}];
+\end{tabbing}
+\end{code}
+
+It is used to immediately exit a function and take expression as the return value of the function. The expression is optional as some functions do not have a return value.
+
+\subsubsection{Empty statements}
+This statement is simply written as:
+
+\begin{code}
+\begin{tabbing}
+~~~~~~~~;
+\end{tabbing}
+\end{code}
+
+It does nothing.
+
+
+\section{Functions}
+
+\subsection{Function Definition}
+TML allows only global functions and the functions are order-sensitive. It means that all functions should be defined outside all other function bodies, directly in the file scope. And if you want to call a function, that function should be defined before calling. It is allowed to define recursive functions, which will call the function itself inside the function body, but it is not allowed to define two functions that will call each other.
+
+The function definition has the regular syntax as follows:
+\begin{code}
+\begin{tabbing}
+~~~~~~~~\= \textsl{type-specifier} \textsl{identifier} ( \textsl{parameter-list} ) \\
+\> ~~~~~~~~\textsl{block-statement}
+\end{tabbing}
+\end{code}
+
+The type-specifier is used to declare the type of the return value of the function, and it is the same as described in section \ref{typeSpec}. The identifier is the name of the function, which is used by function calls. The statement is the function body and is usually a compound statement. What's in the parentheses is an optional parameter list with the following format and each parameter should be specified type by type-specifier and name by identifier:
+\begin{code}
+\begin{tabbing}
+~~~~~~~~\= \textsl{parameter-list} $\rightarrow$ \= \textsl{parameter-declaration} \\
+\> \> \textsl{parameter-declaration} , \textsl{parameter-list} \\
+\> \textsl{parameter-declaration} $\rightarrow$ \textsl{type-specifier} \textsl{identifier}
+\end{tabbing}
+\end{code}
+
+An example of function:
+\begin{code}
+\begin{tabbing}
+~~~~~~~~\= int gcd(int a, int b) \\
+\> \{ \\
+\> ~~~~~~~~\= if (b $==$ 0 $||$ (a = a \% b) $==$ 0) \\
+\> \> \{ \\
+\> \> ~~~~~~~~\= return b; \\
+\> \> \} \\
+\> \> return gcd(b, a); \\
+\> \}
+\end{tabbing}
+\end{code}
+
+\subsection{Main Function}
+In TML, there is an entry function where the program starts. There must be one main function in a TML program and should be defined like this:
+\begin{code}
+\begin{tabbing}
+~~~~~~~~\= void main() \\
+\> \{ \\
+\> ~~~~~~~~\textsl{statement-list} \\
+\> \} 
+\end{tabbing}
+\end{code}
+
+\subsection{Built-in Functions}
+There are mainly two built-in functions in TML, doing some regular jobs. The function names are reserved and can't be redefined.
+
+\subsubsection{print function}
+This function is used to print some information onto the screen.
+As a built-in function, the parameters passed to this function can be various. The definition of this function can be regarded as:
+\begin{code}
+\begin{tabbing}
+~~~~~~~~void print(\textsl{item-list}) \{ ... \}
+\end{tabbing}
+\end{code}
+
+The \textsl{item-list} can be a list of items separated by commas. The items can be literals and variables of any basic type. The print function will print them on screen from left to right and move to a new line after printing all the items in the list.
+
+\subsubsection{alloc function}
+This function is used to allocate space for variables of any type of tree.
+Tree variables can only be used as iterators and cannot be assigned node values or children before we allocate memory space of certain size for them.
+As a built-in function, the parameters passed to this function can be various. The definition of this function can be regarded as:
+\begin{code}
+\begin{tabbing}
+~~~~~~~~int alloc(\textsl{tree-list}) \{ ... \}
+\end{tabbing}
+\end{code}
+
+The \textsl{tree-list} can be a list of trees separated by commas. The trees can be of any tree type. The alloc function will recognize the size needed for each tree and allocate the space for them from left to right and return if the allocation succeeds.
+
+\section{Scope}
+In TML, there are two finds of scopes. Codes directly written in the file has a file scope(global), starting from the current position to the end of the file. Also, each compound statement will generate a local scope confined by the two curly brackets. Identifiers can only be used within its scope.
+
+% Yan End
+
+\section{Language Restrictions}
+TML has some language restrictions, which are already mentioned in previous sections. In this section, the restrictions are summarized as below.
+\begin{itemize}
+\setlength{\itemsep}{0pt}
+\setlength{\parskip}{0pt}
+\item TML source codes consist of only \textbf{ASCII} character set.
+\item Sizes and value ranges for primitive types in TML is in Table~\ref{pri_types}.
+\item Each tree type in TML can have 99 member variables at most.
+\item The maximum degree of each tree type in TML is 99.
+\end{itemize}
+
+\section{Language Formalization}
+TML language formalization is done in ocamlyacc format. The production rules with operator precedence rules are listed below, followed by the ocamlyacc output.
+
+\tt
+\lstset{basicstyle=\footnotesize}
+\lstinputlisting[language=Caml]{parser_pdf.mly}
+
+\mbox{}
+
+\noindent
+And the output of the parser in file "parser.output" is:
+
+72 terminals, 22 nonterminals
+
+91 grammar rules, 190 states
+
+%/* parser.output */
+
+%\lstinputlisting{../../src/parser.output}    too long!!!!!!!!
+
+%\section{Conversions to Java}
+
+
+
+
+
+%\begin{thebibliography}{}
+
+%\end{thebibliography}   
+
+\end{document}

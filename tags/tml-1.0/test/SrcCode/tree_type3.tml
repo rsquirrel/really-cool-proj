@@ -1,0 +1,16 @@
+treetype <1> list
+{
+	int k2;
+	int v;
+}
+
+treetype <1, [next]> table
+{
+	int key1;
+	list l;
+}
+
+int main()
+{
+}   
+

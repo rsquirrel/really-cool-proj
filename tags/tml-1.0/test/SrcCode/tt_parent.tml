@@ -1,0 +1,21 @@
+treetype <2, [left, right]>MyTree_t
+{
+	int vint = 0;
+	float vflt = 1.;
+	string vstr = "hi";
+}
+
+
+void main ()
+{
+	MyTree_t ta, tb, tc;
+	alloc(ta, tb, tc);
+	
+	ta ->(tb: tc);
+	
+	
+	print (ta == ^tb);		// true
+	print (ta == ^tc);			// true
+	print (^ta == ~);			// true
+	
+}

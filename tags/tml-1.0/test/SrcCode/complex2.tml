@@ -1,0 +1,45 @@
+int i;
+treetype <6, [a,b,c,d,e,f]> MyTree_t
+{
+	int num;
+	float numf;
+	string nums;
+	char numc;
+}
+
+treetype <3> NewTree
+{
+	int a;
+	float b;
+	string c;
+}
+void main ()
+{
+	MyTree_t ta, tb,tc,td,te,tf;
+	NewTree a1,a2;
+	
+	alloc(ta, tb, tc, td, te, tf);
+	alloc(a1,a2);
+	
+	int childnum1,childnum2;
+	
+	ta ->(tb:~:(tf->(tc:td->(~:te))):~:~:~);
+	a1->(a2:~);
+    childnum1 = #tb;
+	childnum2 = #a2;
+	te = $tf;
+	td = @tf;
+	te = tf;
+	ta[0].num = 1;
+	
+	if(childnum1 == childnum2)
+	{
+		print("position of both nodes is same");
+	}
+	int j;
+	for(j=0;j<childnum1+1;j=j+1)
+	{
+		print(ta[j].num);
+		ta[i].nums="hello world";
+	}
+}

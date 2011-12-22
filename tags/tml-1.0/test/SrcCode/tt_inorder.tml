@@ -1,0 +1,25 @@
+treetype<2> Node
+{
+	int id;
+}
+
+int main()
+{
+	Node a, b, c, d, e, f, g;
+	alloc(a, b, c, d, e, f, g);
+	a.id = 1;
+	b.id = 2;
+	c.id = 3;
+	d.id = 4;
+	e.id = 5;
+	f.id = 6;
+	g.id = 7;
+	a->((b->(d:e)):(c->(f:g)));
+
+	foreach n in a by inorder
+	{
+		print(n.id);
+	}
+
+	print('\n');
+}

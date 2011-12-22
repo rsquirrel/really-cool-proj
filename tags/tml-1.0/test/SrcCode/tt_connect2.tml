@@ -1,0 +1,26 @@
+treetype <2, [left, right]>MyTree_t
+{
+	int vint = 0;
+	float vflt = 1.;
+	string vstr = "hi";
+}
+
+
+void main ()
+{
+	MyTree_t ta, tb, tc;
+	alloc(ta, tb, tc);
+	
+	ta.vstr = "root";
+	tb.vstr = "i'm tb";
+	tc.vstr = "i'm tc";
+	
+	
+	ta -> ( ~ : tb -> ( ~ :tc));
+	
+	
+	print (ta.vstr);				// root
+	print (ta[1].vstr);				// i'm tb
+	print (ta[1][right].vstr);		// i'm tc
+
+}

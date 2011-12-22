@@ -1,0 +1,106 @@
+treetype <2, [left, right]> Node
+{
+	int data;
+}
+
+bool insert(Node root, int data)
+{
+	if (root.data == data)
+		return false;
+	else if (root.data > data)
+	{
+		if (root[left] == ~)				// ~ means null
+		{
+			alloc(root[left]);
+			root[left].data = data;
+			return true;
+		}
+		else
+			return insert(root[left], data);
+	}
+	else
+	{
+		if (root[right] == ~)
+		{
+			alloc(root[right]);
+			root[right].data = data;
+			return true;
+		}
+		else
+			return insert(root[right], data);
+	}
+}
+
+bool find(Node root, int data)
+{
+	if (root == ~)
+		return false;
+	else if (root.data == data)
+		return true;
+	else if (root.data > data)
+		return find(root[left], data);
+	else
+		return find(root[right], data);
+}
+
+void print_tree_helper(Node n, int depth)
+{
+	if (n != ~)
+	{
+		int i;
+		string indent = "    "; 			// four spaces
+		for (i = 0; i < depth; i = i + 1)
+			print(indent);
+		print(n.data, '\n');
+		print_tree_helper(n[left], depth + 1);
+		print_tree_helper(n[right], depth + 1);
+	}
+}
+
+void print_tree(Node root)
+{
+	print_tree_helper(root, 0);
+}
+
+int main()
+{
+	Node root;
+	alloc(root);
+	root.data = 18;						// has to manually create root
+	
+	insert(root, 3);
+	insert(root, 25);
+	insert(root, 0);
+	insert(root, 2);
+	insert(root, 11);
+	insert(root, 12);
+	insert(root, 34);
+	insert(root, 30);
+	insert(root, 40);
+
+	print_tree(root);
+	
+	print("Inorder: ");
+	foreach n in root by inorder
+		print(n.data, ' ');
+	print('\n');
+	
+	print("Preorder: ");
+	foreach n in root by preorder
+		print(n.data, ' ');
+	print('\n');
+
+	print("Postorder: ");
+	foreach n in root by postorder
+		print(n.data, ' ');
+	print('\n');
+
+	print("Levelorder: ");
+	foreach n in root by levelorder
+		print(n.data, ' ');
+	print('\n');
+	
+	print(find(root, 12));					// true
+	print(find(root, 38));					// false
+	print('\n');
+}

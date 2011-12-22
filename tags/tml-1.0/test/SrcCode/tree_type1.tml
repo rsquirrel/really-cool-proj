@@ -1,0 +1,9 @@
+treetype <2> binary_tree
+{
+	int a;
+	float b;
+}
+
+int main()
+{
+}

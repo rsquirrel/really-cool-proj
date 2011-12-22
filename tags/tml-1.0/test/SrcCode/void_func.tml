@@ -1,0 +1,15 @@
+void foo(int a, int b)
+{
+	print(a, b);
+}
+
+int main()
+{
+	int a = 3;
+	int c = 5;
+	int b = 7;
+	print(a, b);
+	a = 1; b = 2; c = 3;
+	print(a, b, c);
+	print('\n');
+}

@@ -1,0 +1,11 @@
+#!/bin/bash
+
+BASEDIR=$(dirname $0)
+if [ $# -ne 1 ]
+then
+	echo "Usage: tml <bytecode file>"
+else
+	java -jar $BASEDIR/tml.jar $1
+fi
+
+exit 0
