@@ -1,4 +1,4 @@
-# Author: Yan Zou, Jiabin Hu
+# Author: Yan Zou, Jiabin Hu, Shuai Sun
 # Usage: test.bash <srcfile>
 #        srcfile: the source file to be tested.
 #        If no srcfile is specified, it will run all test cases.
@@ -9,7 +9,11 @@ tmlc="../src/TML_Compiler/tmlc"
 
 if [ $# -lt 1 ]
 then
-	echo "Running all tests..." 
+	echo "Running all tests..."
+elif [ "$1" = "clean" ]
+then
+    rm ./SrcCode/*.result ./SrcCode/*.tmb
+    exit
 else
 	file=$1
     echo "Testing $file"
