@@ -45,7 +45,7 @@ Shuai Sun (ss4088)\\
 Yan Zou (yz2437)\\\\
 \textit{Columbia University}
 }
-\date{\textit{December 21th, 2011}}
+\date{\textit{December 22nd, 2011}}
 \maketitle
 
 \pagebreak
@@ -78,10 +78,10 @@ TML compiles the source codes and translate them into TML byte code, which is th
 
 \pagebreak
 \section{Language Tutorial}
-TML was designed to describe trees and use them in a more convenient way, with language-supported tree operators. User of TML can use these feartures to define their own tree-like data structures and write their programs.
+TML was designed to describe trees and use them in a more convenient way, with language-supported tree operators. User of TML can use these features to define their own tree-like data structures and write their programs.
 
 \subsection{An Introduction}
-TML is a C-like language. Most of the grammer is similar to that of C. Each source file, with the extension ".tml", should contain a main() method, which returns nothing. And each statement in the code should end with a semicolon.
+TML is a C-like language. Most of the grammar is similar to that of C. Each source file, with the extension ".tml", should contain a main() method, which returns nothing. And each statement in the code should end with a semicolon.
 
 \begin{code}
 \begin{tabbing}
@@ -117,13 +117,19 @@ TML programs can output results of computation by using built-in printing functi
 \end{tabbing}
 \end{code}
 
-When your finish writing the code, to compile the program, type the following command line:
+When your finish writing the code, cd to the src directory in our project, and type the following command line to compile the program:
 \begin{code}
 \begin{tabbing}
-~~~~~~~~\=./tmlc sample\_program.tml\\
-\> ./tml\\
+~~~~~~~~\=./tmlc sample\_program.tml
 \end{tabbing}
 \end{code}
+To run the TML program, type the following command line:
+\begin{code}
+\begin{tabbing}
+~~~~~~~~./tml sample\_program.tmb
+\end{tabbing}
+\end{code}
+
 
 \subsection {An Example of Tree Traversal}
 The following code of TML is an example of inorder traversal over the tree. In the program, it defineds a binary tree type, constructs a tree with tree operators, sets the value and prints the result.
@@ -131,7 +137,7 @@ The tree constructed along with the value set is in the figure~\ref{bintree}.
 
 \begin{figure}[h!]
 {\centering \resizebox*{100pt}{86pt}{\includegraphics{tree.png}} \par}
-\caption{Tree constrution in sample code}
+\caption{Tree construction in sample code}
 \label{bintree}
 \end{figure}
 
@@ -161,7 +167,16 @@ The tree constructed along with the value set is in the figure~\ref{bintree}.
 \end{tabbing}
 \end{code}
 
-Now, you have already written a program in TML. You can compile it and run. It should prints out:
+Now, you have already written a program in TML. Let's name it tutorial.tml. You can compile it and run by the following command. 
+
+\begin{code}
+\begin{tabbing}
+~~~~~~~~\=./tmlc tutorial.tml\\
+\>./tml tutorial.tmb
+\end{tabbing}
+\end{code}
+
+It should prints out:
 \begin{code}
 \begin{tabbing}
 ~~~~~~~~2~1~4~3~0~5\\
@@ -302,9 +317,9 @@ In a tree data structure, children of the root node can be also regarded as root
 \begin{itemize}
 \item Define a tree type
 \label{defTreetype}
-Tree types are defined by users before they can declare and define variables of the tree types. A tree type consists of necessary parts, \textit{type name}, \textit{degree} and \textit{member variable(s)}, and an optional part, \textit{children index aliases}. To define a tree type, the \textit{type name}, \textit{degree} and \textit{member variable(s)} must be defined, and the \textit{children index aliases} can be optionally defiined. The size of a tree type is the sum size of its member variable types.
+Tree types are defined by users before they can declare and define variables of the tree types. A tree type consists of necessary parts, \textit{type name}, \textit{degree} and \textit{member variable(s)}, and an optional part, \textit{children index aliases}. To define a tree type, the \textit{type name}, \textit{degree} and \textit{member variable(s)} must be defined, and the \textit{children index aliases} can be optionally defined. The size of a tree type is the sum size of its member variable types.
 
-When defining each member variable, an intial value can be optimally defined. If the initial value of a member variable is not defined, it will be intialized with the default value of each type. For primitive types, the default values are defined in Table~\ref{pri_types}. For tree types, it will be assigned with null.
+When defining each member variable, an initial value can be optimally defined. If the initial value of a member variable is not defined, it will be initialized with the default value of each type. For primitive types, the default values are defined in Table~\ref{pri_types}. For tree types, it will be assigned with null.
 
 An example of a tree type definition, MyTree\_t, is given below.
 
@@ -588,7 +603,7 @@ Similar to the while statement, the do statement also contains a condition-expre
 \end{code}
 
 \item for statement
-The for statement takes three expressions: init-expression, cond-expression and loop-expression. At the beginning, the init-expression will be evaluated. And then, the cond-expresion is evaluated repeatedly until the result is false. For each time the evaluation has the result true, the codes of the loop body will be executed and the loop-expression will be evaluated afterwards. It has the following syntax:
+The for statement takes three expressions: init-expression, cond-expression and loop-expression. At the beginning, the init-expression will be evaluated. And then, the cond-expression is evaluated repeatedly until the result is false. For each time the evaluation has the result true, the codes of the loop body will be executed and the loop-expression will be evaluated afterward. It has the following syntax:
 
 \begin{code}
 \begin{tabbing}
@@ -788,7 +803,7 @@ The authors are in the comment at the beginning of each file, with a few excepti
 
 \subsection{Style Guide}
 %Include a one-page programming style guide used by the team
-The general style guide was given below. Note that because we are using the OcalIDE on Eclipse developing environment, which provides automated indent feature, and we used the automated indent feature. So there is not much issues on the programming style.
+The general style guide was given below. Note that because we are using the OcaIDE on Eclipse developing environment, which provides automated indent feature, and we used the automated indent feature. So there is not much issues on the programming style.
 
 \subsubsection{O'Caml source}
 \begin{itemize}
@@ -858,7 +873,7 @@ Participated in all discussions and contributed to the project management. Made 
 Wrote a version of the Proposal. Wrote the expression part in the LRM. 
 
 \subsubsection{Akash Sharma}
-Participated in all discussions. Have a great understanding of the design issues and made suggestions on language designing. Wrote test cases for primitive type operations in TML. Wrote the definition of the AST. Helped figuring out the conflicts in parser and AST. Wrote the final complex test cases for TML.
+Participated in all discussions. Have a great understanding of the design issues and made suggestions on language designing. Wrote test cases for primitive type operations in TML. Wrote the definition of the AST. Helped figuring out the conflicts in parser and AST. Tested the analyzer of the compiler. Wrote the final complex test cases for TML.
 
 Wrote a version of the Proposal. Wrote the primitive type part, and language restriction part in the LRM. Made the presentation slice.
 
@@ -1061,10 +1076,13 @@ In this project, I mainly focused on how to implement semantic checking and code
 
 %Stage 1: 
 Ideas. Brainstorm can bring about a lot of ideas, but it is difficult to choose. Everyone has his own thinking and concession is necessary. Voting is always good to try.
+
 %Stage 2: 
 Building the LRM was the most difficult stage in this project, with no one clear about the direction. I realized that problems cannot simply get easier to solve when there are many people doing it, since we spent most of the time discussing and arguing and dealing with disagreements.
+
 %Stage 3: 
 Coding can be done neatly by SVN. In this stage, I began to get a whole view of what a compiler is and how it works. By writing codes on every detail of a compiler, I came across the issues that professor has discussed during class one by one, like the order of parameter evaluation, scoping, and position of variable declaration, and so on.
+
 %Stage 4: 
 Assembling and Testing. Test cases were designed before coding, so that we can test and debug all the way during coding. When we assembly all the parts, it simply works right.
 Above all, this project introduces me to the area of language design and implementation. It really teaches me a lot.
@@ -1155,6 +1173,9 @@ The following source code files are in alphabetical order.
 \lstinputlisting{../../src/TML_Compiler/type.mli}	% file name here
 \end{tt}
 
+
+
+
 \subsection{trunk/src/TML\_Interpreter/}
 The following source code files are in alphabetical order.
 
@@ -1208,6 +1229,9 @@ The following source code files are in alphabetical order.
 \lstset{tabsize=4, basicstyle=\scriptsize, numbers=left, numberstyle=\scriptsize, stepnumber=5, numbersep=5pt, breaklines=true, breakatwhitespace=true}
 \lstinputlisting[language=Java]{../../src/TML_Interpreter/TreeIterator.java}	% file name here
 \end{tt}
+
+
+
 
 
 \subsection{truck/test/SrcCode}
@@ -1362,16 +1386,6 @@ The following test case source files are in alphabetical order.
 \lstset{tabsize=4, basicstyle=\scriptsize, numbers=left, numberstyle=\scriptsize, stepnumber=5, numbersep=5pt, breaklines=true, breakatwhitespace=true}
 \lstinputlisting{../../test/SrcCode/print_char.tml}	% file name here
 \end{tt}
-
-
-
-
-
-
-
-
-
-
 
 \subsubsection{print\_string.tml}		% file name here
 \begin{tt}
